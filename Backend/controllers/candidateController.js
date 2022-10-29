@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
-const cookieParser = require('cookie-parser');
 const Candidate = require('../models/candidate');
 
 
@@ -16,20 +15,17 @@ const registerCandidate = asyncHandler(async(req, res) => {
 
     // Validations
     if (!email || !name || !password || !contactNumber || !username) {
-        res.status(400).json({ message: "Please fill all the details" });
-        throw new Error("Please fill all the details");
+        res.json({ message: "Please fill all the details", status: "error" });
     }
 
     if (password.length < 8) {
-        res.status(400).json({ message: "Password length must be greater than 8" });
-        throw new Error("Password length must be greater than 8");
+        res.json({ message: "Password length must be greater than 8", status: "error" });
     }
 
     // Check if user exists or not
     const userExists = await Candidate.findOne({ username });
     if (userExists) {
-        res.status(400).json({ message: "This username has already been taken" });
-        throw new Error("This username has already been taken");
+        res.json({ message: "This username has already been taken", status: "error" });
     }
 
     // Creating an object of candidate data
@@ -44,8 +40,7 @@ const registerCandidate = asyncHandler(async(req, res) => {
     newCandidate.save(async(err, data) => {
         if (err) {
             console.log(err);
-            return await res.status(400).json({ message: "Error in registering the candidate" });
-            // throw new Error("Error in registering the candidate");
+            return await res.json({ message: "Error in registering the candidate", status: "error" });
         }
         if (data) {
             console.log(data);
@@ -59,14 +54,41 @@ const registerCandidate = asyncHandler(async(req, res) => {
                 // secure: true
             }); // last 2 will be only used at deployment as in local we don't have https
 
-            return await res.status(200).json({ message: "Candidate has been registered successfully", username, token });
+            return await res.json({ message: "Candidate has been registered successfully", status: "ok", username, token });
         }
     });
 });
 
 
+// Login Candidate
 const loginCandidate = asyncHandler(async(req, res) => {
+    const { username, password } = req.body;
 
-})
+    if (!username || !password) {
+        res.json({ message: "Please fill all the fields", status: "error" });
+    }
 
-module.exports = { registerCandidate, loginCandidate };
+    const user = await Candidate.findOne({ username });
+
+    if (!user) {
+        res.json({ message: "Incorrect username or password", status: "error" });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (user && isPasswordCorrect) {
+        res.json({ message: "Candidate loggedin", status: "ok", username });
+    } else {
+        res.json({ message: "Incorrect username or password", status: "error" });
+    }
+});
+
+
+// Logout Candidate
+const logoutCandidate = asyncHandler(async(req, res) => {
+    res.clearCookie("token");
+    res.json({ message: "Logged out", status: "ok" });
+});
+
+
+module.exports = { registerCandidate, loginCandidate, logoutCandidate };
