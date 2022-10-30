@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require('bcrypt');
 
 const candidateSchema = new mongoose.Schema({
     name: {
@@ -130,5 +131,15 @@ const candidateSchema = new mongoose.Schema({
     }]
 
 }, { timestamps: true });
+
+// Hashing the password before saving into the database
+candidateSchema.pre("save", async function(next) {
+    if (!this.isModified("password"))
+        return next();
+
+    const hashedPassword = await bcrypt.hash(this.password, 10);
+    this.password = hashedPassword;
+    next();
+})
 
 module.exports = mongoose.model('Candidate', candidateSchema);

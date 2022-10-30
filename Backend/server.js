@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 
 const adminRoute = require('./routes/adminRoute');
@@ -13,8 +14,8 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors());
-dotenv.config();
 
 // Defining Routes
 app.use("/admin", adminRoute);
