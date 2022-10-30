@@ -27,7 +27,7 @@ const companySchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 8
-            // TODO : validation
+        // TODO : validation
     },
 
     password: {
@@ -82,6 +82,12 @@ const companySchema = new mongoose.Schema({
     }],
 
     isActive: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
+
+    isBlock: {
         type: Boolean,
         required: true,
         default: false

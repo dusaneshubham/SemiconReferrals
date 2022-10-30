@@ -9,7 +9,7 @@ const adminRoute = require('./routes/adminRoute');
 const candidateRoute = require('./routes/candidateRoute');
 const companyRoute = require('./routes/companyRoute');
 
-
+dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -29,7 +29,6 @@ mongoose.connect(process.env.MONGO_URI, {
     .then(() => console.log("Connected to Database"))
     .catch((err) => {
         console.log(err);
-        // console.log("Database connection error")
     });
 
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));

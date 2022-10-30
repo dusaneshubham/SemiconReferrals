@@ -77,7 +77,7 @@ const loginCandidate = asyncHandler(async(req, res) => {
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
     if (user && isPasswordCorrect) {
-        res.json({ message: "Candidate loggedin", status: "ok", username });
+        res.json({ message: "Candidate loggedin", status: "success", username });
     } else {
         res.json({ message: "Incorrect username or password", status: "error" });
     }
@@ -87,7 +87,7 @@ const loginCandidate = asyncHandler(async(req, res) => {
 // Logout Candidate
 const logoutCandidate = asyncHandler(async(req, res) => {
     res.clearCookie("token");
-    res.json({ message: "Logged out", status: "ok" });
+    res.json({ message: "Logged out", status: "success" });
 });
 
 
