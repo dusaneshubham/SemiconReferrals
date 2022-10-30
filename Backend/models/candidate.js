@@ -13,7 +13,7 @@ const candidateSchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 8
-            // TODO : validation
+        // TODO : validation
     },
 
     username: {
@@ -48,7 +48,7 @@ const candidateSchema = new mongoose.Schema({
     profileImage: {
         type: String,
         required: false
-            // TODO : put default image
+        // TODO : put default image
     },
 
     about: {
@@ -128,12 +128,16 @@ const candidateSchema = new mongoose.Schema({
             enum: ["Remote", "Work from Office"],
             required: false
         }
+    }],
+    savePost: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "jobPost"
     }]
 
 }, { timestamps: true });
 
 // Hashing the password before saving into the database
-candidateSchema.pre("save", async function(next) {
+candidateSchema.pre("save", async function (next) {
     if (!this.isModified("password"))
         return next();
 

@@ -2,7 +2,10 @@ const bcrypt = require('bcrypt');
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const admin = require('../models/admin');
+const candidate = require('../models/candidate');
 const company = require('../models/company');
+const hr = require('../models/hr');
+const jobApplication = require('../models/jobApplication');
 const jobPost = require('../models/jobPost');
 
 // Register admin
@@ -58,7 +61,7 @@ const approveCompany = asyncHandler(async (req, res) => {
 
     const isExistCompany = await company.findOne({ id: _id });
     if (isExistCompany) {
-        const _company = await company.findByIdAndUpdate(_id, { isActive: true }, { new: true });
+        const _company = await company.findByIdAndUpdate(_id, { status: "Approved" }, { new: true });
         if (_company) {
             res.json({ message: "successfully updated status!", status: "success" });
         } else {
@@ -74,7 +77,7 @@ const rejectCompany = asyncHandler(async (req, res) => {
 
     const isExistCompany = await company.findOne({ id: _id });
     if (isExistCompany) {
-        const _company = await company.findByIdAndUpdate(_id, { isActive: false }, { new: true });
+        const _company = await company.findByIdAndUpdate(_id, { status: "Rejected" }, { new: true });
         if (_company) {
             res.json({ message: "successfully updated status!", status: "success" });
         } else {
@@ -106,7 +109,7 @@ const rejectPost = asyncHandler(async (req, res) => {
 
     const isExistJobPost = await jobPost.findOne({ id: _id });
     if (isExistJobPost) {
-        const _company = await jobPost.findByIdAndUpdate(_id, { status: "Reject" }, { new: true });
+        const _company = await jobPost.findByIdAndUpdate(_id, { status: "Rejected" }, { new: true });
         if (_company) {
             res.json({ message: "successfully updated status!", status: "success" });
         } else {
@@ -122,7 +125,7 @@ const blockCompany = asyncHandler(async (req, res) => {
 
     const isExistCompany = await company.findOne({ id: _id });
     if (isExistCompany) {
-        const _company = await company.findByIdAndUpdate(_id, { isBlock: true }, { new: true });
+        const _company = await company.findByIdAndUpdate(_id, { status: "Blocked" }, { new: true });
         if (_company) {
             res.json({ message: "successfully updated status!", status: "success" });
         } else {
@@ -138,7 +141,7 @@ const unblockCompany = asyncHandler(async (req, res) => {
 
     const isExistCompany = await company.findOne({ id: _id });
     if (isExistCompany) {
-        const _company = await company.findByIdAndUpdate(_id, { isBlock: false }, { new: true });
+        const _company = await company.findByIdAndUpdate(_id, { status: "Approved" }, { new: true });
         if (_company) {
             res.json({ message: "successfully updated status!", status: "success" });
         } else {
@@ -149,10 +152,101 @@ const unblockCompany = asyncHandler(async (req, res) => {
     }
 });
 
-// TODO 
-/* Approve / Reject the job application by candidate
-Dashboard / Statistics
-View company details
-View candidate details */
+const getStatistics = asyncHandler(async (req, res) => {
+    const numberOfCandidate = await candidate.find().count();
 
-module.exports = { registerAdmin, loginAdmin, approveCompany, rejectCompany, approvePost, rejectPost, blockCompany, unblockCompany };
+    // Statistics of company
+    const numberOfPendingCompany = await company.find({ status: "Pending" }).count();
+
+    const numberOfApprovedCompany = await company.find({ status: "Approved" }).count();
+
+    const numberOfRejectedCompany = await company.find({ status: "Rejected" }).count();
+
+    const numberOfBlockedCompany = await company.find({ status: "Block" }).count();
+
+    // Statistics of job application
+    const numberOfPendingJobApplication = await jobApplication.find({ status: "Pending" }).count();
+
+    const numberOfRejectedJobApplication = await jobApplication.find({ status: "Rejected" }).count();
+
+    const numberOfHiredJobApplication = await jobApplication.find({ status: "Hired" }).count();
+
+    // Statistics of job post
+    const numberOfApprovedJobPost = await jobPost.find({ status: "Approved" }).count();
+
+    const numberOfPendingJobPost = await jobPost.find({ status: "Pending" }).count();
+
+    const numberOfRejectedJobPost = await jobPost.find({ status: "Rejected" }).count();
+
+    // Statistics of Hr
+    const numberOfActiveHr = await hr.find({ isActive: true }).count();
+
+    const numberOfBlockHr = await hr.find({ isActive: false }).count();
+
+    const data = {
+        message: "Statistics",
+        numberOfCandidate: numberOfCandidate,
+        company: {
+            total: numberOfPendingCompany + numberOfApprovedCompany + numberOfRejectedCompany + numberOfBlockedCompany,
+            pending: numberOfPendingCompany,
+            approved: numberOfApprovedCompany,
+            reject: numberOfRejectedCompany,
+            blocked: numberOfBlockedCompany
+        },
+        jobApplication: {
+            total: numberOfPendingJobApplication + numberOfRejectedJobApplication + numberOfHiredJobApplication,
+            pending: numberOfPendingJobApplication,
+            rejected: numberOfRejectedJobApplication,
+            hired: numberOfHiredJobApplication
+        },
+        jobPost: {
+            total: numberOfPendingJobPost + numberOfApprovedJobPost + numberOfRejectedJobPost,
+            pending: numberOfPendingJobPost,
+            approve: numberOfApprovedJobPost,
+            reject: numberOfRejectedJobPost
+        },
+        hr: {
+            total: numberOfActiveHr + numberOfBlockHr,
+            active: numberOfActiveHr,
+            block: numberOfBlockHr
+        }
+    };
+
+    res.json(data);
+});
+
+const approvedJobApplication = asyncHandler(async (req, res) => {
+    const { _id } = req.body;
+
+    const newPost = await post.findByIdAndUpdate(_id, { isApprovedByAdmin: true }, { new: true });
+    if (newPost) {
+        res.json({ message: "successfully updated status", status: "success" });
+    } else {
+        res.json({ message: "Incorrect post id!!", status: "error" });
+    }
+});
+
+const rejectJobApplication = asyncHandler(async (req, res) => {
+    const { _id } = req.body;
+
+    const newPost = await post.findByIdAndUpdate(_id, { isApprovedByAdmin: false }, { new: true });
+    if (newPost) {
+        res.json({ message: "successfully updated status", status: "success" });
+    } else {
+        res.json({ message: "Incorrect post id!!", status: "error" });
+    }
+});
+
+module.exports = {
+    registerAdmin,
+    loginAdmin,
+    approveCompany,
+    rejectCompany,
+    approvePost,
+    rejectPost,
+    blockCompany,
+    unblockCompany,
+    approvedJobApplication,
+    rejectJobApplication,
+    getStatistics
+};

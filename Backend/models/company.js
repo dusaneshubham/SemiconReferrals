@@ -81,16 +81,11 @@ const companySchema = new mongoose.Schema({
         }
     }],
 
-    isActive: {
-        type: Boolean,
+    status: {
+        type: String,
+        enum: ["Approved", "Rejected", "Pending", "Blocked"],
         required: true,
-        default: false
-    },
-
-    isBlock: {
-        type: Boolean,
-        required: true,
-        default: false
+        default: "Pending",
     },
 
     yearOfFoundation: {

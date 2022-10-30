@@ -122,7 +122,7 @@ const jobPostSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        enum: ["Approved", "Reject", "Pending"],
+        enum: ["Approved", "Rejected", "Pending"],
         required: true,
         default: "Pending",
     },
