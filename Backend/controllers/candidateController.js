@@ -54,7 +54,7 @@ const registerCandidate = asyncHandler(async(req, res) => {
                 // secure: true
             }); // last 2 will be only used at deployment as in local we don't have https
 
-            return await res.json({ message: "Candidate has been registered successfully", status: "ok", username, token });
+            return await res.json({ message: "Candidate has been registered successfully", status: "success", username, token });
         }
     });
 });
@@ -74,7 +74,8 @@ const loginCandidate = asyncHandler(async(req, res) => {
         res.json({ message: "Incorrect username or password", status: "error" });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    // const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    const isPasswordCorrect = await Candidate.authenticate(password);
 
     if (user && isPasswordCorrect) {
         res.json({ message: "Candidate loggedin", status: "ok", username });
