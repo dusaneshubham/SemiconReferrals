@@ -47,7 +47,7 @@ const jobPostSchema = new mongoose.Schema({
     profileImage: {
         type: String,
         required: true
-            // TODO : put default image
+        // TODO : put default image
     },
 
     skillsRequired: {
@@ -122,8 +122,9 @@ const jobPostSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        enum: ["Approved", "Reject", "Pending"],
+        enum: ["Approved", "Rejected", "Pending"],
         required: true,
+        default: "Pending",
     },
 
     remarks: {

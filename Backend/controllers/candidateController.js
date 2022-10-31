@@ -1,16 +1,16 @@
 const bcrypt = require('bcrypt');
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
+const candidate = require('../models/candidate');
 const Candidate = require('../models/candidate');
-
+const jobApplication = require('../models/jobApplication');
 
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SEC);
 }
 
-
 // Register Candidate
-const registerCandidate = asyncHandler(async(req, res) => {
+const registerCandidate = asyncHandler(async (req, res) => {
     const { name, email, password, contactNumber, username } = req.body;
 
     // Validations
@@ -37,7 +37,7 @@ const registerCandidate = asyncHandler(async(req, res) => {
         password
     });
 
-    newCandidate.save(async(err, data) => {
+    newCandidate.save(async (err, data) => {
         if (err) {
             console.log(err);
             return await res.json({ message: "Error in registering the candidate", status: "error" });
@@ -61,7 +61,7 @@ const registerCandidate = asyncHandler(async(req, res) => {
 
 
 // Login Candidate
-const loginCandidate = asyncHandler(async(req, res) => {
+const loginCandidate = asyncHandler(async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -78,18 +78,91 @@ const loginCandidate = asyncHandler(async(req, res) => {
     const isPasswordCorrect = await Candidate.authenticate(password);
 
     if (user && isPasswordCorrect) {
-        res.json({ message: "Candidate loggedin", status: "ok", username });
+        res.json({ message: "Candidate loggedin", status: "success", username });
     } else {
         res.json({ message: "Incorrect username or password", status: "error" });
     }
 });
 
-
 // Logout Candidate
-const logoutCandidate = asyncHandler(async(req, res) => {
+const logoutCandidate = asyncHandler(async (req, res) => {
     res.clearCookie("token");
-    res.json({ message: "Logged out", status: "ok" });
+    res.json({ message: "Logged out", status: "success" });
 });
 
+const applyForJob = asyncHandler(async (req, res) => {
+    const { candidateId, jobId } = req.body;
+    let resume = req.files;
 
-module.exports = { registerCandidate, loginCandidate, logoutCandidate };
+    const jobApplication = new jobApplication({
+        candidateId: candidateId,
+        jobId: jobId,
+        resume: resume
+    });
+
+    await jobApplication.save()
+        .then(() => {
+            res.json({ message: "successfully apply for job", status: "success" });
+        }).catch(() => {
+            res.json({ message: "Something went wrong during apply for job", status: "error" });
+        })
+
+});
+
+const withdrawApplication = asyncHandler(async (req, res) => {
+    const { _id } = req.body;
+
+    const result = await jobApplication.deleteOne({ id: _id });
+
+    if (result) {
+        res.json({ message: "successfully withdraw your application", status: "success" });
+    } else {
+        res.json({ message: "We can't withdraw application", status: "error" });
+    }
+});
+
+const updateProfile = asyncHandler(async (req, res) => {
+    const { _id, name, email, username, contactNumber, gender, DOB, skills, linkedIn, experience, education, currentWorkingExperience } = req.body;
+    const profileImage = req.files;
+    const updateDate = {
+        name: name,
+        email: email,
+        username: username,
+        contactNumber: contactNumber,
+        gender: gender,
+        DOB: DOB,
+        profileImage: profileImage,
+        skills: skills,
+        linkedIn: linkedIn,
+        experience: experience,
+        education: education,
+        currentWorkingExperience: currentWorkingExperience
+    }
+    const result = await candidate.findOneAndUpdate({ id: _id }, updateDate, { new: true });
+    if (result) {
+        res.json({ message: "successfully update profile", status: "success" });
+    } else {
+        res.json({ message: "Somthing went wrong during update the profile", status: "error" });
+    }
+});
+
+const getApplicationStatus = asyncHandler(async (req, res) => {
+    const { _id } = req.body;
+    const result = await jobApplication.findOne({ id: _id });
+
+    if (result) {
+        res.json({ message: "Get application status", application: result, status: "success" });
+    } else {
+        res.json({ message: "Application does not found!", status: "error" });
+    }
+});
+
+module.exports = {
+    registerCandidate,
+    loginCandidate,
+    logoutCandidate,
+    applyForJob,
+    withdrawApplication,
+    updateProfile,
+    getApplicationStatus
+};

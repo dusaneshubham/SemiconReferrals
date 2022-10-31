@@ -27,7 +27,7 @@ const companySchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 8
-            // TODO : validation
+        // TODO : validation
     },
 
     password: {
@@ -81,10 +81,11 @@ const companySchema = new mongoose.Schema({
         }
     }],
 
-    isActive: {
-        type: Boolean,
+    status: {
+        type: String,
+        enum: ["Approved", "Rejected", "Pending", "Blocked"],
         required: true,
-        default: false
+        default: "Pending",
     },
 
     yearOfFoundation: {
