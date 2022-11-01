@@ -1,25 +1,29 @@
-const expressAsyncHandler = require("express-async-handler");
-const company = require("../models/company");
+const asyncHandler = require("express-async-handler");
+const Company = require("../models/company");
 
-const getAllCompanyDetails = expressAsyncHandler(async (req, res) => {
-    const data = await company.find();
+const getAllCompanyDetails = asyncHandler(async(req, res) => {
+    const data = await Company.find();
 
-    res.json({ message: "All company data", data: data, status: "success" });
+    if (data) {
+        res.json({ message: "All company data", data: data, success: true });
+    } else {
+        res.json({ message: "Companies not found!", success: false });
+    }
 });
 
-const getPerticularCompanyDetails = asyncHandler(async (req, res) => {
+const getParticularCompanyDetails = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
-    const details = await company.findOne({ id: _id });
+    const details = await Company.findOne({ _id });
 
     if (details) {
-        res.json({ message: "Company details", data: details, status: "success" })
+        res.json({ message: "Company details", data: details, success: true })
     } else {
-        res.json({ message: "Company not found!", status: "error" });
+        res.json({ message: "Company not found!", success: false });
     }
 });
 
 module.exports = {
     getAllCompanyDetails,
-    getPerticularCompanyDetails
+    getParticularCompanyDetails
 }

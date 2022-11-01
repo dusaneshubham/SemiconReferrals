@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginAdmin, approveCompany, rejectCompany, blockCompany, unblockCompany, rejectPost, approvePost, registerAdmin, getStatistics, rejectJobApplication, approvedJobApplication } = require('../controllers/adminController.js');
+const { loginAdmin, approveCompany, rejectCompany, blockCompany, unblockCompany, rejectPost, approvePost, registerAdmin, getStatistics, rejectJobApplication, approveJobApplication } = require('../controllers/adminController.js');
 const admin = require('../models/admin.js');
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router.post("/unblockcompany", unblockCompany);
 router.post("/rejectpost", rejectPost);
 router.post("/approvepost", approvePost);
 router.get("/statistics", getStatistics);
-router.post("/approvejobapplication", approvedJobApplication);
+router.post("/approvejobapplication", approveJobApplication);
 router.post("/rejectjobapplication", rejectJobApplication);
 
 module.exports = router;
