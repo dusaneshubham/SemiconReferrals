@@ -51,7 +51,7 @@ const Footer = () => {
                     <div className="f-col">
                         <h5 className="my-3">Join Us On</h5>
                         <h6>WE don't send spam so don't worry.</h6>
-                        <form action="" className="my-2 form d-flex justify-content-center">
+                        <form action="" className="my-2 search-form d-flex justify-content-center">
                             <input className="input w-75" type="email" name="email" id="email" placeholder="Your e-mail" required />
                             <button type="submit" className="sbm-btn">
                                 <i className="bi bi-envelope"></i>
@@ -61,10 +61,10 @@ const Footer = () => {
                 </div>
                 <hr />
                 <div className="footer-bottom">
-                    <div className="float-start div-1">
+                    <div className="div-1">
                         <p>&copy; {year} Semicon Referrals. All Right Reserved.</p>
                     </div>
-                    <div className="float-end div-2">
+                    <div className="div-2">
                         <i className="bi bi-facebook mx-4"></i>
                         <i className="bi bi-twitter mx-4"></i>
                         <i className="bi bi-instagram mx-4"></i>
