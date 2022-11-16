@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/admin');
 const Candidate = require('../models/candidate');
 const Company = require('../models/company');
-const HR = require('../models/hr');
+const Recruiter = require('../models/recruiter');
 const JobApplication = require('../models/jobApplication');
 const JobPost = require('../models/jobPost');
 
@@ -181,9 +181,9 @@ const getStatistics = asyncHandler(async(req, res) => {
     const numberOfRejectedJobPost = await JobPost.find({ status: "Rejected" }).count();
 
     // Statistics of Hr
-    const numberOfActiveHr = await HR.find({ isActive: true }).count();
+    const numberOfActiveHr = await Recruiter.find({ isActive: true }).count();
 
-    const numberOfBlockHr = await HR.find({ isActive: false }).count();
+    const numberOfBlockHr = await Recruiter.find({ isActive: false }).count();
 
     const data = {
         numberOfCandidate: numberOfCandidate,

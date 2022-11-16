@@ -1,7 +1,5 @@
-const bcrypt = require('bcrypt');
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
-const candidate = require('../models/candidate');
 const Candidate = require('../models/candidate');
 const jobApplication = require('../models/jobApplication');
 
@@ -11,10 +9,10 @@ const generateToken = (id) => {
 
 // Register Candidate
 const registerCandidate = asyncHandler(async(req, res) => {
-    const { name, email, password, contactNumber, username } = req.body;
+    const { name, email, password, contactNumber } = req.body;
 
     // Validations
-    if (!email || !name || !password || !contactNumber || !username) {
+    if (!email || !name || !password || !contactNumber ) {
         res.json({ message: "Please fill all the details", success: false });
     }
 
@@ -23,16 +21,15 @@ const registerCandidate = asyncHandler(async(req, res) => {
     }
 
     // Check if user exists or not
-    const userExists = await Candidate.findOne({ username });
+    const userExists = await Candidate.findOne({ email });
     if (userExists) {
-        res.json({ message: "This username has already been taken", success: false });
+        res.json({ message: "This email has already registered", success: false });
     }
 
     // Creating an object of candidate data
     const newCandidate = new Candidate({
         name,
         email,
-        username,
         contactNumber,
         password
     });
@@ -139,7 +136,7 @@ const updateProfile = asyncHandler(async(req, res) => {
         education: education,
         currentWorkingExperience: currentWorkingExperience
     }
-    const result = await candidate.findOneAndUpdate({ _id }, updatedData, { new: true });
+    const result = await Candidate.findOneAndUpdate({ _id }, updatedData, { new: true });
     if (result) {
         res.json({ message: "successfully update profile", success: true, data: updatedData });
     } else {
