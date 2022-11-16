@@ -1,12 +1,16 @@
-import logo from './logo.svg';
-import './App.css';
-import JobsListing from './pages/JobsListing';
+import Navbar from './components/Navbar/Navbar';
+import { BrowserRouter as Router } from 'react-router-dom';
+// import Footer from './components/Footer/Footer';
+import JobListings from './pages/JobsListing';
 
 function App() {
   return (
-    <div className="App">
-      <JobsListing />
-    </div>
+    <Router>
+      <div className="App">
+        <Navbar />
+        {/* <Footer /> */}
+      </div>
+    </Router>
   );
 }
 
