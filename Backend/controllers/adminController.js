@@ -180,10 +180,10 @@ const getStatistics = asyncHandler(async(req, res) => {
 
     const numberOfRejectedJobPost = await JobPost.find({ status: "Rejected" }).count();
 
-    // Statistics of Hr
-    const numberOfActiveHr = await Recruiter.find({ isActive: true }).count();
+    // Statistics of Recruiter
+    const numberOfActiveRecruiter = await Recruiter.find({ isActive: true }).count();
 
-    const numberOfBlockHr = await Recruiter.find({ isActive: false }).count();
+    const numberOfBlockRecruiter = await Recruiter.find({ isActive: false }).count();
 
     const data = {
         numberOfCandidate: numberOfCandidate,
@@ -206,10 +206,10 @@ const getStatistics = asyncHandler(async(req, res) => {
             approve: numberOfApprovedJobPost,
             reject: numberOfRejectedJobPost
         },
-        hr: {
-            total: numberOfActiveHr + numberOfBlockHr,
-            active: numberOfActiveHr,
-            block: numberOfBlockHr
+        recruiter: {
+            total: numberOfActiveRecruiter + numberOfBlockRecruiter,
+            active: numberOfActiveRecruiter,
+            block: numberOfBlockRecruiter
         }
     };
 

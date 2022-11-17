@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const adminRoute = require('./routes/adminRoute');
 const candidateRoute = require('./routes/candidateRoute');
 const companyRoute = require('./routes/companyRoute');
+const recruiterRoute = require('./routes/recruiterRoute');
 
 dotenv.config();
 const app = express();
@@ -20,6 +21,7 @@ app.use(cors());
 // Defining Routes
 app.use("/admin", adminRoute);
 app.use("/candidate", candidateRoute);
+app.use("/recruiter", recruiterRoute);
 app.use("/company", companyRoute);
 
 mongoose.connect(process.env.MONGO_URI, {

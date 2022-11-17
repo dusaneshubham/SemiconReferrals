@@ -4,13 +4,13 @@ import { Alert, IconButton, OutlinedInput, InputAdornment, FormControl, Button }
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import { isEmail } from 'validator';
-// import axios from 'axios';
+import axios from 'axios';
 
 const SignUp = () => {
     const [alert, setAlert] = useState({
         error: "",
         success: ""
-    })
+    });
     const [showSignUpPassword, setShowSignUpPassword] = useState(false);
     const [showSignUpConfirmPassword, setShowSignUpConfirmPassword] = useState(false);
     const [signUpData, setSignUpData] = useState({
@@ -40,9 +40,37 @@ const SignUp = () => {
         } else if (signUpData.password !== signUpData.confirmPassword) {
             setAlert({ ...alert, error: "Confirm password not match with password!!" });
         } else if (type === "candidate") {
-            // await axios("http://localhost:5000/")
+            await axios.post("http://localhost:5000/candidate/register/", signUpData)
+                .then((res) => res.data)
+                .then((res) => {
+                    if (res.success) {
+                        setAlert({ ...alert, success: res.message });
+                        localStorage.setItem("type", "candidate");
+                        localStorage.setItem("token", res.token);
+                        // redirect path as you wish
+                    } else {
+                        setAlert({ ...alert, error: res.message });
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                    setAlert({ ...alert, error: "Somthing went wrong with server!!" });
+                });
         } else {
-
+            await axios.post("http://localhost:5000/recruiter/register/", signUpData)
+                .then((res) => res.data)
+                .then((res) => {
+                    if (res.success) {
+                        setAlert({ ...alert, success: res.message });
+                        localStorage.setItem("type", "recruiter");
+                        localStorage.setItem("token", res.token);
+                        // redirect path as you wish
+                    } else {
+                        setAlert({ ...alert, error: res.message });
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                    setAlert({ ...alert, error: "Somthing went wrong with server!!" });
+                });
         }
     }
 
