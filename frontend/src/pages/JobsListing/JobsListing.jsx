@@ -1,6 +1,10 @@
 import React from "react";
-import "../../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import "./css/jobs-listing.css";
+import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import "./jobs-listing.css";
+
+import Navbar from "../../components/Navbar/Navbar";
+import Footer from "../../components/Footer/Footer";
+
 import SearchIcon from "@mui/icons-material/Search";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
@@ -8,11 +12,13 @@ import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import BusinessCenterOutlinedIcon from "@mui/icons-material/BusinessCenterOutlined";
 import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 
-import JobList from "../components/JobList";
+import JobList from "../../components/JobList/JobList";
 
 function JobsListing() {
   return (
     <>
+      <Navbar />
+
       <div id="main-container">
         <div id="filters-div">
           <div style={{ margin: "30px auto" }}>
@@ -121,6 +127,8 @@ function JobsListing() {
           </div>
         </div>
       </div>
+
+      <Footer />
     </>
   );
 }

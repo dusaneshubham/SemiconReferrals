@@ -1,16 +1,16 @@
-import Navbar from './components/Navbar/Navbar';
-import { BrowserRouter as Router } from 'react-router-dom';
-// import Footer from './components/Footer/Footer';
-import JobListings from './pages/JobsListing';
+import JobsListing from './pages/JobsListing/JobsListing'
+import JobDescription from './pages/JobDescription/JobDescription'
+import { Routes, Route } from "react-router";
+import { BrowserRouter } from "react-router-dom";
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Navbar />
-        {/* <Footer /> */}
-      </div>
-    </Router>
+    <BrowserRouter>
+      <Routes>
+        <Route exact path="/jobslisting" element={<JobsListing />} />
+        <Route exact path="/jobdescription" element={<JobDescription />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

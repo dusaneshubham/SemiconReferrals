@@ -1,9 +1,10 @@
 import React from 'react';
-import "./css/job-list.css";
+import "./job-list.css";
 import BookmarkBorderOutlinedIcon from "@mui/icons-material/BookmarkBorderOutlined";
 import LocalAtmOutlinedIcon from "@mui/icons-material/LocalAtmOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import BusinessCenterOutlinedIcon from "@mui/icons-material/BusinessCenterOutlined";
+import GoogleLogo from "../../images/google-logo.png";
 
 function JobList() {
     return (
@@ -12,7 +13,7 @@ function JobList() {
           
           <div style={{ display: "flex" }}>
             <div className="company-logo">
-              <img src="../../images/google-logo.png" alt="logo" />
+              <img src={GoogleLogo} alt="logo" />
             </div>
 
             <div style={{ marginLeft: "20px" }}>
@@ -64,4 +65,4 @@ function JobList() {
     );
 }
 
-export default JobList
+export default JobList;
