@@ -1,3 +1,11 @@
 #main-container {
     padding: 30px 80px;
 }
+
+.skills-section {
+    color: #00000080;
+    border: 1px solid #00000080;
+    padding: 3px 12px;
+    margin: 10px 20px 10px 0;
+    border-radius: 30px;
+}

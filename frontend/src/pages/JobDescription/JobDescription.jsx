@@ -7,7 +7,19 @@ import Footer from "../../components/Footer/Footer";
 import JobOverview from "../../components/JobDescription/JobOverview";
 
 const JobDescription = () => {
-  let skillsRequired = ["HTML", "CSS"];
+  let skillsRequired = [
+    "HTML",
+    "CSS",
+    "JavaScript",
+    "Node",
+    "PHP",
+    "C++",
+    "Java",
+    "Ruby",
+    "Python",
+    "Machine Learning",
+    "Artificial Intelligence",
+  ];
 
   return (
     <>
@@ -67,20 +79,11 @@ const JobDescription = () => {
           </p>
 
           <h5 style={{ margin: "20px 0" }}>Skills Required</h5>
-          {skillsRequired.map((skill) => (
-            <span
-              className="user"
-              style={{
-                color: "#00000080",
-                border: "1px solid #00000080",
-                padding:"3px 10px",
-                marginRight:"20px",
-                borderRadius:"40%"
-              }}
-            >
-              {skill}
-            </span>
-          ))}
+          <div className="d-flex flex-wrap">
+            {skillsRequired.map((skill) => (
+              <div className="skills-section">{skill}</div>
+            ))}
+          </div>
         </div>
 
         <div id="right" style={{ width: "30%" }}>
@@ -91,6 +94,7 @@ const JobDescription = () => {
             expirationDate="Feb 20, 2023"
             experienceLevel="Fresher"
             qualification="Bachelor Degree"
+            key=""
           />
         </div>
       </div>
