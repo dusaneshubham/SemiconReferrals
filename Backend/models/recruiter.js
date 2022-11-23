@@ -1,18 +1,11 @@
 const mongoose = require("mongoose");
+const { isEmail } = require('validator');
 
-const HRSchema = new mongoose.Schema({
+const recruiterSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
         min: 3
-    },
-
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-        minLength: 3,
-        maxLength: 30
     },
 
     companyID: {
@@ -23,19 +16,19 @@ const HRSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        min: 8
-            // TODO : validation
+        min: 8,
+        validate: [isEmail, "Invalid email"]
+    },
+
+    contactNumber: {
+        type: String,
+        required: true,
     },
 
     password: {
         type: String,
         required: true,
         minLength: 8
-    },
-
-    contactNumber: {
-        type: String,
-        required: true,
     },
 
     isActive: {
@@ -46,4 +39,4 @@ const HRSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-module.exports = mongoose.model('HR', HRSchema);
+module.exports = mongoose.model('Recuiter', recruiterSchema);

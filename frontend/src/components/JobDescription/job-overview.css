@@ -1,0 +1,27 @@
+#job-overview {
+    background-color: #F5F7FC;
+    border-radius: 8px;
+    padding: 30px;
+}
+
+.data-div {
+    margin: 20px 0;
+    display: flex;
+}
+
+.icon {
+    color: #1976d2;
+}
+
+.data-right-div {
+    margin-left: 20px;
+}
+
+.data-right-div h6 {
+    margin-bottom: 4px;
+}
+
+.data-right-div span {
+    color: rgba(0, 0, 0, 0.5);
+    font-size: 14px;
+}

@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/admin');
 const Candidate = require('../models/candidate');
 const Company = require('../models/company');
-const HR = require('../models/hr');
+const Recruiter = require('../models/recruiter');
 const JobApplication = require('../models/jobApplication');
 const JobPost = require('../models/jobPost');
 
@@ -64,6 +64,22 @@ const approveCompany = asyncHandler(async(req, res) => {
     if (isExistCompany) {
         const _company = await Company.findOneAndUpdate(_id, { status: "Approved" }, { new: true });
         if (_company) {
+            res.json({ message: "successfully updated status!", success: true });
+        } else {
+            res.json({ message: "Something went wrong during approval!!", success: false });
+        }
+    } else {
+        res.json({ message: "Incorrect company id", success: false });
+    }
+});
+
+const approveRecruiter = asyncHandler(async(req, res) => {
+    const { _id } = req.body;
+
+    const isExistRecruiter = await Recruiter.findOne({ _id });
+    if (isExistRecruiter) {
+        const _recruiter = await Recruiter.findOneAndUpdate(_id, { status: "Approved" }, { new: true });
+        if (_recruiter) {
             res.json({ message: "successfully updated status!", success: true });
         } else {
             res.json({ message: "Something went wrong during approval!!", success: false });
@@ -180,10 +196,10 @@ const getStatistics = asyncHandler(async(req, res) => {
 
     const numberOfRejectedJobPost = await JobPost.find({ status: "Rejected" }).count();
 
-    // Statistics of Hr
-    const numberOfActiveHr = await HR.find({ isActive: true }).count();
+    // Statistics of Recruiter
+    const numberOfActiveRecruiter = await Recruiter.find({ isActive: true }).count();
 
-    const numberOfBlockHr = await HR.find({ isActive: false }).count();
+    const numberOfBlockRecruiter = await Recruiter.find({ isActive: false }).count();
 
     const data = {
         numberOfCandidate: numberOfCandidate,
@@ -206,10 +222,10 @@ const getStatistics = asyncHandler(async(req, res) => {
             approve: numberOfApprovedJobPost,
             reject: numberOfRejectedJobPost
         },
-        hr: {
-            total: numberOfActiveHr + numberOfBlockHr,
-            active: numberOfActiveHr,
-            block: numberOfBlockHr
+        recruiter: {
+            total: numberOfActiveRecruiter + numberOfBlockRecruiter,
+            active: numberOfActiveRecruiter,
+            block: numberOfBlockRecruiter
         }
     };
 
@@ -242,6 +258,7 @@ module.exports = {
     registerAdmin,
     loginAdmin,
     approveCompany,
+    approveRecruiter,
     rejectCompany,
     approvePost,
     rejectPost,

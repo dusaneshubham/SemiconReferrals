@@ -4,6 +4,7 @@ import logoPath from '../../images/logo-semiconreferrals-rectangle.png';
 import { Menu as MenuIcon } from '@mui/icons-material';
 import { Box, SwipeableDrawer, Button, List, Divider, ListItem, ListItemButton, ListItemText } from '@mui/material';
 import './Navbar.css';
+import LoginSignUpModal from '../Login-SignUp/LoginSignUp';
 
 const Navbar = () => {
 
@@ -28,7 +29,11 @@ const Navbar = () => {
             <List>
                 <ListItem className="d-flex justify-content-center">
                     <div>
-                        <Button variant="contained">Login / Register</Button>
+                        <span data-bs-toggle="modal" data-bs-target="#loginSignUpModal">
+                            <Button variant="contained" onClick={() => setState(false)}>
+                                Login / Register
+                            </Button>
+                        </span>
                         <Button variant="contained" className="d-none">Add Job</Button>
                     </div>
                 </ListItem>
@@ -47,7 +52,6 @@ const Navbar = () => {
     return (
         <>
             <nav className="nav-bar">
-                {/* <button class='menu-btn' id='menu-btn'><MenuIcon /></button> */}
                 <div className="container-fluid w-100">
                     <NavLink to="#" className=" navbar-link"><img src={logoPath} alt="Autism Logo" className="img-fluid" height="150" width="150" /></NavLink>
                     <NavLink to="#" className="navbar-link main-navbar-link">Home</NavLink>
@@ -56,7 +60,11 @@ const Navbar = () => {
                     <NavLink to="#" className="navbar-link main-navbar-link">Candidates</NavLink>
                     <NavLink to="#" className="navbar-link main-navbar-link">Blog</NavLink>
                     <div className='float-end py-1 main-navbar-link'>
-                        <Button variant="contained" className="mx-1">Login / Register</Button>
+                        <span data-bs-toggle="modal" data-bs-target="#loginSignUpModal">
+                            <Button variant="outlined" className="mx-1">
+                                Login / Register
+                            </Button>
+                        </span>
                         <Button variant="contained" className="d-none">Add Job</Button>
                     </div>
                     <React.Fragment>
@@ -70,6 +78,7 @@ const Navbar = () => {
                             {list()}
                         </SwipeableDrawer>
                     </React.Fragment>
+                    <LoginSignUpModal />
                 </div>
             </nav>
         </>
