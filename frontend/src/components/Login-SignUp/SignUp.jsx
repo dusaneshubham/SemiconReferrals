@@ -1,10 +1,16 @@
 import React from 'react';
 import { useState } from 'react';
-import { Alert, IconButton, OutlinedInput, InputAdornment, FormControl, Button } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
+import { IconButton, OutlinedInput, InputAdornment, FormControl, Button, Snackbar, Slide } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import { isEmail } from 'validator';
 import axios from 'axios';
+import MuiAlert from '@mui/material/Alert';
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const SignUp = () => {
     const [alert, setAlert] = useState({
@@ -20,14 +26,19 @@ const SignUp = () => {
         password: "",
         confirmPassword: ""
     });
-
+    const [loading, setLoading] = useState(false);
     const [type, setType] = useState("candidate");
 
     const setSignUpInput = (prop) => (event) => {
         setSignUpData({ ...signUpData, [prop]: event.target.value });
     }
 
+    const TransitionRight = (props) => {
+        return <Slide {...props} direction="down" />;
+    }
+
     const submit = async () => {
+        setLoading(true);
         setAlert({ error: "", success: "" });
         if (!signUpData.name || !signUpData.email || !signUpData.contactNumber || !signUpData.password || !signUpData.confirmPassword) {
             setAlert({ error: "All field are required!!" });
@@ -72,13 +83,30 @@ const SignUp = () => {
                     setAlert({ error: "Somthing went wrong with server!!" });
                 });
         }
+        setLoading(false);
     }
 
     return (
         <>
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                {alert.error && <Alert severity="error" className="mb-3 w-100" onClose={() => setAlert({ ...alert, error: "" })}><span className="my-alert">{alert.error}</span></Alert>}
-                {alert.success && <Alert severity="success" className="mb-3 w-100" onClose={() => setAlert({ ...alert, success: "" })}><span className="my-alert">{alert.success}</span></Alert>}
+                <Snackbar
+                    autoHideDuration={6000}
+                    open={alert.error ? true : false}
+                    TransitionComponent={TransitionRight}
+                    onClose={() => setAlert({ success: "", error: "" })}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert severity="error"><span className="my-alert">{alert.error}</span></Alert>
+                </Snackbar>
+                <Snackbar
+                    autoHideDuration={6000}
+                    open={alert.success ? true : false}
+                    TransitionComponent={TransitionRight}
+                    onClose={() => setAlert({ success: "", error: "" })}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+                >
+                    <Alert severity="success"><span className="my-alert">{alert.success}</span></Alert>
+                </Snackbar>
                 <div>
                     <div>
                         <Button variant={type === "candidate" ? "contained" : "outlined"} className="type-btn" onClick={() => setType("candidate")}>
@@ -156,9 +184,14 @@ const SignUp = () => {
                         />
                     </FormControl>
                     <FormControl sx={{ m: 1, width: "99%" }} variant="outlined">
-                        <Button variant="contained" onClick={(e) => submit(e)}>
+                        <LoadingButton
+                            variant="contained"
+                            loading={loading}
+                            loadingIndicator="Loading…"
+                            onClick={() => submit()}
+                        >
                             Register
-                        </Button>
+                        </LoadingButton>
                     </FormControl>
                 </div>
             </Box>

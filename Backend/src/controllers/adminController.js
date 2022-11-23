@@ -10,43 +10,43 @@ const JobPost = require('../models/jobPost');
 
 // TODO : To be removed afterwards
 // Register admin
-const registerAdmin = asyncHandler(async(req, res) => {
-    const { name, email, password } = req.body;
+const registerAdmin = asyncHandler(async (req, res) => {
+    // const { name, email, password } = req.body;
 
-    if (!name && !email && !password) {
-        res.json({ message: "Please fill all details", success: false });
-    } else {
-        const user = await Admin.findOne({ email });
-        if (user) {
-            res.json({ message: "Admin is already exist!!", success: false });
-        } else {
-            let hashedPassword = await bcrypt.hash(password, 10);
-            const newAdmin = new Admin({
-                name,
-                email,
-                password: hashedPassword
-            });
-            await newAdmin.save();
-            res.json({ message: "successfully registered admin!!", success: true });
-        }
-    }
+    // if (!name && !email && !password) {
+    //     res.json({ message: "Please fill all details", success: false });
+    // } else {
+    //     const user = await Admin.findOne({ email });
+    //     if (user) {
+    //         res.json({ message: "Admin is already exist!!", success: false });
+    //     } else {
+    //         let hashedPassword = await bcrypt.hash(password, 10);
+    //         const newAdmin = new Admin({
+    //             name,
+    //             email,
+    //             password: hashedPassword
+    //         });
+    //         await newAdmin.save();
+    //         res.json({ message: "successfully registered admin!!", success: true });
+    //     }
+    // }
 });
 
 // login admin
-const loginAdmin = asyncHandler(async(req, res) => {
+const loginAdmin = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     // validation
     if (!email && !password) {
         res.json({ message: "Please fill all the details", success: false });
     } else {
-        const _user = await Admin.findOne({ email });
+        const user = await Admin.findOne({ email });
 
-        if (!_user) {
+        if (!user) {
             res.json({ message: "Invalid credentials!", success: false });
         } else {
 
-            const isPasswordCorrect = await Admin.authenticate(password);
+            const isPasswordCorrect = await bcrypt.compare(password, user.password);
             if (isPasswordCorrect) {
                 res.json({ message: "Admin loggedin", success: true, data: { email } });
             } else {
@@ -57,7 +57,7 @@ const loginAdmin = asyncHandler(async(req, res) => {
     }
 });
 
-const approveCompany = asyncHandler(async(req, res) => {
+const approveCompany = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
     const isExistCompany = await Company.findOne({ _id });
@@ -73,7 +73,7 @@ const approveCompany = asyncHandler(async(req, res) => {
     }
 });
 
-const rejectCompany = asyncHandler(async(req, res) => {
+const rejectCompany = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
     const isExistCompany = await Company.findOne({ _id });
@@ -89,7 +89,7 @@ const rejectCompany = asyncHandler(async(req, res) => {
     }
 });
 
-const approvePost = asyncHandler(async(req, res) => {
+const approvePost = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
     const isExistJobPost = await JobPost.findOne({ _id });
@@ -105,7 +105,7 @@ const approvePost = asyncHandler(async(req, res) => {
     }
 });
 
-const rejectPost = asyncHandler(async(req, res) => {
+const rejectPost = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
     const isExistJobPost = await JobPost.findOne({ _id });
@@ -121,7 +121,7 @@ const rejectPost = asyncHandler(async(req, res) => {
     }
 });
 
-const blockCompany = asyncHandler(async(req, res) => {
+const blockCompany = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
     const isExistCompany = await Company.findOne({ _id });
@@ -137,7 +137,7 @@ const blockCompany = asyncHandler(async(req, res) => {
     }
 });
 
-const unblockCompany = asyncHandler(async(req, res) => {
+const unblockCompany = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
     const isExistCompany = await Company.findOne({ id: _id });
@@ -153,7 +153,7 @@ const unblockCompany = asyncHandler(async(req, res) => {
     }
 });
 
-const getStatistics = asyncHandler(async(req, res) => {
+const getStatistics = asyncHandler(async (req, res) => {
     const numberOfCandidate = await Candidate.find().count();
 
     // Statistics of company
@@ -216,7 +216,7 @@ const getStatistics = asyncHandler(async(req, res) => {
     res.json({ message: "Statistics", data });
 });
 
-const approveJobApplication = asyncHandler(async(req, res) => {
+const approveJobApplication = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
     const newPost = await JobPost.findOneAndUpdate(_id, { isApprovedByAdmin: true }, { new: true });
@@ -227,7 +227,7 @@ const approveJobApplication = asyncHandler(async(req, res) => {
     }
 });
 
-const rejectJobApplication = asyncHandler(async(req, res) => {
+const rejectJobApplication = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
     const newPost = await post.findOneAndUpdate(_id, { isApprovedByAdmin: false }, { new: true });

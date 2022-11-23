@@ -15,7 +15,7 @@ const LoginSignUp = () => {
     return (
         <>
             <div className="modal fade" id="loginSignUpModal" tabIndex="-1" aria-labelledby="loginSignUpModalLabel" aria-hidden="true">
-                <div className="modal-dialog">
+                <div className="modal-dialog modal-dialog-scrollable">
 
                     {/*------------------------ Login ---------------------------------*/}
                     <div className="modal-content" id="login-modal">
