@@ -13,13 +13,15 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 const SignUp = () => {
+
+    // -------------------------- React-hook ---------------------------- //
     const [alert, setAlert] = useState({
         error: "",
         success: ""
     });
     const [showSignUpPassword, setShowSignUpPassword] = useState(false);
     const [showSignUpConfirmPassword, setShowSignUpConfirmPassword] = useState(false);
-    const [signUpData, setSignUpData] = useState({
+    const [data, setSignUpData] = useState({
         name: "",
         email: "",
         contactNumber: "",
@@ -29,36 +31,43 @@ const SignUp = () => {
     const [loading, setLoading] = useState(false);
     const [type, setType] = useState("candidate");
 
+    const intialState = {
+        name: "",
+        email: "",
+        contactNumber: "",
+        password: "",
+        confirmPassword: ""
+    }
+
     const setSignUpInput = (prop) => (event) => {
-        setSignUpData({ ...signUpData, [prop]: event.target.value });
+        setSignUpData({ ...data, [prop]: event.target.value });
     }
 
     const TransitionRight = (props) => {
         return <Slide {...props} direction="down" />;
     }
 
+    // ------------------------------- Backend ----------------------------------- //
     const submit = async () => {
         setLoading(true);
         setAlert({ error: "", success: "" });
-        if (!signUpData.name || !signUpData.email || !signUpData.contactNumber || !signUpData.password || !signUpData.confirmPassword) {
+        if (!data.name || !data.email || !data.contactNumber || !data.password || !data.confirmPassword) {
             setAlert({ error: "All field are required!!" });
-        } else if (!isEmail(signUpData.email)) {
+        } else if (!isEmail(data.email)) {
             setAlert({ error: "Invalid email id!!" });
-        } else if (signUpData.password.length < 8) {
+        } else if (data.password.length < 8) {
             setAlert({ error: "Password should be minimum 8 character!!" });
-        } else if (signUpData.contactNumber.length !== 10) {
+        } else if (data.contactNumber.length !== 10) {
             setAlert({ error: "Contact number should be 10 digit!!" });
-        } else if (signUpData.password !== signUpData.confirmPassword) {
+        } else if (data.password !== data.confirmPassword) {
             setAlert({ error: "Confirm password not match with password!!" });
         } else if (type === "candidate") {
-            await axios.post("http://localhost:5000/candidate/register/", signUpData)
+            await axios.post("http://localhost:5000/send-mail", { data, type })
                 .then((res) => res.data)
                 .then((res) => {
                     if (res.success) {
                         setAlert({ success: res.message });
-                        localStorage.setItem("type", "candidate");
-                        localStorage.setItem("token", res.token);
-                        // redirect path as you wish
+                        setSignUpData(intialState);
                     } else {
                         setAlert({ error: res.message });
                     }
@@ -67,14 +76,12 @@ const SignUp = () => {
                     setAlert({ error: "Somthing went wrong with server!!" });
                 });
         } else {
-            await axios.post("http://localhost:5000/recruiter/register/", signUpData)
+            await axios.post("http://localhost:5000/send-mail/", { data, type })
                 .then((res) => res.data)
                 .then((res) => {
                     if (res.success) {
                         setAlert({ success: res.message });
-                        localStorage.setItem("type", "recruiter");
-                        localStorage.setItem("token", res.token);
-                        // redirect path as your wish
+                        setSignUpData(intialState);
                     } else {
                         setAlert({ error: res.message });
                     }
@@ -121,7 +128,7 @@ const SignUp = () => {
                         <OutlinedInput
                             id="signup-name"
                             type='text'
-                            value={signUpData.name}
+                            value={data.name}
                             onChange={setSignUpInput('name')}
                         />
                     </FormControl>
@@ -130,7 +137,7 @@ const SignUp = () => {
                         <OutlinedInput
                             id="signup-email"
                             type='email'
-                            value={signUpData.email}
+                            value={data.email}
                             onChange={setSignUpInput('email')}
                         />
                     </FormControl>
@@ -139,7 +146,7 @@ const SignUp = () => {
                         <OutlinedInput
                             id="signup-contact-number"
                             type='number'
-                            value={signUpData.contactNumber}
+                            value={data.contactNumber}
                             onChange={setSignUpInput('contactNumber')}
                         />
                     </FormControl>
@@ -148,7 +155,7 @@ const SignUp = () => {
                         <OutlinedInput
                             id="signup-password"
                             type={showSignUpPassword ? 'text' : 'password'}
-                            value={signUpData.password}
+                            value={data.password}
                             onChange={setSignUpInput('password')}
                             endAdornment={
                                 <InputAdornment position="end">
@@ -168,7 +175,7 @@ const SignUp = () => {
                         <OutlinedInput
                             id="signup-confirm-password"
                             type={showSignUpConfirmPassword ? 'text' : 'password'}
-                            value={signUpData.confirmPassword}
+                            value={data.confirmPassword}
                             onChange={setSignUpInput('confirmPassword')}
                             endAdornment={
                                 <InputAdornment position="end">

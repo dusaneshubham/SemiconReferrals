@@ -28,7 +28,7 @@ const registerRecruiter = asyncHandler(async (req, res) => {
     }
 
     // Check if company exist or not
-    // const companyName=
+    // const companyName =
 
     const hashPassword = await bcrypt.hash(password, 10);
 
@@ -69,8 +69,12 @@ const loginRecruiter = asyncHandler(async (req, res) => {
         // const isPasswordCorrect = await Recruiter.authenticate(password);
 
         if (user && isPasswordCorrect) {
-            let token = generateToken(user);
-            res.json({ message: "Recruiter loggedin", success: true, token: token });
+            if (!user.status) {
+                res.json({ message: "Your approval is on pending! Please try agin latter!", success: true});
+            } else {
+                let token = generateToken(user);
+                res.json({ message: "Recruiter loggedin", success: true, token: token });
+            }
         } else {
             res.json({ message: "Incorrect email or password", success: false });
         }

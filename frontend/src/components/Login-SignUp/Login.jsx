@@ -79,10 +79,11 @@ const Login = () => {
                 .then((res) => res.data)
                 .then((res) => {
                     if (res.success) {
+                        if (res.token) {
+                            localStorage.setItem("type", "recruiter");
+                            localStorage.setItem("token", res.token);
+                        }
                         setAlert({ success: res.message });
-                        localStorage.setItem("type", "recruiter");
-                        localStorage.setItem("token", res.token);
-                        // redirect path as you wish
                     } else {
                         setAlert({ error: res.message });
                     }

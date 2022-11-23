@@ -1,5 +1,4 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -9,6 +8,8 @@ const adminRoute = require('./routes/adminRoute');
 const candidateRoute = require('./routes/candidateRoute');
 const companyRoute = require('./routes/companyRoute');
 const recruiterRoute = require('./routes/recruiterRoute');
+const sendEmail = require('./middleware/sendEmail');
+const verifyEmail = require('./middleware/verifyEmail');
 
 dotenv.config();
 const app = express();
@@ -19,6 +20,8 @@ app.use(cookieParser());
 app.use(cors());
 
 // Defining Routes
+app.use("/verify-mail", verifyEmail);
+app.use("/send-mail", sendEmail);
 app.use("/admin", adminRoute);
 app.use("/candidate", candidateRoute);
 app.use("/recruiter", recruiterRoute);

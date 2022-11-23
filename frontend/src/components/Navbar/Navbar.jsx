@@ -61,7 +61,7 @@ const Navbar = () => {
                     <NavLink to="#" className="navbar-link main-navbar-link">Blog</NavLink>
                     <div className='float-end py-1 main-navbar-link'>
                         <span data-bs-toggle="modal" data-bs-target="#loginSignUpModal">
-                            <Button variant="outlined" className="mx-1">
+                            <Button variant="contained" className="mx-1">
                                 Login / Register
                             </Button>
                         </span>

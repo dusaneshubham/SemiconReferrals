@@ -1,12 +1,16 @@
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import EmailVerification from './pages/EmailVerification';
+import PageNotFound from './pages/PageNotFound';
 import Navbar from './components/Navbar/Navbar';
-// import Footer from './components/Footer/Footer';
 
 function App() {
   return (
     <Router>
       <Navbar />
-      {/* <Footer /> */}
+      <Routes>
+        <Route exact path="/email-verification" element={<EmailVerification />} />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
     </Router>
   );
 }
