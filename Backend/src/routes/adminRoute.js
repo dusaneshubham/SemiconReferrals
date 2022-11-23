@@ -1,6 +1,5 @@
 const express = require('express');
 const { loginAdmin, approveCompany, rejectCompany, blockCompany, unblockCompany, rejectPost, approvePost, registerAdmin, getStatistics, rejectJobApplication, approveJobApplication } = require('../controllers/adminController.js');
-const admin = require('../models/admin.js');
 const router = express.Router();
 
 router.post("/register", registerAdmin);

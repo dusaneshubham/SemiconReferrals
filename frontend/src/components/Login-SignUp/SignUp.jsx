@@ -30,46 +30,46 @@ const SignUp = () => {
     const submit = async () => {
         setAlert({ error: "", success: "" });
         if (!signUpData.name || !signUpData.email || !signUpData.contactNumber || !signUpData.password || !signUpData.confirmPassword) {
-            setAlert({ ...alert, error: "All field are required!!" });
+            setAlert({ error: "All field are required!!" });
         } else if (!isEmail(signUpData.email)) {
-            setAlert({ ...alert, error: "Invalid email id!!" });
+            setAlert({ error: "Invalid email id!!" });
         } else if (signUpData.password.length < 8) {
-            setAlert({ ...alert, error: "Password should be minimum 8 character!!" });
+            setAlert({ error: "Password should be minimum 8 character!!" });
         } else if (signUpData.contactNumber.length !== 10) {
-            setAlert({ ...alert, error: "Contact number should be 10 digit!!" });
+            setAlert({ error: "Contact number should be 10 digit!!" });
         } else if (signUpData.password !== signUpData.confirmPassword) {
-            setAlert({ ...alert, error: "Confirm password not match with password!!" });
+            setAlert({ error: "Confirm password not match with password!!" });
         } else if (type === "candidate") {
             await axios.post("http://localhost:5000/candidate/register/", signUpData)
                 .then((res) => res.data)
                 .then((res) => {
                     if (res.success) {
-                        setAlert({ ...alert, success: res.message });
+                        setAlert({ success: res.message });
                         localStorage.setItem("type", "candidate");
                         localStorage.setItem("token", res.token);
                         // redirect path as you wish
                     } else {
-                        setAlert({ ...alert, error: res.message });
+                        setAlert({ error: res.message });
                     }
                 }).catch((err) => {
                     console.log(err);
-                    setAlert({ ...alert, error: "Somthing went wrong with server!!" });
+                    setAlert({ error: "Somthing went wrong with server!!" });
                 });
         } else {
             await axios.post("http://localhost:5000/recruiter/register/", signUpData)
                 .then((res) => res.data)
                 .then((res) => {
                     if (res.success) {
-                        setAlert({ ...alert, success: res.message });
+                        setAlert({ success: res.message });
                         localStorage.setItem("type", "recruiter");
                         localStorage.setItem("token", res.token);
-                        // redirect path as you wish
+                        // redirect path as your wish
                     } else {
-                        setAlert({ ...alert, error: res.message });
+                        setAlert({ error: res.message });
                     }
                 }).catch((err) => {
                     console.log(err);
-                    setAlert({ ...alert, error: "Somthing went wrong with server!!" });
+                    setAlert({ error: "Somthing went wrong with server!!" });
                 });
         }
     }
