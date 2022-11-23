@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const { isEmail } = require('validator');
 
 const candidateSchema = new mongoose.Schema({
@@ -30,7 +31,7 @@ const candidateSchema = new mongoose.Schema({
 }, { timestamps: true })
 
 // Hashing the password before saving into the database
-candidateSchema.pre("save", async function (next) {
+candidateSchema.pre("save", async function(next) {
     if (!this.isModified("password"))
         return next();
 
@@ -40,7 +41,7 @@ candidateSchema.pre("save", async function (next) {
 });
 
 candidateSchema.methods = {
-    authenticate: async function (password) {
+    authenticate: async function(password) {
         return await bcrypt.compare(password, this.hash_password);
     }
 };

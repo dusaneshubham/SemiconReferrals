@@ -1,0 +1,160 @@
+.homepage-main-left,
+.homepage-main-right {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 600px;
+    color: #FFFFFF;
+}
+
+.homepage-main-left {
+    /* background-color: var(--main-blue); */
+    background: linear-gradient(0deg, rgba(33, 63, 154, 0.9), rgba(33, 63, 154, 0.9)), url('../../images/illustration_1.jpg');
+    background-size: cover;
+}
+
+.homepage-main-right {
+    background: linear-gradient(0deg, rgba(245, 130, 32, 0.9), rgba(245, 130, 32, 0.9)), url('../../images/illustration_1.jpg');
+    background-size: cover;
+    /* background-color: var(--main-orange); */
+}
+
+.post-apply-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 3px;
+    background-color: #FFFFFF;
+}
+
+.post-apply-btn-link {
+    color: var(--main-blue);
+    text-decoration: none;
+}
+
+.post-apply-btn-link:hover {
+    color: var(--light-pink);
+}
+
+.card-box {
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 15px 30px;
+    margin: 15px 0;
+    background-color: #ffffff;
+}
+
+.card-box-img {
+    border-radius: 50%;
+    width: 100px !important;
+    height: 100px !important;
+    margin-right: 20px;
+}
+
+.card-box {
+    display: flex;
+    justify-content: space-between;
+}
+
+.container p {
+    color: var(--text);
+}
+
+ul {
+    list-style: none;
+    padding: 0 !important;
+    margin: 30px 0 !important;
+}
+
+.start-hiring-btn {
+    padding: 10px 20px;
+    background-color: var(--main-blue);
+    color: #ffffff;
+    border: none;
+    border-radius: 3px;
+}
+
+.start-hiring-btn-link {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.start-hiring-btn-link:hover {
+    color: var(--light-pink);
+}
+
+.top-resources ul li {
+    margin: 2px 0 !important;
+}
+
+.top-resources ul:last-child li:before {
+    content: "✓\0020";
+}
+
+.about-section ul {
+    color: var(--text);
+}
+
+.top-hiring-employer-div {
+    width: 130px;
+    height: 130px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 10px;
+}
+
+.background {
+    background: url("../../images/shaking_hands.jpg");
+    background-size: auto;
+}
+
+@media only screen and (max-width: 768px) {
+    .homepage-main {
+        flex-direction: column;
+    }
+    .homepage-main-left,
+    .homepage-main-right {
+        height: 300px;
+    }
+}
+
+@media only screen and (max-width: 992px) {
+    * {
+        font-size: 0.8rem;
+    }
+    .flex-div {
+        /* width: 100% !important; */
+        flex-direction: column;
+    }
+    .card-box {
+        width: 100% !important;
+        padding: 10px;
+    }
+    .card-box-img {
+        margin-right: 10px;
+    }
+    .card-box img {
+        width: 50px;
+        height: 50px;
+    }
+    .top-resources-details,
+    .about-section-details {
+        width: 100% !important;
+    }
+    .illustration-div {
+        display: none;
+    }
+    .top-hiring-resources-section {
+        flex-direction: column;
+    }
+    .top-hiring-employers {
+        flex-wrap: wrap;
+    }
+    .top-hiring-employer-div {
+        margin: 20px auto;
+    }
+}
