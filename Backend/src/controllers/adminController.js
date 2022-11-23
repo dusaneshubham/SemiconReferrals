@@ -73,6 +73,22 @@ const approveCompany = asyncHandler(async (req, res) => {
     }
 });
 
+const approveRecruiter = asyncHandler(async (req, res) => {
+    const { _id } = req.body;
+
+    const isExistRecruiter = await Recruiter.findOne({ _id });
+    if (isExistRecruiter) {
+        const _recruiter = await Recruiter.findOneAndUpdate(_id, { status: "Approved" }, { new: true });
+        if (_recruiter) {
+            res.json({ message: "successfully updated status!", success: true });
+        } else {
+            res.json({ message: "Something went wrong during approval!!", success: false });
+        }
+    } else {
+        res.json({ message: "Incorrect company id", success: false });
+    }
+});
+
 const rejectCompany = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
@@ -242,6 +258,7 @@ module.exports = {
     registerAdmin,
     loginAdmin,
     approveCompany,
+    approveRecruiter,
     rejectCompany,
     approvePost,
     rejectPost,

@@ -2,14 +2,14 @@ const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const Candidate = require('../models/candidate');
 const jobApplication = require('../models/jobApplication');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SEC);
 }
 
 // Register Candidate
-const registerCandidate = asyncHandler(async (req, res) => {
+const registerCandidate = asyncHandler(async(req, res) => {
     const { name, email, password, contactNumber } = req.body;
 
     // Validations
@@ -37,7 +37,7 @@ const registerCandidate = asyncHandler(async (req, res) => {
         password: hashPassword
     });
 
-    newCandidate.save(async (err, data) => {
+    newCandidate.save(async(err, data) => {
         if (err) {
             console.log(err);
             return res.json({ message: "Error in registering the candidate", success: false });
@@ -53,7 +53,7 @@ const registerCandidate = asyncHandler(async (req, res) => {
 
 
 // Login Candidate
-const loginCandidate = asyncHandler(async (req, res) => {
+const loginCandidate = asyncHandler(async(req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -61,7 +61,6 @@ const loginCandidate = asyncHandler(async (req, res) => {
     }
 
     const user = await Candidate.findOne({ email });
-
     if (!user) {
         res.json({ message: "Incorrect email or password", success: false });
     } else {
@@ -78,12 +77,12 @@ const loginCandidate = asyncHandler(async (req, res) => {
 });
 
 // Logout Candidate
-const logoutCandidate = asyncHandler(async (req, res) => {
+const logoutCandidate = asyncHandler(async(req, res) => {
     res.clearCookie("token");
     res.json({ message: "Logged out", success: true });
 });
 
-const applyForJob = asyncHandler(async (req, res) => {
+const applyForJob = asyncHandler(async(req, res) => {
     const { candidateId, jobId } = req.body;
     let resume = req.files;
 
@@ -102,7 +101,7 @@ const applyForJob = asyncHandler(async (req, res) => {
 
 });
 
-const withdrawApplication = asyncHandler(async (req, res) => {
+const withdrawApplication = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
     const result = await jobApplication.deleteOne({ _id });
@@ -115,7 +114,7 @@ const withdrawApplication = asyncHandler(async (req, res) => {
 });
 
 // TODO : education, currentWorkingExperience contains object
-const updateProfile = asyncHandler(async (req, res) => {
+const updateProfile = asyncHandler(async(req, res) => {
     const { _id, name, email, username, contactNumber, gender, DOB, skills, linkedIn, experience, education, currentWorkingExperience } = req.body;
     const profileImage = req.files;
     const updatedData = {
@@ -140,7 +139,7 @@ const updateProfile = asyncHandler(async (req, res) => {
     }
 });
 
-const getApplicationStatus = asyncHandler(async (req, res) => {
+const getApplicationStatus = asyncHandler(async(req, res) => {
     const { _id } = req.body;
     const result = await jobApplication.findOne({ _id });
 
