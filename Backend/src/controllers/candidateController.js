@@ -87,10 +87,11 @@ const updatePassword = asyncHandler(async (req, res) => {
     } else if (password !== confirmPassword) {
         res.json({ message: "Password and Confirm password does not match!", success: false });
     } else {
+        const newPassword = await bcrypt.hash(password, 10);
         const updatePassword = await Candidate.findOneAndUpdate({ email: email }, { password: password }, { new: true });
-        if(updatePassword){
+        if (updatePassword) {
             res.json({ message: "Your password has been saved!", success: true });
-        }else{
+        } else {
             res.json({ message: "Something went wrong during update password!", success: false });
         }
     }
