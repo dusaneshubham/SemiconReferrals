@@ -8,7 +8,7 @@ const path = require('path');
 const candidate = require("../models/candidate");
 const recruiter = require("../models/recruiter");
 
-const sendEmail = expressAsyncHandler(async (req, res) => {
+const sendEmail = expressAsyncHandler(async(req, res) => {
     const { name, email } = req.body.data;
     const { type } = req.body;
 
