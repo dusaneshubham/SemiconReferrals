@@ -13,7 +13,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const Login = () => {
+const Login = (prop) => {
     const navigate = useNavigate();
     const [alert, setAlert] = useState({});
     const [loading, setLoading] = useState(false);
@@ -105,7 +105,7 @@ const Login = () => {
         <>
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 <Snackbar
-                    autoHideDuration={6000}
+                    autoHideDuration={2000}
                     open={alert.error ? true : false}
                     TransitionComponent={Transition}
                     onClose={handleClose}
@@ -114,7 +114,7 @@ const Login = () => {
                     <Alert severity="error" onClose={handleClose}><span className="my-alert">{alert.error}</span></Alert>
                 </Snackbar>
                 <Snackbar
-                    autoHideDuration={6000}
+                    autoHideDuration={2000}
                     open={alert.success ? true : false}
                     TransitionComponent={Transition}
                     onClose={handleClose}
@@ -164,7 +164,7 @@ const Login = () => {
                         />
                     </FormControl>
                     <div className="float-end my-2">
-                        <Link className="text-decoration-none" style={{ cursor: "pointer" }}>Forgotten password?</Link>
+                        <Link className="text-decoration-none" style={{ cursor: "pointer" }} onClick={() => prop.method()}>Forgotten password?</Link>
                     </div>
                     <FormControl sx={{ m: 1, width: "99%" }} variant="outlined">
                         <LoadingButton

@@ -104,7 +104,7 @@ const SignUp = () => {
         <>
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 <Snackbar
-                    autoHideDuration={6000}
+                    autoHideDuration={2000}
                     open={alert.error ? true : false}
                     TransitionComponent={Transition}
                     onClose={handleClose}
@@ -113,7 +113,7 @@ const SignUp = () => {
                     <Alert severity="error" onClose={handleClose}><span className="my-alert">{alert.error}</span></Alert>
                 </Snackbar>
                 <Snackbar
-                    autoHideDuration={6000}
+                    autoHideDuration={2000}
                     open={alert.success ? true : false}
                     TransitionComponent={Transition}
                     onClose={handleClose}

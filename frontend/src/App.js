@@ -8,6 +8,7 @@ import AdminDashboard from "./pages/admin/Dashboard/Dashboard";
 
 import DashboardComponent from "./components/admin/Dashboard/Dashboard";
 import Profile from "./components/admin/Profile/Profile";
+import ForgetPassword from "./pages/ForgetPassword";
 
 function App() {
   return (
@@ -24,6 +25,11 @@ function App() {
           exact
           path="/email-verification"
           element={<EmailVerification />}
+        />
+        <Route
+          exact
+          path="/forget-pass"
+          element={<ForgetPassword />}
         />
         <Route path="*" element={<PageNotFound />} />
       </Routes>

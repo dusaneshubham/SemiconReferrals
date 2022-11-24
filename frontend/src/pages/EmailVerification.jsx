@@ -81,29 +81,36 @@ function EmailVerification() {
         setLoading(false);
     }
 
-    const TransitionRight = (props) => {
+    const Transition = (props) => {
         return <Slide {...props} direction="down" />;
+    }
+
+    const handleClose = (_, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setAlert({});
     }
 
     return (
         <>
             <Snackbar
-                autoHideDuration={6000}
+                autoHideDuration={2000}
                 open={alert.error ? true : false}
-                TransitionComponent={TransitionRight}
-                onClose={() => setAlert({ success: "", error: "" })}
+                TransitionComponent={Transition}
+                onClose={handleClose}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             >
-                <Alert severity="error"><span className="my-alert">{alert.error}</span></Alert>
+                <Alert severity="error" onClose={handleClose}><span className="my-alert">{alert.error}</span></Alert>
             </Snackbar>
             <Snackbar
-                autoHideDuration={6000}
+                autoHideDuration={2000}
                 open={alert.success ? true : false}
-                TransitionComponent={TransitionRight}
-                onClose={() => setAlert({ success: "", error: "" })}
+                TransitionComponent={Transition}
+                onClose={handleClose}
                 anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
             >
-                <Alert severity="success"><span className="my-alert">{alert.success}</span></Alert>
+                <Alert severity="success" onClose={handleClose}><span className="my-alert">{alert.success}</span></Alert>
             </Snackbar>
             <div className="w-100 h-100 d-flex justify-content-center align-content-around">
                 <div className="container-fluid bg-light w-50 mt-5 text-center p-3">

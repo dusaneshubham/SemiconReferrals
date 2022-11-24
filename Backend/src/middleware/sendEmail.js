@@ -26,7 +26,6 @@ const sendEmail = expressAsyncHandler(async(req, res) => {
 
         if (!_candidate && !_recruiter) {
             const token = await jwt.sign(req.body, process.env.SECRETKEY, { expiresIn: '2h' });
-            // const encryptToken = encrypt(token);
 
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
@@ -53,7 +52,7 @@ const sendEmail = expressAsyncHandler(async(req, res) => {
                 to: email,
                 subject: "Welcome " + name,
                 text: "Hii",
-                template: 'Email-template',
+                template: 'Email',
                 context: {
                     username: name,
                     url: `http://localhost:3000/email-verification?token=${token}`,
