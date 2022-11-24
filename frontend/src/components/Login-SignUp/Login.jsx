@@ -7,16 +7,15 @@ import Box from '@mui/material/Box';
 import { isEmail } from 'validator';
 import axios from 'axios';
 import MuiAlert from '@mui/material/Alert';
+import { useNavigate } from 'react-router-dom';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const Login = () => {
-    const [alert, setAlert] = useState({
-        error: "",
-        success: ""
-    });
+    const navigate = useNavigate();
+    const [alert, setAlert] = useState({});
     const [loading, setLoading] = useState(false);
     const [showLoginPassword, setShowLoginPassword] = useState(false);
     const [type, setType] = useState("admin");
@@ -29,13 +28,12 @@ const Login = () => {
         setLoginData({ ...loginData, [prop]: event.target.value });
     }
 
-    const TransitionRight = (props) => {
+    const Transition = (props) => {
         return <Slide {...props} direction="down" />;
     }
 
     const submit = async () => {
         setLoading(true);
-        setAlert({ error: "", success: "" });
         if (!loginData.email || !loginData.password) {
             setAlert({ error: "All field are required!!" });
         } else if (!isEmail(loginData.email)) {
@@ -50,7 +48,7 @@ const Login = () => {
                         setAlert({ success: res.message });
                         localStorage.setItem("type", "candidate");
                         localStorage.setItem("token", res.token);
-                        // redirect path as you wish
+                        navigate('/');
                     } else {
                         setAlert({ error: res.message });
                     }
@@ -66,7 +64,7 @@ const Login = () => {
                         setAlert({ success: res.message });
                         localStorage.setItem("type", "admin");
                         localStorage.setItem("token", res.token);
-                        // redirect path as you wish
+                        navigate('/');
                     } else {
                         setAlert({ error: res.message });
                     }
@@ -82,6 +80,7 @@ const Login = () => {
                         if (res.token) {
                             localStorage.setItem("type", "recruiter");
                             localStorage.setItem("token", res.token);
+                            navigate('/');
                         }
                         setAlert({ success: res.message });
                     } else {
@@ -95,26 +94,33 @@ const Login = () => {
         setLoading(false);
     }
 
+    const handleClose = (_, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setAlert({});
+    }
+
     return (
         <>
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 <Snackbar
                     autoHideDuration={6000}
                     open={alert.error ? true : false}
-                    TransitionComponent={TransitionRight}
-                    onClose={() => setAlert({ success: "", error: "" })}
+                    TransitionComponent={Transition}
+                    onClose={handleClose}
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 >
-                    <Alert severity="error"><span className="my-alert">{alert.error}</span></Alert>
+                    <Alert severity="error" onClose={handleClose}><span className="my-alert">{alert.error}</span></Alert>
                 </Snackbar>
                 <Snackbar
                     autoHideDuration={6000}
                     open={alert.success ? true : false}
-                    TransitionComponent={TransitionRight}
-                    onClose={() => setAlert({ success: "", error: "" })}
+                    TransitionComponent={Transition}
+                    onClose={handleClose}
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 >
-                    <Alert severity="success"><span className="my-alert">{alert.success}</span></Alert>
+                    <Alert severity="success" onClose={handleClose}><span className="my-alert">{alert.success}</span></Alert>
                 </Snackbar>
                 <div>
                     <div>
