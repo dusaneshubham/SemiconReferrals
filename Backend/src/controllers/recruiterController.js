@@ -28,7 +28,7 @@ const registerRecruiter = asyncHandler(async (req, res) => {
     }
 
     // Check if company exist or not
-    // const companyName=
+    // const companyName =
 
     const hashPassword = await bcrypt.hash(password, 10);
 
@@ -44,7 +44,7 @@ const registerRecruiter = asyncHandler(async (req, res) => {
             console.log(err);
             return res.json({ message: "Error in registering the recruiter", success: false });
         } else {
-            console.log(data);
+            // console.log(data);
             // generating token for signin after registered
             let token = generateToken(data);
             return res.json({ message: "Recruiter has been registered successfully", success: true, token: token });
@@ -64,16 +64,20 @@ const loginRecruiter = asyncHandler(async (req, res) => {
 
     if (!user) {
         res.json({ message: "Incorrect email or password", success: false });
-    }
-
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    // const isPasswordCorrect = await Recruiter.authenticate(password);
-
-    if (user && isPasswordCorrect) {
-        let token = generateToken(user);
-        res.json({ message: "Recruiter loggedin", success: true, token: token });
     } else {
-        res.json({ message: "Incorrect email or password", success: false });
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        // const isPasswordCorrect = await Recruiter.authenticate(password);
+
+        if (user && isPasswordCorrect) {
+            if (!user.status) {
+                res.json({ message: "Your approval is on pending! Please try agin latter!", success: true});
+            } else {
+                let token = generateToken(user);
+                res.json({ message: "Recruiter loggedin", success: true, token: token });
+            }
+        } else {
+            res.json({ message: "Incorrect email or password", success: false });
+        }
     }
 });
 

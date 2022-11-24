@@ -43,7 +43,7 @@ const registerCandidate = asyncHandler(async(req, res) => {
             return res.json({ message: "Error in registering the candidate", success: false });
         }
         if (data) {
-            console.log(data);
+            // console.log(data);
             // generating token for signin after registered
             let token = generateToken(data);
             return res.json({ message: "Candidate has been registered successfully", success: true, token: token });
@@ -63,16 +63,16 @@ const loginCandidate = asyncHandler(async(req, res) => {
     const user = await Candidate.findOne({ email });
     if (!user) {
         res.json({ message: "Incorrect email or password", success: false });
-    }
-
-    const isPasswordCorrect = await bcrypt.compare(password, user.password);
-    // const isPasswordCorrect = await Candidate.authenticate(password);
-
-    if (user && isPasswordCorrect) {
-        let token = generateToken(user);
-        res.json({ message: "Candidate loggedin", success: true, token: token });
     } else {
-        res.json({ message: "Incorrect email or password", success: false });
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+        // const isPasswordCorrect = await Candidate.authenticate(password);
+
+        if (user && isPasswordCorrect) {
+            let token = generateToken(user);
+            res.json({ message: "Candidate loggedin", success: true, token: token });
+        } else {
+            res.json({ message: "Incorrect email or password", success: false });
+        }
     }
 });
 
