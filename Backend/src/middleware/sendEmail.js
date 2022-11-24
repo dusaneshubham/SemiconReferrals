@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 // const { encrypt } = require("./encrypt-decrypt");
 const path = require('path');
 
-const sendEmail = expressAsyncHandler(async (req, res) => {
+const sendEmail = expressAsyncHandler(async(req, res) => {
     const { name, email } = req.body.data;
 
     if (!name && !email) {
