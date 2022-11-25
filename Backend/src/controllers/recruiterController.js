@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const Recruiter = require('../models/recruiter');
 const bcrypt = require('bcrypt');
+const { isEmail } = require('validator');
 
 // Generate the token
 const generateToken = (id) => {
@@ -26,9 +27,6 @@ const registerRecruiter = asyncHandler(async (req, res) => {
     if (userExists) {
         return res.json({ message: "This email has already registered", success: false });
     }
-
-    // Check if company exist or not
-    // const companyName =
 
     const hashPassword = await bcrypt.hash(password, 10);
 
@@ -69,19 +67,38 @@ const loginRecruiter = asyncHandler(async (req, res) => {
         // const isPasswordCorrect = await Recruiter.authenticate(password);
 
         if (user && isPasswordCorrect) {
-            if (!user.status) {
-                res.json({ message: "Your approval is on pending! Please try agin latter!", success: true});
-            } else {
-                let token = generateToken(user);
-                res.json({ message: "Recruiter loggedin", success: true, token: token });
-            }
+            let token = generateToken(user);
+            res.json({ message: "Recruiter loggedin", success: true, token: token });
         } else {
             res.json({ message: "Incorrect email or password", success: false });
         }
     }
 });
 
+// update password
+const updatePassword = asyncHandler(async (req, res) => {
+    const { email, password, confirmPassword } = req.body;
+
+    if (!email || !password || !confirmPassword) {
+        res.json({ message: "All field are required!", success: false });
+    } else if (!isEmail(email)) {
+        res.json({ message: "Invalid mail Id!", success: false });
+    } else if (password !== confirmPassword) {
+        res.json({ message: "Password and Confirm password does not match!", success: false });
+    } else {
+        const newPassword = await bcrypt.hash(password, 10);
+        const updatePassword = await Recruiter.findOneAndUpdate({ email: email }, { password: newPassword }, { new: true });
+        if (updatePassword) {
+            console.log(updatePassword);
+            res.json({ message: "Your password has been saved!", success: true });
+        } else {
+            res.json({ message: "Something went wrong during update password!", success: false });
+        }
+    }
+});
+
 module.exports = {
     registerRecruiter,
-    loginRecruiter
+    loginRecruiter,
+    updatePassword
 }

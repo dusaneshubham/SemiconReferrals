@@ -10,6 +10,8 @@ const companyRoute = require('./routes/companyRoute');
 const recruiterRoute = require('./routes/recruiterRoute');
 const sendEmail = require('./middleware/sendEmail');
 const verifyEmail = require('./middleware/verifyEmail');
+const sendForgetPassMail = require('./middleware/sendForgetPassMail');
+const verifyToken = require('./middleware/verifyToken');
 
 dotenv.config();
 const app = express();
@@ -20,8 +22,10 @@ app.use(cookieParser());
 app.use(cors());
 
 // Defining Routes
+app.use("/verify-token", verifyToken);
 app.use("/verify-mail", verifyEmail);
 app.use("/send-mail", sendEmail);
+app.use("/send-forget-pass-mail", sendForgetPassMail);
 app.use("/admin", adminRoute);
 app.use("/candidate", candidateRoute);
 app.use("/recruiter", recruiterRoute);

@@ -43,7 +43,7 @@ const SignUp = () => {
         setSignUpData({ ...data, [prop]: event.target.value });
     }
 
-    const TransitionRight = (props) => {
+    const Transition = (props) => {
         return <Slide {...props} direction="down" />;
     }
 
@@ -93,26 +93,33 @@ const SignUp = () => {
         setLoading(false);
     }
 
+    const handleClose = (_, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setAlert({});
+    }
+
     return (
         <>
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 <Snackbar
-                    autoHideDuration={6000}
+                    autoHideDuration={2000}
                     open={alert.error ? true : false}
-                    TransitionComponent={TransitionRight}
-                    onClose={() => setAlert({ success: "", error: "" })}
+                    TransitionComponent={Transition}
+                    onClose={handleClose}
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 >
-                    <Alert severity="error"><span className="my-alert">{alert.error}</span></Alert>
+                    <Alert severity="error" onClose={handleClose}><span className="my-alert">{alert.error}</span></Alert>
                 </Snackbar>
                 <Snackbar
-                    autoHideDuration={6000}
+                    autoHideDuration={2000}
                     open={alert.success ? true : false}
-                    TransitionComponent={TransitionRight}
-                    onClose={() => setAlert({ success: "", error: "" })}
+                    TransitionComponent={Transition}
+                    onClose={handleClose}
                     anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
                 >
-                    <Alert severity="success"><span className="my-alert">{alert.success}</span></Alert>
+                    <Alert severity="success" onClose={handleClose}><span className="my-alert">{alert.success}</span></Alert>
                 </Snackbar>
                 <div>
                     <div>

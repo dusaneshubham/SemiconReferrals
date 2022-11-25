@@ -18,6 +18,9 @@ import CandidateResumes from "./components/candidate/MyResumes/MyResumes";
 import CandidateAppliedJobs from "./components/candidate/AppliedJobs/AppliedJobs";
 import CandidateSavedJobs from "./components/candidate/SavedJobs/SavedJobs";
 import CandidateFollowedEmployers from "./components/candidate/FollowedEmployers/FollowedEmployers";
+import DashboardComponent from "./components/admin/Dashboard/Dashboard";
+import Profile from "./components/admin/Profile/Profile";
+import ForgetPassword from "./pages/ForgetPassword";
 
 function App() {
   return (
@@ -47,9 +50,14 @@ function App() {
           exact
           path="/email-verification"
           element={<EmailVerification />}
-        />{" "}
-        <Route path="*" element={<PageNotFound />} />{" "}
-      </Routes>{" "}
+        />
+        <Route
+          exact
+          path="/forget-pass"
+          element={<ForgetPassword />}
+        />
+        <Route path="*" element={<PageNotFound />} />
+      </Routes>
     </BrowserRouter>
   );
 }
