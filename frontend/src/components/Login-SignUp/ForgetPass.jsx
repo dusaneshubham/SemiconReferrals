@@ -38,7 +38,7 @@ const ForgetPass = () => {
                 .then((res) => {
                     if (res.success) {
                         setAlert({ success: res.message });
-                        console.log(res.url);
+                        // console.log(res.url);
                         setData({ ...data, email: "" });
                         navigate('/');
                     } else {

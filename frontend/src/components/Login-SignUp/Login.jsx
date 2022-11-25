@@ -48,7 +48,7 @@ const Login = (prop) => {
                         setAlert({ success: res.message });
                         localStorage.setItem("type", "candidate");
                         localStorage.setItem("token", res.token);
-                        window.reload();
+                        window.location.reload();
                     } else {
                         setAlert({ error: res.message });
                     }
@@ -64,7 +64,7 @@ const Login = (prop) => {
                         setAlert({ success: res.message });
                         localStorage.setItem("type", "admin");
                         localStorage.setItem("token", res.token);
-                        window.reload();
+                        window.location.reload();
                     } else {
                         setAlert({ error: res.message });
                     }
@@ -80,7 +80,7 @@ const Login = (prop) => {
                         if (res.token) {
                             localStorage.setItem("type", "recruiter");
                             localStorage.setItem("token", res.token);
-                            window.reload();
+                            window.location.reload();
                         }
                         setAlert({ success: res.message });
                     } else {
