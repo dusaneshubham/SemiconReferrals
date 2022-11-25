@@ -7,6 +7,7 @@ const Company = require('../models/company');
 const Recruiter = require('../models/recruiter');
 const JobApplication = require('../models/jobApplication');
 const JobPost = require('../models/jobPost');
+const { isEmail } = require('validator');
 
 // TODO : To be removed afterwards
 // Register admin
@@ -53,6 +54,27 @@ const loginAdmin = asyncHandler(async (req, res) => {
                 res.json({ message: "Invalid credentials!", success: false });
             }
 
+        }
+    }
+});
+
+// update password
+const updatePassword = asyncHandler(async (req, res) => {
+    const { email, password, confirmPassword } = req.body;
+
+    if (!email || !password || !confirmPassword) {
+        res.json({ message: "All field are required!", success: false });
+    } else if (!isEmail(email)) {
+        res.json({ message: "Invalid mail Id!", success: false });
+    } else if (password !== confirmPassword) {
+        res.json({ message: "Password and Confirm password does not match!", success: false });
+    } else {
+        const newPassword = await bcrypt.hash(password, 10);
+        const updatePassword = await Admin.findOneAndUpdate({ email: email }, { password: password }, { new: true });
+        if (updatePassword) {
+            res.json({ message: "Your password has been saved!", success: true });
+        } else {
+            res.json({ message: "Something went wrong during update password!", success: false });
         }
     }
 });
@@ -257,6 +279,7 @@ const rejectJobApplication = asyncHandler(async (req, res) => {
 module.exports = {
     registerAdmin,
     loginAdmin,
+    updatePassword,
     approveCompany,
     approveRecruiter,
     rejectCompany,

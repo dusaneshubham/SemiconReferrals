@@ -1,31 +1,32 @@
-const expressAsyncHandler = require("express-async-handler");
-const nodemailer = require("nodemailer");
+const expressAsyncHandler = require('express-async-handler');
+const nodemailer = require('nodemailer');
 const { isEmail } = require('validator');
-const hbs = require('nodemailer-express-handlebars');
+const admin = require('../models/admin');
+const candidate = require('../models/candidate');
+const recruiter = require('../models/recruiter');
 const jwt = require('jsonwebtoken');
-// const { encrypt } = require("./encrypt-decrypt");
 const path = require('path');
-const candidate = require("../models/candidate");
-const recruiter = require("../models/recruiter");
+const hbs = require('nodemailer-express-handlebars');
 
-const sendEmail = expressAsyncHandler(async(req, res) => {
-    const { name, email } = req.body.data;
-    const { type } = req.body;
+const sendForgetPassMail = expressAsyncHandler(async(req, res) => {
+    const { type, email } = req.body;
 
-    if (!name && !email) {
-        res.json({ message: "All field are required", success: false });
+    if (!type && !email) {
+        res.json({ message: "All field are required!", success: false });
     } else if (!isEmail(email)) {
-        res.json({ message: "Invalid email", success: false });
+        res.json({ message: "Error! Invalid email id!", success: false });
     } else {
-        let _candidate, _recruiter;
+        let user;
         if (type === "candidate") {
-            _candidate = await candidate.findOne({ email: email });
-        } else {
-            _recruiter = await recruiter.findOne({ email: email });
+            user = await candidate.findOne({ email: email });
+        } else if (type === "admin") {
+            user = await admin.findOne({ email: email });
+        } else if (type === "recruiter") {
+            user = await recruiter.findOne({ email: email });
         }
 
-        if (!_candidate && !_recruiter) {
-            const token = await jwt.sign(req.body, process.env.SECRETKEY, { expiresIn: '2h' });
+        if (user) {
+            const token = await jwt.sign({ email, type }, process.env.SECRETKEY);
 
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
@@ -50,12 +51,10 @@ const sendEmail = expressAsyncHandler(async(req, res) => {
             const mailOptions = {
                 from: process.env.EMAIL,
                 to: email,
-                subject: "Welcome " + name,
-                text: "Hii",
-                template: 'Email',
+                subject: "reset password!",
+                template: 'ForgetPass',
                 context: {
-                    username: name,
-                    url: `http://localhost:3000/email-verification?token=${token}`,
+                    url: `http://localhost:3000/forget-pass?token=${token}`,
                     year: new Date().getFullYear()
                 },
                 attachments: [{
@@ -70,14 +69,15 @@ const sendEmail = expressAsyncHandler(async(req, res) => {
                     console.log(err);
                     res.json({ message: "Something went wrong during sending mail!", success: false });
                 } else {
-                    res.json({ message: "Verification mail has been sent on your mail Id!", success: true });
+                    res.json({ message: "Reset password mail has been sent on your mail Id! ", success: true });
                 }
             });
+            // res.json({ message: "Reset password mail has been sent on your mail Id! ", url: `http://localhost:3000/forget-pass?token=${token}`, success: true });
         } else {
-            res.json({ message: "User is already exist!", success: false });
+            res.json({ message: "User not found!", success: false });
         }
     }
 
 });
 
-module.exports = sendEmail;
+module.exports = sendForgetPassMail;

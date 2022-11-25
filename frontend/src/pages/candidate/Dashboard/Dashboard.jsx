@@ -21,7 +21,7 @@ import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight"
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 
 const Dashboard = () => {
@@ -29,8 +29,12 @@ const Dashboard = () => {
   const [open, setOpen] = React.useState(false);
   const sideNavbar = {
     dashboard: "Dashboard",
-    pendingapplications: "Pending Applications",
-    pendingpost: "Pending Post",
+    viewprofile: "View Profile",
+    updateprofile: "Update Profile",
+    myresumes: "My Resumes",
+    appliedjobs: "Applied Jobs",
+    savedjobs: "Saved Jobs",
+    followedemployers: "Followed Employers",
   };
 
   const drawerWidth = 240;
@@ -130,7 +134,7 @@ const Dashboard = () => {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Admin - Semicon Referrals
+            Welcome - Shubham Dusane
           </Typography>
         </Toolbar>
       </AppBar>

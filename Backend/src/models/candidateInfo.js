@@ -21,7 +21,7 @@ const candidateInfoSchema = new mongoose.Schema({
     profileImage: {
         type: String,
         required: false
-        // TODO : put default image
+            // TODO : put default image
     },
 
     about: {
@@ -41,6 +41,12 @@ const candidateInfoSchema = new mongoose.Schema({
 
     experience: {
         type: String,
+        required: false
+    },
+
+    qualification: {
+        type: String,
+        enum: ["Bachelor", "Master", "PHD"],
         required: false
     },
 
@@ -72,34 +78,26 @@ const candidateInfoSchema = new mongoose.Schema({
         }
     }],
 
-    currentWorkingExperience: [{
-        companyName: {
+    workingExperience: [{
+        organizationName: {
             type: String,
-            required: false,
             default: "None"
         },
-        duration: {
-            type: String,
-            required: false,
-            default: 0
-        },
         designation: {
-            type: String,
-            required: false
+            type: String
         },
-        responsibilities: {
-            type: String,
-            required: false
+        jobStartDate: {
+            type: Date
         },
-        typeofJob: {
-            type: String,
-            enum: ["Full Time", "Part Time", "Internship"],
-            required: false
+        jobEndDate: {
+            type: Date
         },
-        modeOfWorking: {
+        description: {
             type: String,
-            enum: ["Remote", "Work from Office"],
-            required: false
+        },
+        isCurrentlyWorking: {
+            type: Boolean,
+            default: false
         }
     }],
     savePost: [{
