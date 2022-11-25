@@ -62,11 +62,6 @@ const Navbar = () => {
                 </ListItem>
                 <ListItem disablePadding>
                     <ListItemButton>
-                        <NavLink to='/postjob' className={({ isActive }) => isActive ? 'navbar-link active-link' : 'navbar-link'}> <ListItemText primary='Post Job' /> </NavLink>
-                    </ListItemButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <ListItemButton>
                         <NavLink to='/blog' className={({ isActive }) => isActive ? 'navbar-link active-link' : 'navbar-link'}> <ListItemText primary='Blog' /> </NavLink>
                     </ListItemButton>
                 </ListItem>
@@ -91,7 +86,6 @@ const Navbar = () => {
                     <NavLink to="/" className=" navbar-link"><img src={logoPath} alt="Autism Logo" className="img-fluid" height="150" width="150" /></NavLink>
                     <NavLink to="/" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Home</NavLink>
                     <NavLink to="/search" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Search</NavLink>
-                    <NavLink to="/postjob" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Post jobs</NavLink>
                     <NavLink to="/blog" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Blog</NavLink>
                     <NavLink to="/faqs" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>FAQs</NavLink>
                     <NavLink to="/contact" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Contact</NavLink>
