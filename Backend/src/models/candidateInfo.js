@@ -9,72 +9,59 @@ const candidateInfoSchema = new mongoose.Schema({
     },
 
     gender: {
-        type: String,
-        required: false
+        type: String
     },
 
     DOB: {
-        type: Date,
-        required: false
+        type: Date
     },
 
     profileImage: {
-        type: String,
-        required: false
+        type: String
             // TODO : put default image
     },
 
     about: {
-        type: String,
-        required: false
+        type: String
     },
 
     skills: {
         type: Array,
-        required: false
+        default: []
     },
 
     linkedIn: {
-        type: String,
-        required: false
+        type: String
     },
 
     experience: {
         type: String,
-        required: false
     },
 
     qualification: {
         type: String,
         enum: ["Bachelor", "Master", "PHD"],
-        required: false
     },
 
     education: [{
         degree: {
             type: String,
-            required: false
         },
         passingYear: {
             type: String,
-            required: false
         },
         CGPA: {
             type: String,
-            required: false,
             default: 0
         },
         institute: {
             type: String,
-            required: false
         },
         university: {
             type: String,
-            required: false
         },
         branch: {
             type: String,
-            required: false
         }
     }],
 
@@ -97,13 +84,16 @@ const candidateInfoSchema = new mongoose.Schema({
         },
         isCurrentlyWorking: {
             type: Boolean,
-            default: false
         }
     }],
-    savePost: [{
+    savedPost: [{
         type: mongoose.SchemaTypes.ObjectId,
         ref: "jobPost"
-    }]
+    }],
+    resumes: {
+        type: Array,
+        default: []
+    }
 
 }, { timestamps: true });
 

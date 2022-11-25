@@ -11,20 +11,20 @@ const UpdateProfile = () => {
             <h4>Personal Information</h4>
             <form className="row g-3">
               <div className="col-md-6">
-                <label for="name" className="form-label">
+                <label htmlFor="name" className="form-label">
                   Full Name
                 </label>
                 <input type="text" className="form-control" id="name" />
               </div>
               <div className="col-md-6">
-                <label for="email" className="form-label">
+                <label htmlFor="email" className="form-label">
                   Email
                 </label>
                 <input type="email" className="form-control" id="email" disabled />
               </div>
 
               <div class="col-md-6">
-                <label for="gender" class="form-label">
+                <label htmlFor="gender" class="form-label">
                   Gender
                 </label>
                 <select id="gender" class="form-select">
@@ -35,14 +35,14 @@ const UpdateProfile = () => {
                 </select>
               </div>
               <div className="col-md-6">
-                <label for="DOB" className="form-label">
+                <label htmlFor="DOB" className="form-label">
                   Date Of Birth
                 </label>
                 <input type="date" className="form-control" id="DOB" />
               </div>
 
               <div className="col-md-6">
-                <label for="profile-image" className="form-label">
+                <label htmlFor="profile-image" className="form-label">
                   Profile Image
                 </label>
                 <input
@@ -52,7 +52,7 @@ const UpdateProfile = () => {
                 />
               </div>
               <div class="col-md-6">
-                <label for="experience" class="form-label">
+                <label htmlFor="experience" class="form-label">
                   Experience
                 </label>
                 <select id="experience" class="form-select">
@@ -67,7 +67,7 @@ const UpdateProfile = () => {
               </div>
 
               <div class="col-md-6">
-                <label for="qualification" class="form-label">
+                <label htmlFor="qualification" class="form-label">
                   Qualification
                 </label>
                 <select id="qualification" class="form-select">
@@ -78,7 +78,7 @@ const UpdateProfile = () => {
                 </select>
               </div>
               <div className="col-md-6">
-                <label for="contact-number" className="form-label">
+                <label htmlFor="contact-number" className="form-label">
                   Contact Number
                 </label>
                 <input
