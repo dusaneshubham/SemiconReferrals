@@ -7,14 +7,14 @@ import Box from '@mui/material/Box';
 import { isEmail } from 'validator';
 import axios from 'axios';
 import MuiAlert from '@mui/material/Alert';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const Login = (prop) => {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const [alert, setAlert] = useState({});
     const [loading, setLoading] = useState(false);
     const [showLoginPassword, setShowLoginPassword] = useState(false);
@@ -48,7 +48,7 @@ const Login = (prop) => {
                         setAlert({ success: res.message });
                         localStorage.setItem("type", "candidate");
                         localStorage.setItem("token", res.token);
-                        navigate('/');
+                        window.reload();
                     } else {
                         setAlert({ error: res.message });
                     }
@@ -64,7 +64,7 @@ const Login = (prop) => {
                         setAlert({ success: res.message });
                         localStorage.setItem("type", "admin");
                         localStorage.setItem("token", res.token);
-                        navigate('/');
+                        window.reload();
                     } else {
                         setAlert({ error: res.message });
                     }
@@ -80,7 +80,7 @@ const Login = (prop) => {
                         if (res.token) {
                             localStorage.setItem("type", "recruiter");
                             localStorage.setItem("token", res.token);
-                            navigate('/');
+                            window.reload();
                         }
                         setAlert({ success: res.message });
                     } else {

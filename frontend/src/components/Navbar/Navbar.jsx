@@ -63,7 +63,7 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="nav-bar sticky-top">
+            <nav className="nav-bar fixed-top">
                 <div className="container-fluid w-100">
                     <NavLink to="#" className=" navbar-link"><img src={logoPath} alt="Autism Logo" className="img-fluid" height="150" width="150" /></NavLink>
                     <NavLink to="#" className="navbar-link main-navbar-link">Home</NavLink>
@@ -79,8 +79,8 @@ const Navbar = () => {
                                 </Button>
                             </span>
                         }
-                        {loggedin && <Button variant="outlined" className="profile-btn border-0 py-1"><AccountCircleIcon fontSize='large'/></Button>}
-                        {loggedin && <Button variant="outlined" className="profile-btn border-0 py-1"><NotificationsIcon fontSize='large'/></Button>}
+                        {loggedin && <Button variant="outlined" className="profile-btn border-0 py-1"><AccountCircleIcon fontSize='large' /></Button>}
+                        {loggedin && <Button variant="outlined" className="profile-btn border-0 py-1"><NotificationsIcon fontSize='large' /></Button>}
                     </div>
                     <React.Fragment>
                         <Button className="menu-btn float-end mx-0 my-2" onClick={toggleDrawer(true)}><MenuIcon /></Button>
