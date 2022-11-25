@@ -50,13 +50,36 @@ const Navbar = () => {
                     </ListItem>
                 }
                 <Divider />
-                {['Home', 'Find Jobs', 'Employers', 'Candidates', 'Blog'].map((text) => (
-                    <ListItem key={text} disablePadding>
-                        <ListItemButton>
-                            <NavLink to={'/' + text} className='navbar-link'> <ListItemText primary={text} /> </NavLink>
-                        </ListItemButton>
-                    </ListItem>
-                ))}
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <NavLink to='/' className={({ isActive }) => isActive ? 'navbar-link active-link' : 'navbar-link'}> <ListItemText primary='Home' /> </NavLink>
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <NavLink to='/search' className={({ isActive }) => isActive ? 'navbar-link active-link' : 'navbar-link'}> <ListItemText primary='Search' /> </NavLink>
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <NavLink to='/postjob' className={({ isActive }) => isActive ? 'navbar-link active-link' : 'navbar-link'}> <ListItemText primary='Post Job' /> </NavLink>
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <NavLink to='/blog' className={({ isActive }) => isActive ? 'navbar-link active-link' : 'navbar-link'}> <ListItemText primary='Blog' /> </NavLink>
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <NavLink to='/faqs' className={({ isActive }) => isActive ? 'navbar-link active-link' : 'navbar-link'}> <ListItemText primary='FAQs' /> </NavLink>
+                    </ListItemButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <ListItemButton>
+                        <NavLink to='/contact' className={({ isActive }) => isActive ? 'navbar-link active-link' : 'navbar-link'}> <ListItemText primary='Contact' /> </NavLink>
+                    </ListItemButton>
+                </ListItem>
             </List>
         </Box>
     );
@@ -65,12 +88,13 @@ const Navbar = () => {
         <>
             <nav className="nav-bar fixed-top">
                 <div className="container-fluid w-100">
-                    <NavLink to="#" className=" navbar-link"><img src={logoPath} alt="Autism Logo" className="img-fluid" height="150" width="150" /></NavLink>
-                    <NavLink to="#" className="navbar-link main-navbar-link">Home</NavLink>
-                    <NavLink to="#" className="navbar-link main-navbar-link">Find Jobs</NavLink>
-                    <NavLink to="#" className="navbar-link main-navbar-link">Employers</NavLink>
-                    <NavLink to="#" className="navbar-link main-navbar-link">Candidates</NavLink>
-                    <NavLink to="#" className="navbar-link main-navbar-link">Blog</NavLink>
+                    <NavLink to="/" className=" navbar-link"><img src={logoPath} alt="Autism Logo" className="img-fluid" height="150" width="150" /></NavLink>
+                    <NavLink to="/" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Home</NavLink>
+                    <NavLink to="/search" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Search</NavLink>
+                    <NavLink to="/postjob" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Post jobs</NavLink>
+                    <NavLink to="/blog" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Blog</NavLink>
+                    <NavLink to="/faqs" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>FAQs</NavLink>
+                    <NavLink to="/contact" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Contact</NavLink>
                     <div className='float-end'>
                         {!loggedin &&
                             <span className="main-navbar-link" data-bs-toggle="modal" data-bs-target="#loginSignUpModal">
