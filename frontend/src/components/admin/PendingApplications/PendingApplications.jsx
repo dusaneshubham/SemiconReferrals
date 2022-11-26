@@ -15,6 +15,15 @@ import {
   DialogContentText,
 } from "@mui/material";
 import {Link} from 'react-router-dom';
+<<<<<<< HEAD
+=======
+
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+// import DialogTitle from "@mui/material/DialogTitle";
+>>>>>>> 18c2c319b728d84bb461b82e9f54218fde70eaad
 import Draggable from "react-draggable";
 
 function PaperComponent(props) {

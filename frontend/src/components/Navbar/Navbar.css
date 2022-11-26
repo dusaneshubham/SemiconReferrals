@@ -10,7 +10,7 @@
     margin: 5px 20px;
 }
 
-.navbar-link:hover, .navbar-link span:hover {
+.navbar-link:hover, .navbar-link span:hover, .active-link, .active-link span {
     color: var(--light-pink);
 }
 

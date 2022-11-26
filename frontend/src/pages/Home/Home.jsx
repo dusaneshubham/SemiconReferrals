@@ -9,7 +9,7 @@ import AllCards from "../../components/Home/AllCards";
 import Landing from "../../components/Home/Landing";
 
 import Navbar from "../../components/Navbar/Navbar";
-// import Footer from "../../components/Footer/Footer";
+import Footer from "../../components/Footer/Footer";
 
 const Home = () => {
   return (
@@ -20,7 +20,7 @@ const Home = () => {
       <TopResources />
       <TopHiringEmployers />
       <About />
-      {/* <Footer /> */}
+      <Footer />
     </>
   );
 };
