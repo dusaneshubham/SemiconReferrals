@@ -4,8 +4,9 @@ const admin = require('../models/admin');
 const candidate = require('../models/candidate');
 const recruiter = require('../models/recruiter');
 
-const verifyToken = expressAsyncHandler(async (req, res) => {
+const verifyToken = expressAsyncHandler(async(req, res, next) => {
     const { token } = req.body;
+    // console.log(token);
 
     if (token) {
         const result = await jwt.verify(token, process.env.SECRETKEY);
@@ -23,6 +24,7 @@ const verifyToken = expressAsyncHandler(async (req, res) => {
             }
 
             if (user) {
+                req.user = user;
                 res.json({ message: "User data", data: result, success: true });
             } else {
                 res.json({ message: "Your token is invalid or expired!", success: false });
@@ -33,6 +35,8 @@ const verifyToken = expressAsyncHandler(async (req, res) => {
     } else {
         res.json({ message: "Token is not found!", success: false })
     }
+
+    next();
 });
 
 module.exports = verifyToken
