@@ -67,7 +67,6 @@ const MyResumes = () => {
   axios
     .get("http://localhost:5000/candidate/getAllMyResumes")
     .then((response) => {
-      console.log(response.data.images);
       let images = response.data.images;
       rows.push(images.map((image) => {
         return createData(image);
