@@ -2,7 +2,7 @@ const multer = require('multer');
 
 const resumeStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, './images/resume');
+        cb(null, './src/images/resume');
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + "_" + file.originalname);
@@ -12,6 +12,7 @@ const resumeStorage = multer.diskStorage({
 const upload = multer({
     storage: resumeStorage,
 });
+
 // const upload = multer({
 //     storage: resumeStorage,
 //     limits: {

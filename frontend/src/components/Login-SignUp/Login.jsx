@@ -77,11 +77,9 @@ const Login = (prop) => {
                 .then((res) => res.data)
                 .then((res) => {
                     if (res.success) {
-                        if (res.token) {
-                            localStorage.setItem("type", "recruiter");
-                            localStorage.setItem("token", res.token);
-                            window.location.reload();
-                        }
+                        localStorage.setItem("type", "recruiter");
+                        localStorage.setItem("token", res.token);
+                        window.location.reload();
                         setAlert({ success: res.message });
                     } else {
                         setAlert({ error: res.message });

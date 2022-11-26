@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const hbs = require('nodemailer-express-handlebars');
 
-const sendForgetPassMail = expressAsyncHandler(async(req, res) => {
+const sendForgetPassMail = expressAsyncHandler(async (req, res) => {
     const { type, email } = req.body;
 
     if (!type && !email) {
@@ -26,7 +26,7 @@ const sendForgetPassMail = expressAsyncHandler(async(req, res) => {
         }
 
         if (user) {
-            const token = await jwt.sign({ email, type }, process.env.SECRETKEY);
+            const token = await jwt.sign({ _id: user._id, type }, process.env.SECRETKEY);
 
             const transporter = nodemailer.createTransport({
                 service: 'gmail',
