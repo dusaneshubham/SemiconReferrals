@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useEffect } from "react";
 import axios from "axios";
 
 const MyResumes = () => {
@@ -62,22 +61,22 @@ const MyResumes = () => {
     };
   }
 
-  let rows = [];
+  // let rows = [];
 
   axios
     .get("http://localhost:5000/candidate/getAllMyResumes")
     .then((response) => {
-      console.log(response.data.images);
       let images = response.data.images;
       images.map((image, index) => {
-        rows.push(createData(image));
+        return rows.push(createData(image));
       });
     })
     .catch(() => {});
-  // const rows = [
-  //   createData("Shubham_Dusane.pdf"),
-  //   createData("Shubham_Dusane_Resume.pdf"),
-  // ];
+    
+  const rows = [
+    createData("Shubham_Dusane.pdf"),
+    createData("Shubham_Dusane_Resume.pdf"),
+  ];
 
   // Resume sending to backend to upload
   const uploadResume = (e) => {
