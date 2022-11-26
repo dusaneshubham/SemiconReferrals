@@ -20,7 +20,12 @@ const UpdateProfile = () => {
                 <label for="email" className="form-label">
                   Email
                 </label>
-                <input type="email" className="form-control" id="email" disabled />
+                <input
+                  type="email"
+                  className="form-control"
+                  id="email"
+                  disabled
+                />
               </div>
 
               <div class="col-md-6">
