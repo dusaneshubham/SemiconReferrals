@@ -137,6 +137,14 @@ const uploadMyResume = asyncHandler(async(req, res) => {
     // }
 });
 
+const downloadResume = asyncHandler(async(req, res) => {
+
+});
+
+const deleteResume = asyncHandler(async(req, res) => {
+
+});
+
 const getAllMyResumes = asyncHandler(async(req, res) => {
     let data = await CandidateInfo.find({ candidateId: "637f0fb8886fad29ca1fd0e7" });
     res.json({ images: data[0].resumes, success: true });
@@ -220,5 +228,7 @@ module.exports = {
     updateProfile,
     getApplicationStatus,
     uploadMyResume,
-    getAllMyResumes
+    getAllMyResumes,
+    downloadResume,
+    deleteResume
 };

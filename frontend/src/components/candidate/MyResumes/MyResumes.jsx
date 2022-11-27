@@ -66,10 +66,10 @@ const MyResumes = () => {
   axios
     .get("http://localhost:5000/candidate/getAllMyResumes")
     .then((response) => {
-      let images = response.data.images;
-      images.map((image, index) => {
-        return rows.push(createData(image));
-      });
+      // let images = response.data.images;
+      // images.map((image, index) => {
+      //   return rows.push(createData(image));
+      // });
     })
     .catch(() => {});
     
