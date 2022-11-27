@@ -18,6 +18,7 @@ import {
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
+import { useEffect } from "react";
 
 const MyResumes = () => {
   const [open, setOpen] = useState(false);
@@ -61,17 +62,32 @@ const MyResumes = () => {
     };
   }
 
-  let rows = [];
+  var rows = [];
+  let [resumeData, setResumeData] = useState([]);
 
-  axios
-    .get("http://localhost:5000/candidate/getAllMyResumes")
-    .then((response) => {
-      let images = response.data.images;
-      rows.push(images.map((image) => {
-        return createData(image);
-      }))
-    })
-    .catch(() => { });
+  const getResumes = () => {
+    axios
+      .get("http://localhost:5000/candidate/getAllMyResumes")
+      .then((response) => {
+        let images = response.data.images;
+        setResumeData(
+          resumeData.push(
+            images.map((image) => {
+              return createData(image);
+            })[0].resumeName
+          )
+        );
+        // console.log(rows[0][0].resumeName);
+        // console.log(rows[0][1].resumeName);
+      })
+      .catch(() => {});
+  };
+
+  useEffect(()=>{
+    getResumes();
+    console.log(resumeData);
+  }, []);
+
   // const rows = [
   //   createData("Shubham_Dusane.pdf"),
   //   createData("Shubham_Dusane_Resume.pdf"),
@@ -79,14 +95,14 @@ const MyResumes = () => {
 
   // Resume sending to backend to upload
   const uploadResume = (e) => {
-    let token = localStorage.getItem('token');
+    let token = localStorage.getItem("token");
     const formData = new FormData();
     formData.append("resume", resume);
     formData.append("token", token);
     axios
       .post("http://localhost:5000/candidate/uploadMyResume", formData)
-      .then(() => { })
-      .catch(() => { });
+      .then(() => {})
+      .catch(() => {});
   };
 
   return (

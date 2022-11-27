@@ -86,17 +86,36 @@ const candidateInfoSchema = new mongoose.Schema({
             type: Boolean,
         }
     }],
+
     savedPost: [{
         type: mongoose.SchemaTypes.ObjectId,
         ref: "JobPost"
     }],
+
     followings: [{
         type: mongoose.SchemaTypes.ObjectId,
         ref: "Recruiter"
     }],
+
     resumes: {
         type: Array,
         default: []
+    },
+
+    desiredCitiesToWork: {
+        type: String
+    },
+
+    isOpenToWork: {
+        type: String
+    },
+
+    noticePeriod: {
+        type: String
+    },
+
+    currentJobLocation: {
+        type: String
     }
 
 }, { timestamps: true });
