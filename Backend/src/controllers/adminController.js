@@ -9,6 +9,11 @@ const JobApplication = require('../models/jobApplication');
 const JobPost = require('../models/jobPost');
 const { isEmail } = require('validator');
 
+// Generate the token
+const generateToken = (user) => {
+    return jwt.sign({ _id: user._id, type:"admin" }, process.env.SECRETKEY);
+}
+
 // TODO : To be removed afterwards
 // Register admin
 const registerAdmin = asyncHandler(async (req, res) => {
@@ -46,10 +51,10 @@ const loginAdmin = asyncHandler(async (req, res) => {
         if (!user) {
             res.json({ message: "Invalid credentials!", success: false });
         } else {
-
             const isPasswordCorrect = await bcrypt.compare(password, user.password);
             if (isPasswordCorrect) {
-                res.json({ message: "Admin loggedin", success: true, data: { email } });
+                let token = await generateToken(user);
+                res.json({ message: "Admin loggedin", success: true, token: token });
             } else {
                 res.json({ message: "Invalid credentials!", success: false });
             }

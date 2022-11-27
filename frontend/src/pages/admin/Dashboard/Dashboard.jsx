@@ -148,31 +148,31 @@ const Dashboard = () => {
         <List>
           {Object.entries(sideNavbar).map(([key, value], index) => (
             <ListItem key={index} disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-              >
-                <ListItemIcon
+              <Link to={key} >
+                <ListItemButton
                   sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
                   }}
                 >
-                  {/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
-                  {obj.dashboard}
-                </ListItemIcon>
-                <Link to={key}>
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
+                    {obj.dashboard}
+                  </ListItemIcon>
                   <ListItemText
                     primary={value}
                     style={{ color: "var(--text)", textDecoration: "none" }}
                     sx={{ opacity: open ? 1 : 0 }}
                   />
-                </Link>
-              </ListItemButton>
+                </ListItemButton>
+              </Link>
             </ListItem>
           ))}
         </List>

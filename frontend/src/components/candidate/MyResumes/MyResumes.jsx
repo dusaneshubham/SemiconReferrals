@@ -21,7 +21,7 @@ import axios from "axios";
 
 const MyResumes = () => {
   const [open, setOpen] = useState(false);
-  const [resume, setResume] = useState("");
+  const [resume, setResume] = useState();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -61,33 +61,32 @@ const MyResumes = () => {
     };
   }
 
-  // let rows = [];
+  let rows = [];
 
   axios
     .get("http://localhost:5000/candidate/getAllMyResumes")
     .then((response) => {
-      // let images = response.data.images;
-      // images.map((image, index) => {
-      //   return rows.push(createData(image));
-      // });
+      let images = response.data.images;
+      rows.push(images.map((image) => {
+        return createData(image);
+      }))
     })
-    .catch(() => {});
-    
-  const rows = [
-    createData("Shubham_Dusane.pdf"),
-    createData("Shubham_Dusane_Resume.pdf"),
-  ];
+    .catch(() => { });
+  // const rows = [
+  //   createData("Shubham_Dusane.pdf"),
+  //   createData("Shubham_Dusane_Resume.pdf"),
+  // ];
 
   // Resume sending to backend to upload
   const uploadResume = (e) => {
-    // let token = localStorage.getItem('token');
+    let token = localStorage.getItem('token');
     const formData = new FormData();
     formData.append("resume", resume);
-    // formData.append("token", token);
+    formData.append("token", token);
     axios
       .post("http://localhost:5000/candidate/uploadMyResume", formData)
-      .then(() => {})
-      .catch(() => {});
+      .then(() => { })
+      .catch(() => { });
   };
 
   return (
@@ -110,30 +109,32 @@ const MyResumes = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.employerName}>
-                <StyledTableCell>{row.resumeName}</StyledTableCell>
-                <StyledTableCell>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    style={{ margin: "10px" }}
-                  >
-                    <DownloadIcon style={{ marginRight: "5px" }} /> Download
-                  </Button>
-                </StyledTableCell>
-                <StyledTableCell>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={handleClickOpen}
-                    style={{ margin: "10px" }}
-                  >
-                    <DeleteIcon style={{ marginRight: "5px" }} /> Delete
-                  </Button>
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
+            {rows.map((row) => {
+              return (
+                <StyledTableRow key={row.employerName}>
+                  <StyledTableCell>{row.resumeName}</StyledTableCell>
+                  <StyledTableCell>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      style={{ margin: "10px" }}
+                    >
+                      <DownloadIcon style={{ marginRight: "5px" }} /> Download
+                    </Button>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleClickOpen}
+                      style={{ margin: "10px" }}
+                    >
+                      <DeleteIcon style={{ marginRight: "5px" }} /> Delete
+                    </Button>
+                  </StyledTableCell>
+                </StyledTableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>

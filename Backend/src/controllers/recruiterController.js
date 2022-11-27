@@ -5,8 +5,8 @@ const bcrypt = require('bcrypt');
 const { isEmail } = require('validator');
 
 // Generate the token
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SEC);
+const generateToken = (user) => {
+    return jwt.sign({ _id: user._id, type: "recruiter" }, process.env.SECRETKEY);
 }
 
 // register api
@@ -67,7 +67,7 @@ const loginRecruiter = asyncHandler(async (req, res) => {
         // const isPasswordCorrect = await Recruiter.authenticate(password);
 
         if (user && isPasswordCorrect) {
-            let token = generateToken(user);
+            let token = await generateToken(user);
             res.json({ message: "Recruiter loggedin", success: true, token: token });
         } else {
             res.json({ message: "Incorrect email or password", success: false });

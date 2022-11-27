@@ -5,10 +5,10 @@ const CandidateInfo = require('../models/candidateInfo');
 const jobApplication = require('../models/jobApplication');
 const bcrypt = require('bcryptjs');
 const { isEmail } = require('validator');
-const { response } = require('express');
 
-const generateToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SEC);
+// Generate the token
+const generateToken = (user) => {
+    return jwt.sign({ _id: user._id, type: "candidate" }, process.env.SECRETKEY);
 }
 
 // Register Candidate
@@ -70,7 +70,7 @@ const loginCandidate = asyncHandler(async(req, res) => {
         // const isPasswordCorrect = await Candidate.authenticate(password);
 
         if (user && isPasswordCorrect) {
-            let token = generateToken(user);
+            let token = await generateToken(user);
             res.json({ message: "Candidate loggedin", success: true, token: token });
         } else {
             res.json({ message: "Incorrect email or password", success: false });
@@ -105,36 +105,36 @@ const logoutCandidate = asyncHandler(async(req, res) => {
     res.json({ message: "Logged out", success: true });
 });
 
-const allResumes = asyncHandler(async(req, res) => {
-    data = await CandidateInfo.find({ candidateId: "637f0fb8886fad29ca1fd0e7" });
-    return data[0].resumes;
-})
-
 const uploadMyResume = asyncHandler(async(req, res) => {
-    let myResumes = await allResumes();
     let user = req.user;
-    console.log(req.user);
-    // console.log(myResumes);
-    // if (!myResumes) {
-    //     resume = [];
-    //     resume.push(req.file.path);
-    //     let data = new CandidateInfo({
-    //         candidateId: "637f0fb8886fad29ca1fd0e7",
-    //         resumes: resume
-    //     });
-    //     await data.save().then(() => {
-    //         res.json({ message: "Resume has been uploaded!", success: true })
-    //     }).catch(() => {
-    //         res.json({ message: "Resume has not been uploaded due to server error!", success: false })
-    //     })
-    // } else {
-    //     myResumes.push(req.file.path);
-    //     await CandidateInfo.updateOne({ candidateId: "637f0fb8886fad29ca1fd0e7" }, { $set: { resumes: myResumes } }).then(() => {
-    //         res.json({ message: "Resume has been uploaded!", success: true })
-    //     }).catch(() => {
-    //         res.json({ message: "Resume has not been uploaded due to server error!", success: false })
-    //     })
-    // }
+    let myResumes = await CandidateInfo.findOne({ candidateId: user._id }).select({ "resumes": 1 });
+
+    if (!myResumes) {
+        resume = [];
+        resume.push(req.file.path);
+        let data = new CandidateInfo({
+            candidateId: user._id,
+            resumes: resume
+        });
+        await data.save().then(() => {
+            res.json({ message: "Resume has been uploaded!", success: true })
+        }).catch(() => {
+            res.json({ message: "Resume has not been uploaded due to server error!", success: false })
+        });
+    } else {
+        myResumses.reumes.push(req.file.path);
+        await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: myResumes.resumes }, { new: true }).then((err, data) => {
+            if (err) {
+                console.log(err);
+                res.json({ message: "Resume has not been uploaded due to server error!", success: false })
+            } else {
+                res.json({ message: "Resume has been uploaded!", success: true })
+            }
+        }).catch((err) => {
+            console.log(err);
+            res.json({ message: "Resume has not been uploaded due to server error!", success: false })
+        });
+    }
 });
 
 const downloadResume = asyncHandler(async(req, res) => {
