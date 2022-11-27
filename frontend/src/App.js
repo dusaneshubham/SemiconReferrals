@@ -12,7 +12,7 @@ import PendingPost from "./components/admin/PendingPost/PendingPost";
 
 import CandidateDashboard from "./pages/candidate/Dashboard/Dashboard";
 import CandidateDashboardComponent from "./components/candidate/Dashboard/Dashboard";
-import CandidateViewProfile from "./components/candidate/ViewProfile/ViewProfile";
+import CandidateProfile from "./pages/candidate/Profile/Profile";
 import CandidateUpdateProfile from "./components/candidate/UpdateProfile/UpdateProfile";
 import CandidateResumes from "./components/candidate/MyResumes/MyResumes";
 import CandidateAppliedJobs from "./components/candidate/AppliedJobs/AppliedJobs";
@@ -34,9 +34,10 @@ function App() {
           <Route path="pendingpost" element={<PendingPost />} />{" "}
         </Route>{" "}
 
+        <Route exact path="/candidate/profile" element={<CandidateProfile />} />{" "}
         <Route exact path="/candidate" element={<CandidateDashboard />}>
           <Route path="dashboard" element={<CandidateDashboardComponent />} />{" "}
-          <Route path="viewprofile" element={<CandidateViewProfile />} />{" "}
+          {/* <Route path="viewprofile" element={<CandidateProfile />} />{" "} */}
           <Route path="updateprofile" element={<CandidateUpdateProfile />} />{" "}
           <Route path="myresumes" element={<CandidateResumes />} />{" "}
           <Route path="appliedjobs" element={<CandidateAppliedJobs />} />{" "}
