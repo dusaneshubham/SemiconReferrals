@@ -5,7 +5,8 @@ const candidateInfoSchema = new mongoose.Schema({
 
     candidateId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Candidate'
+        ref: 'Candidate',
+        required: true
     },
 
     gender: {
@@ -68,7 +69,8 @@ const candidateInfoSchema = new mongoose.Schema({
     workingExperience: [{
         organizationName: {
             type: String,
-            default: "None"
+            default: "None",
+            required: true
         },
         designation: {
             type: String
