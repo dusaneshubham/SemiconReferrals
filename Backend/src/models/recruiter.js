@@ -8,11 +8,6 @@ const recruiterSchema = new mongoose.Schema({
         min: 3
     },
 
-    companyID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
-    },
-
     email: {
         type: String,
         required: true,

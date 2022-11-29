@@ -29,6 +29,7 @@ const Dashboard = () => {
   const [open, setOpen] = React.useState(false);
   const sideNavbar = {
     dashboard: "Dashboard",
+    jobpost: "Post a Job",
     viewprofile: "View Profile",
     updateprofile: "Update Profile",
     savedcandidates: "Saved Candidates",

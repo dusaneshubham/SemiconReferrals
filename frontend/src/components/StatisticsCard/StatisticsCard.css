@@ -1,0 +1,21 @@
+.dashboard-card {
+    width: 400px;
+    background-color: #32ac79;
+    padding: 20px;
+    border-radius: 8px;
+    color: #FFFFFF;
+    margin: 15px 30px 15px 0 !important;
+}
+
+.dashboard-card h2 {
+    margin-bottom: 30px !important;
+}
+
+.dashboard-card-link {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+.dashboard-card-link:hover {
+    color: var(--light-pink);
+}
