@@ -19,7 +19,7 @@ const candidateInfoSchema = new mongoose.Schema({
 
     profileImage: {
         type: String
-            // TODO : put default image
+        // TODO : put default image
     },
 
     about: {
@@ -45,23 +45,26 @@ const candidateInfoSchema = new mongoose.Schema({
     },
 
     education: [{
-        degree: {
+        title: {
+            type: String,
+            required: true
+        },
+        instituteName: {
             type: String,
         },
-        passingYear: {
-            type: String,
+        startDate: {
+            type: Date,
+        },
+        endDate: {
+            type: Date,
         },
         CGPA: {
             type: String,
-            default: 0
         },
-        institute: {
-            type: String,
+        grades: {
+            type: String
         },
-        university: {
-            type: String,
-        },
-        branch: {
+        description: {
             type: String,
         }
     }],
@@ -69,7 +72,6 @@ const candidateInfoSchema = new mongoose.Schema({
     workingExperience: [{
         organizationName: {
             type: String,
-            default: "None",
             required: true
         },
         designation: {
