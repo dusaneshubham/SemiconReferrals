@@ -138,7 +138,7 @@ const uploadMyResume = asyncHandler(async (req, res) => {
 });
 
 const getAllMyResumes = asyncHandler(async (req, res) => {
-    let data = await CandidateInfo.find({ candidateId: "637f0fb8886fad29ca1fd0e7" });
+    let data = await CandidateInfo.findOne({ candidateId: "637f0fb8886fad29ca1fd0e7" });
     res.json({ images: data[0].resumes, success: true });
 })
 

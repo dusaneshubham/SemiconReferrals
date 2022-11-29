@@ -45,7 +45,9 @@ const UpdateProfile = () => {
         .post("http://localhost:5000/recruiter/getRecruiterDetails", { token })
         .then((res) => res.data)
         .then(async (res) => {
-          await setUserDetails({ ...userDetails, ...res });
+          await setUserDetails((data) => {
+            return { ...data, ...res }
+          });
           setLoading(false);
         })
         .catch((err) => {
