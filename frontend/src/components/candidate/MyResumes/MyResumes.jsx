@@ -83,7 +83,7 @@ const MyResumes = () => {
       .catch(() => {});
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     getResumes();
     console.log(resumeData);
   }, []);
@@ -134,8 +134,9 @@ const MyResumes = () => {
                       variant="contained"
                       color="success"
                       style={{ margin: "10px" }}
+                      startIcon={<DownloadIcon />}
                     >
-                      <DownloadIcon style={{ marginRight: "5px" }} /> Download
+                      Download
                     </Button>
                   </StyledTableCell>
                   <StyledTableCell>
@@ -144,8 +145,9 @@ const MyResumes = () => {
                       color="error"
                       onClick={handleClickOpen}
                       style={{ margin: "10px" }}
+                      startIcon={<DeleteIcon />}
                     >
-                      <DeleteIcon style={{ marginRight: "5px" }} /> Delete
+                      Delete
                     </Button>
                   </StyledTableCell>
                 </StyledTableRow>

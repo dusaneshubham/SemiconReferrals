@@ -20,6 +20,11 @@ import CandidateSavedJobs from "./components/candidate/SavedJobs/SavedJobs";
 import CandidateFollowedEmployers from "./components/candidate/FollowedEmployers/FollowedEmployers";
 import ForgetPassword from "./pages/ForgetPassword";
 
+import EmployerDashboard from "./pages/employer/Dashboard/Dashboard";
+import EmployerDashboardComponent from "./components/employer/Dashboard/Dashboard";
+import EmployerSavedCandidates from "./components/employer/SavedCandidates/SavedCandidates";
+import EmployerFollowers from "./components/employer/Followers/Followers";
+
 function App() {
   return (
     <BrowserRouter>
@@ -27,13 +32,11 @@ function App() {
         <Route exact path="/" element={<Home />} />{" "}
         <Route exact path="/jobslisting" element={<JobsListing />} />{" "}
         <Route exact path="/jobdescription" element={<JobDescription />} />{" "}
-
         <Route exact path="/admin" element={<AdminDashboard />}>
           <Route path="dashboard" element={<AdminDashboardComponent />} />{" "}
           <Route path="pendingapplications" element={<PendingApplications />} />{" "}
           <Route path="pendingpost" element={<PendingPost />} />{" "}
         </Route>{" "}
-
         <Route exact path="/candidate/profile" element={<CandidateProfile />} />{" "}
         <Route exact path="/candidate" element={<CandidateDashboard />}>
           <Route path="dashboard" element={<CandidateDashboardComponent />} />{" "}
@@ -42,19 +45,24 @@ function App() {
           <Route path="myresumes" element={<CandidateResumes />} />{" "}
           <Route path="appliedjobs" element={<CandidateAppliedJobs />} />{" "}
           <Route path="savedjobs" element={<CandidateSavedJobs />} />{" "}
-          <Route path="followedemployers" element={<CandidateFollowedEmployers />} />{" "}
+          <Route
+            path="followedemployers"
+            element={<CandidateFollowedEmployers />}
+          />{" "}
         </Route>{" "}
 
+        <Route exact path="/employer" element={<EmployerDashboard />}>
+          <Route path="dashboard" element={<EmployerDashboardComponent />} />{" "}
+          <Route path="savedcandidates" element={<EmployerSavedCandidates />} />{" "}
+          <Route path="followers" element={<EmployerFollowers />} />{" "}
+        </Route>
+        
         <Route
           exact
           path="/email-verification"
           element={<EmailVerification />}
         />
-        <Route
-          exact
-          path="/forget-pass"
-          element={<ForgetPassword />}
-        />
+        <Route exact path="/forget-pass" element={<ForgetPassword />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>
