@@ -123,7 +123,7 @@ const uploadMyResume = asyncHandler(async (req, res) => {
         });
     } else {
         myResumes.resumes.push(req.file.path);
-        await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: myResumes.resumes }, { new: true }).then((err, data) => {
+        await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: myResumes.resumes }, { new: true }).then((err) => {
             if (err) {
                 console.log(err);
                 res.json({ message: "Resume has not been uploaded due to server error!", success: false })
@@ -204,6 +204,7 @@ const getCandidateDetails = asyncHandler(async (req, res) => {
                 workingExperience: candidateInfo.workingExperience,
                 education: candidateInfo.education,
                 resumes: candidateInfo.resumes,
+                linkedIn: candidateInfo.linkedIn,
                 success: true
             });
         } else {
@@ -212,6 +213,7 @@ const getCandidateDetails = asyncHandler(async (req, res) => {
                 email: candidateData.email,
                 name: candidateData.name,
                 contactNumber: candidateData.contactNumber,
+                DOB: candidateInfo.DOB,
                 success: true
             });
         }
@@ -220,9 +222,7 @@ const getCandidateDetails = asyncHandler(async (req, res) => {
     }
 })
 
-// TODO : education, currentWorkingExperience contains object
 const updateProfile = asyncHandler(async (req, res) => {
-
     // candidate information details
     const {
         name,
@@ -236,6 +236,7 @@ const updateProfile = asyncHandler(async (req, res) => {
         isOpenToWork,
         noticePeriod,
         currentJobLocation,
+        linkedIn
     } = req.body;
 
     // candidate main details
@@ -259,6 +260,7 @@ const updateProfile = asyncHandler(async (req, res) => {
         isOpenToWork: isOpenToWork,
         noticePeriod: noticePeriod,
         currentJobLocation: currentJobLocation,
+        linkedIn: linkedIn
     }
 
     const result = await Candidate.findOneAndUpdate({ _id: user._id }, candidateUpdatedData, { new: true });
@@ -269,7 +271,7 @@ const updateProfile = asyncHandler(async (req, res) => {
             // for old user
             const result1 = await CandidateInfo.updateOne({ candidateId: user._id }, candidateInfoUpdatedData, { new: true });
             if (result1) {
-                res.json({ message: "Successfully update profile", success: true, data: { ...candidateInfoUpdatedData, ...candidateUpdatedData } });
+                res.json({ message: "Successfully update profile", success: true });
             } else {
                 res.json({ message: "Somthing went wrong during update the profile", success: false });
             }
@@ -279,7 +281,7 @@ const updateProfile = asyncHandler(async (req, res) => {
             await newInfo.save()
                 .then((data, err) => {
                     if (data) {
-                        res.json({ message: "Successfully update profile", success: true, data: { ...candidateInfoUpdatedData, ...candidateUpdatedData } });
+                        res.json({ message: "Successfully update profile!!", success: true });
                     } else {
                         console.log(err);
                         res.json({ message: "Somthing went wrong during update the profile", success: false });
@@ -290,6 +292,74 @@ const updateProfile = asyncHandler(async (req, res) => {
         }
     } else {
         res.json({ message: "Somthing went wrong during update the profile", success: false });
+    }
+});
+
+const updateWorkingExperience = asyncHandler(async (req, res) => {
+    const { currentWorkingExperience } = req.body;
+    const user = req.user;
+    await CandidateInfo.findOneAndUpdate({ candidateID: user._id }, { workingExperience: currentWorkingExperience }, { new: true })
+        .then((data, err) => {
+            if (data) {
+                // console.log("data", data);
+                res.json({ message: "Successfully update profile!!", success: true });
+            } else {
+                console.log("err", err);
+                res.json({ message: "Job experience has not been uploaded due to server error!", success: false });
+            }
+        }).catch((err) => {
+            console.log(err);
+            res.json({ message: "Experience has not been uploaded due to server error!", success: false });
+        });
+});
+
+const updateEducationDetails = asyncHandler(async (req, res) => {
+    const { educationDetails } = req.body;
+    const user = req.user;
+
+    if (educationDetails) {
+        await CandidateInfo.findOneAndUpdate({ candidateID: user._id }, { education: educationDetails }, { new: true })
+            .then((data, err) => {
+                if (data) {
+                    // console.log("data", data);
+                    res.json({ message: "Successfully update profile!!", success: true });
+                } else {
+                    console.log("err", err);
+                    res.json({ message: "Educational details has not been uploaded due to server error!", success: false });
+                }
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Experience has not been uploaded due to server error!", success: false });
+            });
+    } else {
+        res.json({ message: "Invalid request!!", success: false });
+    }
+});
+
+const changePassword = asyncHandler(async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+    const user = req.user;
+
+    if (!oldPassword || oldPassword === "" || !newPassword || newPassword === "") {
+        res.json({ message: "Both field are required!!", success: false });
+    } else {
+        let result = await Candidate.findOne({ _id: user._id });
+        if (result) {
+            const compare = await bcrypt.compare(oldPassword, user.password);
+            if (compare) {
+                const hashPassword = await bcrypt.hash(newPassword, 10);
+                result = await Candidate.updateOne({ _id: user._id }, { password: hashPassword }, { new: true });
+                if (result) {
+                    res.json({ message: "Successfully update your password!", success: true });
+                } else {
+                    res.json({ message: "Something went wrong during password update!", success: false });
+                }
+            } else {
+                res.json({ message: "Your password is wrong!", success: false });
+            }
+        } else {
+            res.json({ message: "Candidate not found!!", success: false });
+        }
     }
 });
 
@@ -317,5 +387,8 @@ module.exports = {
     getAllMyResumes,
     downloadResume,
     deleteResume,
+    updateWorkingExperience,
+    updateEducationDetails,
+    changePassword,
     getCandidateDetails
 };

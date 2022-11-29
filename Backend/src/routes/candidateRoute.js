@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerCandidate, loginCandidate, logoutCandidate, applyForJob, withdrawApplication, getApplicationStatus, updateProfile, updatePassword, uploadMyResume, getAllMyResumes, getCandidateDetails } = require('../controllers/candidateController');
+const { registerCandidate, loginCandidate, logoutCandidate, applyForJob, withdrawApplication, getApplicationStatus, updateProfile, updatePassword, uploadMyResume, getAllMyResumes, getCandidateDetails, updateWorkingExperience, updateEducationDetails, changePassword } = require('../controllers/candidateController');
 const uploadProfileImage = require('../middleware/profileImageUpload');
 const uploadResume = require('../middleware/resumeUpload');
 const verifyToken = require('../middleware/verifyToken');
@@ -16,6 +16,9 @@ router.get("/getAllMyResumes", getAllMyResumes);
 router.delete("/withdrawApplication", withdrawApplication);
 // router.post("/updateProfile", uploadProfileImage.array('profileImage'), verifyToken, updateProfile);
 router.post("/updateProfile", verifyToken, updateProfile);
+router.post("/updateWorkingExperience", verifyToken, updateWorkingExperience);
+router.post("/updateEducationDetails", verifyToken, updateEducationDetails);
+router.post("/changePassword", verifyToken, changePassword);
 router.post("/getCandidateDetails", verifyToken, getCandidateDetails);
 router.post("/getapplicationstatus", getApplicationStatus);
 

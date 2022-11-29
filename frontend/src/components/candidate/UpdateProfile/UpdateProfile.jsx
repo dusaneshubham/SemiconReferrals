@@ -2,19 +2,28 @@ import React from "react";
 import "./UpdateProfile.css";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { IconButton, OutlinedInput, InputAdornment, FormControl, Button, Snackbar, Slide } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import axios from "axios";
-import { useState } from "react";
-import { useEffect } from "react";
-import { Button, Snackbar, Slide } from '@mui/material';
+import { useState, useEffect } from "react";
 import ReactLoading from 'react-loading';
 import MuiAlert from '@mui/material/Alert';
 import JobExperience from "./JobExperience";
+import EducationDetails from "./EducationDetails";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const UpdateProfile = () => {
+
+    // password
+    const [passwordData, setPasswordData] = useState({
+        oldPassword: "",
+        newPassword: ""
+    });
+    const [showSignUpPassword, setShowSignUpPassword] = useState(false);
+    const [showSignUpConfirmPassword, setShowSignUpConfirmPassword] = useState(false);
 
     // alert
     const [alert, setAlert] = useState({});
@@ -39,7 +48,7 @@ const UpdateProfile = () => {
         education: [],
         workingExperience: [],
         resumes: [],
-        linkedin: "",
+        linkedIn: "",
     });
 
     useEffect(() => {
@@ -50,7 +59,7 @@ const UpdateProfile = () => {
                 .post("http://localhost:5000/candidate/getCandidateDetails", { token })
                 .then((res) => res.data)
                 .then(async (res) => {
-                    await setUserDetails({ ...userDetails, ...res });
+                    await setUserDetails((data) => { return { ...data, ...res } });
                     setLoading(false);
                 })
                 .catch((err) => {
@@ -63,10 +72,22 @@ const UpdateProfile = () => {
         }
     }, []);
 
+    // alert functions
+    const Transition = (props) => {
+        return <Slide {...props} direction="down" />;
+    }
+
+    const handleClose = (_, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setAlert({});
+    }
+
+    let token = localStorage.getItem("token");
+
     // update data
     const updateCandidateProfile = () => {
-        let token = localStorage.getItem("token");
-        console.log(userDetails.DOB);
         if (token) {
             axios.post("http://localhost:5000/candidate/updateProfile", { ...userDetails, token: token })
                 .then((response) => response.data)
@@ -86,15 +107,25 @@ const UpdateProfile = () => {
         }
     };
 
-    const Transition = (props) => {
-        return <Slide {...props} direction="down" />;
-    }
-
-    const handleClose = (_, reason) => {
-        if (reason === 'clickaway') {
-            return;
+    const changePassword = async () => {
+        if (passwordData.oldPassword === "" || passwordData.newPassword === "") {
+            setAlert({ error: "Both field are require!!" });
+        } else {
+            await axios.post("http://localhost:5000/candidate/changePassword", { token: token, ...passwordData })
+                .then((res) => res.data)
+                .then((res) => {
+                    if (res.success) {
+                        setAlert({ success: res.message });
+                        setPasswordData({ oldPassword: '', newPassword: '' });
+                    } else {
+                        setAlert({ error: res.message });
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                    setAlert({ error: "Something went wrong with server!" });
+                });
         }
-        setAlert({});
     }
 
     if (loading) {
@@ -141,7 +172,7 @@ const UpdateProfile = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        defaultValue={userDetails.name}
+                                        value={userDetails.name}
                                         onChange={(e) =>
                                             setUserDetails({ ...userDetails, name: e.target.value })
                                         }
@@ -157,7 +188,7 @@ const UpdateProfile = () => {
                                     </label>
                                     <input
                                         type="email"
-                                        defaultValue={userDetails.email}
+                                        value={userDetails.email}
                                         onChange={(e) =>
                                             setUserDetails({ ...userDetails, email: e.target.value })
                                         }
@@ -194,7 +225,7 @@ const UpdateProfile = () => {
                                     </label>
                                     <input
                                         type="date"
-                                        defaultValue={userDetails.DOB.split('T')[0]}
+                                        value={userDetails.DOB.split('T')[0]}
                                         onChange={(e) =>
                                             setUserDetails({ ...userDetails, DOB: e.target.value })
                                         }
@@ -271,7 +302,7 @@ const UpdateProfile = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        defaultValue={userDetails.contactNumber}
+                                        value={userDetails.contactNumber}
                                         onChange={(e) =>
                                             setUserDetails({
                                                 ...userDetails,
@@ -291,7 +322,7 @@ const UpdateProfile = () => {
                                     <CKEditor
                                         editor={ClassicEditor}
                                         data={userDetails.about}
-                                        onChange={(e, editor) => {
+                                        onChange={(_, editor) => {
                                             const data = editor.getData();
                                             // console.log({ e, editor, data });
                                             setUserDetails({
@@ -332,7 +363,7 @@ const UpdateProfile = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        defaultValue={userDetails.desiredCitiesToWork}
+                                        value={userDetails.desiredCitiesToWork}
                                         onChange={(e) =>
                                             setUserDetails({
                                                 ...userDetails,
@@ -397,7 +428,7 @@ const UpdateProfile = () => {
                                     </label>
                                     <input
                                         type="text"
-                                        defaultValue={userDetails.currentJobLocation}
+                                        value={userDetails.currentJobLocation}
                                         onChange={(e) =>
                                             setUserDetails({
                                                 ...userDetails,
@@ -429,7 +460,132 @@ const UpdateProfile = () => {
                     <div className="col-md-8 p-4 bg-white">
                         <JobExperience
                             data={userDetails.workingExperience}
+                            alert={setAlert}
                         />
+                    </div>
+
+                    {/*--------------------- Educational Details ---------------------*/}
+                    <div className="col-md-8 p-4 bg-white">
+                        <EducationDetails
+                            data={userDetails.education}
+                            alert={setAlert}
+                        />
+                    </div>
+
+                    {/*--------------------- Social link ---------------------*/}
+                    <div className="col-md-8 p-4 bg-white">
+                        <div style={{ margin: "10px 0" }}>
+                            <h4>Social link</h4>
+                            <div className="row g-3 p-4 bg-light">
+
+
+                                {/*--------------------- LinkedIn link ---------------------*/}
+                                <div className="col-md-12">
+                                    <label htmlFor="linkedin-link" className="form-label">
+                                        LinkedIn
+                                    </label>
+                                    <input
+                                        type="url"
+                                        value={userDetails.linkedIn}
+                                        onChange={(e) => {
+                                            setUserDetails({
+                                                ...userDetails,
+                                                linkedIn: e.target.value,
+                                            })
+                                        }}
+                                        className="form-control"
+                                        id="linkedin-link"
+                                    />
+                                </div>
+
+                                {/*--------------------- Submit Button ---------------------*/}
+                                <div className="col-12">
+                                    <Button
+                                        variant="contained"
+                                        type="submit"
+                                        className="start-hiring-btn"
+                                        style={{ float: "right", margin: "15px 0" }}
+                                        onClick={updateCandidateProfile}
+                                    >
+                                        Save Profile Link
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/*--------------------- Change password ---------------------*/}
+                    <div className="col-md-8 p-4 bg-white">
+                        <div style={{ margin: "10px 0" }}>
+                            <h4>Change Password</h4>
+                            <div className="row g-3 p-4 bg-light">
+                                {/*--------------------- Old password ---------------------*/}
+                                <div className="col-md-6">
+                                    <FormControl sx={{ m: 1, width: "99%" }} variant="outlined">
+                                        <label htmlFor="linkedin-link" className="form-label">
+                                            Old Password
+                                        </label>
+                                        <OutlinedInput
+                                            id="signup-password"
+                                            type={showSignUpPassword ? 'text' : 'password'}
+                                            value={passwordData.oldPassword}
+                                            onChange={(e) => setPasswordData({ ...passwordData, oldPassword: e.target.value })}
+                                            endAdornment={
+                                                <InputAdornment position="end">
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={() => setShowSignUpPassword(!showSignUpPassword)}
+                                                        edge="end"
+                                                    >
+                                                        {showSignUpPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            }
+                                        />
+                                    </FormControl>
+
+                                </div>
+
+                                {/*--------------------- New password ---------------------*/}
+                                <div className="col-md-6">
+                                    <FormControl sx={{ m: 1, width: "99%" }} variant="outlined">
+                                        <label htmlFor="linkedin-link" className="form-label">
+                                            New Password
+                                        </label>
+                                        <OutlinedInput
+                                            id="signup-confirm-password"
+                                            type={showSignUpConfirmPassword ? 'text' : 'password'}
+                                            value={passwordData.newPassword}
+                                            onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                                            endAdornment={
+                                                < InputAdornment position="end" >
+                                                    <IconButton
+                                                        aria-label="toggle password visibility"
+                                                        onClick={() => setShowSignUpConfirmPassword(!showSignUpConfirmPassword)}
+                                                        edge="end"
+                                                    >
+                                                        {showSignUpConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                                    </IconButton>
+                                                </InputAdornment>
+                                            }
+                                        />
+                                    </FormControl>
+                                </div>
+
+                                {/*--------------------- Submit ---------------------*/}
+                                <div className="col-12">
+                                    <Button
+                                        variant="contained"
+                                        type="submit"
+                                        className="start-hiring-btn"
+                                        style={{ float: "right", margin: "15px 0" }}
+                                        onClick={changePassword}
+                                    >
+                                        Update password
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div >
             </>

@@ -4,6 +4,7 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
+import axios from 'axios';
 
 const JobExperience = (prop) => {
 
@@ -30,17 +31,38 @@ const JobExperience = (prop) => {
             description: "",
             isCurrentlyWorking: ""
         }]);
-        console.log(jobExperience);
     }
 
     const removeExperience = async (index) => {
-        console.log(index);
         await setJobExperience((jobExperienceData) => jobExperienceData.filter((_, dataIndex) => dataIndex !== index));
-        console.log(jobExperience);
     }
 
-    const updateJobExperience = () => {
+    const updateJobExperience = async () => {
+        let token = localStorage.getItem("token");
+        let flag = true;
+        jobExperience.forEach((element) => {
+            if (element.organizationName === "") {
+                flag = false;
+                return;
+            }
+        });
 
+        if (flag) {
+            await axios.post("http://localhost:5000/candidate/updateWorkingExperience", { token: token, currentWorkingExperience: jobExperience })
+                .then((data) => data.data)
+                .then((data) => {
+                    if (data.success) {
+                        prop.alert({ success: data.message });
+                    } else {
+                        prop.alert({ error: data.message });
+                    }
+                }).catch((err) => {
+                    console.log(err);
+                    prop.alert({ error: "Something went wrong with server!" });
+                });
+        } else {
+            prop.alert({ error: "Organization field are required in job experience!" });
+        }
     }
 
     return (
@@ -53,49 +75,52 @@ const JobExperience = (prop) => {
                             {index !== 0 && <h5>Professional Additional Field {index}</h5>}
                             {/*--------------------- Organization name ---------------------*/}
                             <div className="col-md-6">
-                                <label htmlFor="organization-name" className="form-label">
-                                    Organization Name
+                                <label htmlFor={"organization-name" + index} className="form-label">
+                                    Organization Name *
                                 </label>
                                 <input
                                     type="text"
-                                    defaultValue={data.organizationName}
-                                    onChange={(e) =>
-                                        setJobExperience({ ...jobExperience[index], organizationName: e.target.value })
-                                    }
+                                    value={data.organizationName}
+                                    onChange={(e) => {
+                                        data.organizationName = e.target.value;
+                                        setJobExperience([...jobExperience]);
+                                    }}
                                     className="form-control"
-                                    id="organization-name"
+                                    id={"organization-name" + index}
                                 />
                             </div>
 
                             {/*--------------------- Your role ---------------------*/}
                             <div className="col-md-6">
-                                <label htmlFor="role" className="form-label">
+                                <label htmlFor={"role" + index} className="form-label">
                                     Your role
                                 </label>
                                 <input
                                     type="text"
-                                    defaultValue={data.designation}
-                                    onChange={(e) =>
-                                        setJobExperience({ ...jobExperience[index], designation: e.target.value })
-                                    }
+                                    value={data.designation}
+                                    onChange={(e) => {
+                                        data.designation = e.target.value;
+                                        setJobExperience([...jobExperience]);
+                                    }}
                                     className="form-control"
-                                    id="role"
+                                    id={"role" + index}
                                 />
                             </div>
 
                             {/*--------------------- Job start date ---------------------*/}
                             <div className="col-md-6">
-                                <label htmlFor="job-start-date" className="form-label">
+                                <label htmlFor={"job-start-date" + index} className="form-label">
                                     Job start date
                                 </label>
                                 <input
                                     type="date"
-                                    defaultValue={data.jobStartDate && data.jobStartDate.split('T')[index]}
-                                    onChange={(e) =>
-                                        setJobExperience({ ...jobExperience[index], jobStartDate: e.target.value })
-                                    }
+                                    value={data.jobStartDate ? data.jobStartDate.split('T')[0] : ''}
+                                    onChange={(e) => {
+                                        data.jobStartDate = e.target.value;
+                                        setJobExperience([...jobExperience]);
+                                    }}
                                     className="form-control"
-                                    id="job-start-date"
+                                    id={"job-start-date" + index}
                                 />
                             </div>
 
@@ -105,40 +130,56 @@ const JobExperience = (prop) => {
                                     Job end date
                                 </label>
                                 <input
-                                    type="date"
-                                    defaultValue={data.jobEndDate && data.jobEndDate.split('T')[0]}
-                                    onChange={(e) =>
-                                        setJobExperience({ ...jobExperience[index], jobEndDate: e.target.value })
-                                    }
+                                    type={data.isCurrentlyWorking ? 'text' : 'date'}
+                                    disabled={data.isCurrentlyWorking ? 'disabled' : false}
+                                    value={data.jobEndDate ? data.jobEndDate.split('T')[0] : ''}
+                                    onChange={(e) => {
+                                        if (e.target.value) {
+                                            data.jobEndDate = e.target.value;
+                                        } else {
+                                            data.jobEndDate = "";
+                                        }
+                                        setJobExperience([...jobExperience]);
+                                    }}
                                     className="form-control"
                                     id={"job-end-date" + index}
                                 />
-                                <input type="checkbox" className="m-1" defaultValue={jobExperience[index].isCurrentlyWorking} id="check-box" onChange={(e) => {
-                                    if (e.target.checked) {
-                                        $('#job-end-date' + index).attr("type", "text");
-                                        $('#job-end-date' + index).prop("disabled", true);
-                                    } else {
-                                        $('#job-end-date' + index).attr("type", "date");
-                                        $('#job-end-date' + index).prop("disabled", false);
-                                    }
-                                }} />
+                                <input type="checkbox"
+                                    className="m-1"
+                                    checked={data.isCurrentlyWorking}
+                                    id="check-box" onChange={(e) => {
+                                        data.isCurrentlyWorking = e.target.checked;
+                                        setJobExperience([...jobExperience]);
+                                        if (e.target.checked) {
+                                            data.jobEndDate = "";
+                                            setJobExperience([...jobExperience]);
+                                            $('#job-end-date' + index).attr("type", "text");
+                                            $('#job-end-date' + index).prop("disabled", true);
+                                        } else {
+                                            $('#job-end-date' + index).attr("type", "date");
+                                            $('#job-end-date' + index).prop("disabled", false);
+                                        }
+                                    }} />
                                 Are You Currently Working There?
                             </div>
 
                             {/*--------------------- Description ---------------------*/}
                             <div>
-                                <label htmlFor="contact-number" className="form-label">
+                                <label htmlFor={"contact-number" + index} className="form-label">
                                     Description
                                 </label>
                                 <CKEditor
                                     editor={ClassicEditor}
                                     data={data.description}
                                     onChange={(_, editor) => {
-                                        const data = editor.getData();
-                                        setJobExperience({ ...jobExperience[0], description: data })
+                                        const descData = editor.getData();
+                                        data.description = descData;
+                                        setJobExperience([...jobExperience]);
                                     }}
                                 />
                             </div>
+
+                            {/*--------------------- Remove button ---------------------*/}
                             {index !== 0 &&
                                 <div className="remove-btn">
                                     <Button
