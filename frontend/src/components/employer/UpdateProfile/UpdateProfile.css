@@ -1,0 +1,9 @@
+h4 {
+    margin: 15px 0 30px 0;
+    color: var(--main-orange);
+}
+
+input,
+select {
+    margin: 6px 0 10px 0;
+}

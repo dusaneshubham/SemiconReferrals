@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const Recruiter = require('../models/recruiter');
+const RecruiterInfo = require('../models/recruiterInfo');
 const bcrypt = require('bcrypt');
 const { isEmail } = require('validator');
 
@@ -10,7 +11,7 @@ const generateToken = (user) => {
 }
 
 // register api
-const registerRecruiter = asyncHandler(async (req, res) => {
+const registerRecruiter = asyncHandler(async(req, res) => {
     const { name, email, contactNumber, password } = req.body;
 
     // Validations
@@ -37,7 +38,7 @@ const registerRecruiter = asyncHandler(async (req, res) => {
         password: hashPassword
     });
 
-    newRecruiter.save(async (err, data) => {
+    newRecruiter.save(async(err, data) => {
         if (err) {
             console.log(err);
             return res.json({ message: "Error in registering the recruiter", success: false });
@@ -51,7 +52,7 @@ const registerRecruiter = asyncHandler(async (req, res) => {
 });
 
 // login recruiter
-const loginRecruiter = asyncHandler(async (req, res) => {
+const loginRecruiter = asyncHandler(async(req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -76,7 +77,7 @@ const loginRecruiter = asyncHandler(async (req, res) => {
 });
 
 // update password
-const updatePassword = asyncHandler(async (req, res) => {
+const updatePassword = asyncHandler(async(req, res) => {
     const { email, password, confirmPassword } = req.body;
 
     if (!email || !password || !confirmPassword) {
@@ -97,8 +98,123 @@ const updatePassword = asyncHandler(async (req, res) => {
     }
 });
 
+const getRecruiterDetails = asyncHandler(async(req, res) => {
+    let user = req.user;
+    let recruiterData = await Recruiter.findOne({ _id: user._id });
+
+    if (recruiterData) {
+        let recruiterInfo = await RecruiterInfo.findOne({ recruiterId: user._id });
+        if (recruiterInfo) {
+            res.json({
+                name: recruiterData.name,
+                companyName: recruiterInfo.companyName,
+                email: recruiterData.email,
+                contactNumber: recruiterData.contactNumber,
+                companyWebsite: recruiterInfo.companyWebsite,
+                linkedin: recruiterInfo.linkedin,
+                totalExperience: recruiterInfo.totalExperience,
+                teamName: recruiterInfo.teamName,
+                teamSize: recruiterInfo.teamSize,
+                location: recruiterInfo.location,
+                designation: recruiterInfo.designation,
+                currentExperience: recruiterInfo.experienceInCurrentOrganization,
+                teamWorkDescription: recruiterInfo.teamWorkDescription,
+                success: true
+            });
+        } else {
+            // for new user
+            res.json({
+                email: recruiterData.email,
+                name: recruiterData.name,
+                contactNumber: recruiterData.contactNumber,
+                success: true
+            });
+        }
+    } else {
+        res.json({ success: false, message: "Cannot get data" });
+    }
+})
+
+const updateProfile = asyncHandler(async(req, res) => {
+    console.log(1);
+    // recruiter information details
+    const {
+        name,
+        companyName,
+        email,
+        contactNumber,
+        companyWebsite,
+        linkedin,
+        totalExperience,
+        teamName,
+        teamSize,
+        location,
+        designation,
+        currentExperience,
+        teamWorkDescription
+    } = req.body;
+
+    // recruiter main details
+    let user = req.user;
+
+    // const profileImage = req.files;
+
+    const recruiterUpdatedData = {
+        name: name,
+        contactNumber: contactNumber,
+    };
+
+    const recruiterInfoUpdatedData = {
+        companyName: companyName,
+        companyWebsite: companyWebsite,
+        linkedin: linkedin,
+        totalExperience: totalExperience,
+        teamName: teamName,
+        teamSize: teamSize,
+        location: location,
+        designation: designation,
+        experienceInCurrentOrganization: currentExperience,
+        teamWorkDescription: teamWorkDescription,
+    }
+
+    console.log(recruiterUpdatedData, recruiterInfoUpdatedData);
+
+    const result = await Recruiter.findOneAndUpdate({ _id: user._id }, recruiterUpdatedData, { new: true });
+
+    if (result) {
+        const response = await RecruiterInfo.findOne({ recruiterId: user._id });
+        if (response) {
+            // for old user
+            const result1 = await RecruiterInfo.updateOne({ recruiterId: user._id }, recruiterInfoUpdatedData, { new: true });
+            if (result1) {
+                res.json({ message: "Successfully update profile", success: true, data: {...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
+            } else {
+                res.json({ message: "Somthing went wrong during update the profile", success: false });
+            }
+        } else {
+            // for new user 
+            const newInfo = new RecruiterInfo({ recruiterId: user._id, ...recruiterInfoUpdatedData });
+            await newInfo.save()
+                .then((data, err) => {
+                    if (data) {
+                        res.json({ message: "Successfully update profile", success: true, data: {...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
+                    } else {
+                        console.log(err);
+                        res.json({ message: "Somthing went wrong during update the profile", success: false });
+                    }
+                }).catch((err) => {
+                    res.json({ message: "Somthing went wrong during update the profile", success: false });
+                });
+        }
+    } else {
+        res.json({ message: "Somthing went wrong during update the profile", success: false });
+    }
+});
+
 module.exports = {
     registerRecruiter,
     loginRecruiter,
-    updatePassword
+    updatePassword,
+    getRecruiterDetails,
+    updateProfile
 }

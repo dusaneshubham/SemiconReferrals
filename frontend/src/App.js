@@ -20,6 +20,13 @@ import CandidateSavedJobs from "./components/candidate/SavedJobs/SavedJobs";
 import CandidateFollowedEmployers from "./components/candidate/FollowedEmployers/FollowedEmployers";
 import ForgetPassword from "./pages/ForgetPassword";
 
+import EmployerDashboard from "./pages/employer/Dashboard/Dashboard";
+import EmployerDashboardComponent from "./components/employer/Dashboard/Dashboard";
+import EmployerSavedCandidates from "./components/employer/SavedCandidates/SavedCandidates";
+import EmployerFollowers from "./components/employer/Followers/Followers";
+import JobPost from "./components/employer/JobPost/JobPost";
+import EmployerUpdateProfile from "./components/employer/UpdateProfile/UpdateProfile";
+
 function App() {
   return (
     <BrowserRouter>
@@ -42,7 +49,18 @@ function App() {
           <Route path="myresumes" element={<CandidateResumes />} />
           <Route path="appliedjobs" element={<CandidateAppliedJobs />} />
           <Route path="savedjobs" element={<CandidateSavedJobs />} />
-          <Route path="followedemployers" element={<CandidateFollowedEmployers />} />
+          <Route
+            path="followedemployers"
+            element={<CandidateFollowedEmployers />}
+          />
+        </Route>
+
+        <Route exact path="/employer" element={<EmployerDashboard />}>
+          <Route path="dashboard" element={<EmployerDashboardComponent />} />
+          <Route path="jobpost" element={<JobPost />} />
+          <Route path="savedcandidates" element={<EmployerSavedCandidates />} />
+          <Route path="updateprofile" element={<EmployerUpdateProfile />} />
+          <Route path="followers" element={<EmployerFollowers />} />
         </Route>
 
         <Route
@@ -50,11 +68,7 @@ function App() {
           path="/email-verification"
           element={<EmailVerification />}
         />
-        <Route
-          exact
-          path="/forget-pass"
-          element={<ForgetPassword />}
-        />
+        <Route exact path="/forget-pass" element={<ForgetPassword />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>

@@ -1,8 +1,7 @@
 import React from "react";
-// import { TextField } from "@mui/material";
 
 const Profile = () => {
-  return (
+  return (  
     <>
       <div className="container">
         <div className="row">
@@ -79,7 +78,7 @@ const Profile = () => {
               padding: "20px",
             }}
           >
-            Contact Shubham Candidate Sample
+            Contact Shubham Dusane
             <hr />
             <form className="row ">
               <div className="col-md-12">

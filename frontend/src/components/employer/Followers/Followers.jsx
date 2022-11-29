@@ -18,7 +18,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import { image2 } from "../../../images/images";
 
-const FollowedEmployers = () => {
+const Followers = () => {
   const [open, setOpen] = React.useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -51,26 +51,26 @@ const FollowedEmployers = () => {
     },
   }));
 
-  function createData(companyName, employerName, openPositions, remove) {
+  function createData(location, employerName, followedOn, remove) {
     return {
-      companyName,
+      location,
       employerName,
-      openPositions,
+      followedOn,
       remove,
     };
   }
 
-  const rows = [createData("Google", "Shubham Dusane", 0)];
+  const rows = [createData("Ahmedabad", "Shubham Dusane", "23 Jan, 2021")];
 
   return (
     <>
-      <h4>Your Followed Employers</h4>
+      <h4>Your Followers</h4>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Company Name</StyledTableCell>
-              <StyledTableCell>Open Positions</StyledTableCell>
+              <StyledTableCell>Candidate</StyledTableCell>
+              <StyledTableCell>Followed On</StyledTableCell>
               <StyledTableCell>Action</StyledTableCell>
             </TableRow>
           </TableHead>
@@ -84,13 +84,11 @@ const FollowedEmployers = () => {
                     </div>
                     <div>
                       <div>{row.employerName}</div>
-                      <div style={{ color: "var(--text)" }}>
-                        {row.companyName}
-                      </div>
+                      <div style={{ color: "var(--text)" }}>{row.location}</div>
                     </div>
                   </div>
                 </StyledTableCell>
-                <StyledTableCell>{row.openPositions}</StyledTableCell>
+                <StyledTableCell>{row.followedOn}</StyledTableCell>
                 <StyledTableCell>
                   <Button
                     variant="contained"
@@ -116,7 +114,7 @@ const FollowedEmployers = () => {
       >
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to Remove this Employer from your followings?
+            Are you sure you want to Remove this candidate from your followings?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -132,4 +130,4 @@ const FollowedEmployers = () => {
   );
 };
 
-export default FollowedEmployers;
+export default Followers;

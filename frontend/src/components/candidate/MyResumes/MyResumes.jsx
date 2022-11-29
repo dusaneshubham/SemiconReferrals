@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import {
@@ -64,8 +64,8 @@ const MyResumes = () => {
 
   var rows = [];
   let [resumeData, setResumeData] = useState([]);
-
-  // const getResumes = () => {
+  
+  useEffect(() => {
     axios
       .get("http://localhost:5000/candidate/getAllMyResumes")
       .then((response) => {
@@ -81,12 +81,7 @@ const MyResumes = () => {
         // console.log(rows[0][1].resumeName);
       })
       .catch(() => { });
-  // };
-
-  // useEffect(()=>{
-  //   getResumes();
-  //   console.log(resumeData);
-  // }, []);
+  }, []);
 
   // const rows = [
   //   createData("Shubham_Dusane.pdf"),
@@ -134,8 +129,9 @@ const MyResumes = () => {
                       variant="contained"
                       color="success"
                       style={{ margin: "10px" }}
+                      startIcon={<DownloadIcon />}
                     >
-                      <DownloadIcon style={{ marginRight: "5px" }} /> Download
+                      Download
                     </Button>
                   </StyledTableCell>
                   <StyledTableCell>
@@ -144,8 +140,9 @@ const MyResumes = () => {
                       color="error"
                       onClick={handleClickOpen}
                       style={{ margin: "10px" }}
+                      startIcon={<DeleteIcon />}
                     >
-                      <DeleteIcon style={{ marginRight: "5px" }} /> Delete
+                      Delete
                     </Button>
                   </StyledTableCell>
                 </StyledTableRow>
