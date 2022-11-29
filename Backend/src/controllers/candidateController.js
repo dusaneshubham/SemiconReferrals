@@ -111,7 +111,7 @@ const uploadMyResume = asyncHandler(async (req, res) => {
 
     if (!myResumes) {
         resume = [];
-        resume.push(req.file.path);
+        resume.push({ fileName: req.file.filename, url: 'http://localhost:5000/resumes/' + req.file.filename });
         let data = new CandidateInfo({
             candidateId: user._id,
             resumes: resume
@@ -122,13 +122,12 @@ const uploadMyResume = asyncHandler(async (req, res) => {
             res.json({ message: "Resume has not been uploaded due to server error!", success: false })
         });
     } else {
-        myResumes.resumes.push(req.file.path);
-        await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: myResumes.resumes }, { new: true }).then((err) => {
-            if (err) {
-                console.log(err);
-                res.json({ message: "Resume has not been uploaded due to server error!", success: false })
+        myResumes.resumes.push({ fileName: req.file.filename, url: 'http://localhost:5000/resumes/' + req.file.filename });
+        await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: myResumes.resumes }, { new: true }).then((data) => {
+            if (data) {
+                res.json({ message: "Resume has been uploaded!", success: true, resumes: data.resumes })
             } else {
-                res.json({ message: "Resume has been uploaded!", success: true })
+                res.json({ message: "Resume has not been uploaded due to server error!", success: false })
             }
         }).catch((err) => {
             console.log(err);
@@ -138,16 +137,33 @@ const uploadMyResume = asyncHandler(async (req, res) => {
 });
 
 const getAllMyResumes = asyncHandler(async (req, res) => {
-    let data = await CandidateInfo.findOne({ candidateId: "637f0fb8886fad29ca1fd0e7" });
-    res.json({ images: data[0].resumes, success: true });
-})
-
-const downloadResume = asyncHandler(async (req, res) => {
-
+    const user = req.user;
+    let data = await CandidateInfo.findOne({ candidateId: user._id });
+    if (data) {
+        res.json({ message: "Resumes", resumes: data.resumes, success: true });
+    } else {
+        res.json({ message: "User not found!", success: false });
+    }
 });
 
 const deleteResume = asyncHandler(async (req, res) => {
-
+    const { resumeData } = req.body;
+    const user = req.user;
+    if (resumeData) {
+        await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: resumeData }, { new: true })
+            .then((data) => {
+                if (data) {
+                    res.json({ message: "Successfully delete resume!!", success: true, resumes: data.resumes });
+                } else {
+                    res.json({ message: "Invalid user!!", success: false });
+                }
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Somthing went wrong during delete resume!!", success: false });
+            });
+    } else {
+        res.json({ message: "Invalid request!", success: false });
+    }
 });
 
 const applyForJob = asyncHandler(async (req, res) => {
@@ -384,9 +400,8 @@ module.exports = {
     updateProfile,
     getApplicationStatus,
     uploadMyResume,
-    getAllMyResumes,
-    downloadResume,
     deleteResume,
+    getAllMyResumes,
     updateWorkingExperience,
     updateEducationDetails,
     changePassword,
