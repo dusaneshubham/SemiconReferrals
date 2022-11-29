@@ -12,7 +12,7 @@ const generateToken = (user) => {
 }
 
 // Register Candidate
-const registerCandidate = asyncHandler(async(req, res) => {
+const registerCandidate = asyncHandler(async (req, res) => {
     const { name, email, password, contactNumber } = req.body;
 
     // Validations
@@ -40,13 +40,12 @@ const registerCandidate = asyncHandler(async(req, res) => {
         password: hashPassword
     });
 
-    newCandidate.save(async(err, data) => {
+    newCandidate.save(async (err, data) => {
         if (err) {
             console.log(err);
             return res.json({ message: "Error in registering the candidate", success: false });
         }
         if (data) {
-            // console.log(data);
             // generating token for signin after registered
             let token = generateToken(data);
             return res.json({ message: "Candidate has been registered successfully", success: true, token: token });
@@ -55,7 +54,7 @@ const registerCandidate = asyncHandler(async(req, res) => {
 });
 
 // Login Candidate
-const loginCandidate = asyncHandler(async(req, res) => {
+const loginCandidate = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -79,7 +78,7 @@ const loginCandidate = asyncHandler(async(req, res) => {
 });
 
 // update password
-const updatePassword = asyncHandler(async(req, res) => {
+const updatePassword = asyncHandler(async (req, res) => {
     const { email, password, confirmPassword } = req.body;
 
     if (!email || !password || !confirmPassword) {
@@ -100,12 +99,12 @@ const updatePassword = asyncHandler(async(req, res) => {
 });
 
 // Logout Candidate
-const logoutCandidate = asyncHandler(async(req, res) => {
+const logoutCandidate = asyncHandler(async (req, res) => {
     res.clearCookie("token");
     res.json({ message: "Logged out", success: true });
 });
 
-const uploadMyResume = asyncHandler(async(req, res) => {
+const uploadMyResume = asyncHandler(async (req, res) => {
     let user = req.user;
     // console.log(user);
     let myResumes = await CandidateInfo.findOne({ candidateId: user._id }).select({ "resumes": 1 });
@@ -138,20 +137,20 @@ const uploadMyResume = asyncHandler(async(req, res) => {
     }
 });
 
-const getAllMyResumes = asyncHandler(async(req, res) => {
+const getAllMyResumes = asyncHandler(async (req, res) => {
     let data = await CandidateInfo.find({ candidateId: "637f0fb8886fad29ca1fd0e7" });
     res.json({ images: data[0].resumes, success: true });
 })
 
-const downloadResume = asyncHandler(async(req, res) => {
+const downloadResume = asyncHandler(async (req, res) => {
 
 });
 
-const deleteResume = asyncHandler(async(req, res) => {
+const deleteResume = asyncHandler(async (req, res) => {
 
 });
 
-const applyForJob = asyncHandler(async(req, res) => {
+const applyForJob = asyncHandler(async (req, res) => {
     const { candidateId, jobId } = req.body;
     let resume = req.files;
 
@@ -170,7 +169,7 @@ const applyForJob = asyncHandler(async(req, res) => {
 
 });
 
-const withdrawApplication = asyncHandler(async(req, res) => {
+const withdrawApplication = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
     const result = await jobApplication.deleteOne({ _id });
@@ -182,35 +181,49 @@ const withdrawApplication = asyncHandler(async(req, res) => {
     }
 });
 
-const getCandidateDetails = asyncHandler(async(req, res) => {
+const getCandidateDetails = asyncHandler(async (req, res) => {
     let user = req.user;
     let candidateData = await Candidate.findOne({ _id: user._id });
-    let candidateInfo = await CandidateInfo.find({ candidateId: user._id });
-    candidateInfo = candidateInfo[0];
-    console.log(candidateData, candidateInfo);
-    if (candidateData && candidateInfo) {
-        res.json({
-            email: candidateData.email,
-            name: candidateData.name,
-            contactNumber: candidateData.contactNumber,
-            DOB: candidateInfo.DOB,
-            gender: candidateInfo.gender,
-            experience: candidateInfo.experience,
-            qualification: candidateInfo.qualification,
-            about: candidateInfo.about,
-            desiredCitiesToWork: candidateInfo.desiredCitiesToWork,
-            isOpenToWork: candidateInfo.isOpenToWork,
-            noticePeriod: candidateInfo.noticePeriod,
-            currentJobLocation: candidateInfo.currentJobLocation,
-            success: true
-        });
+
+    if (candidateData) {
+        let candidateInfo = await CandidateInfo.findOne({ candidateId: user._id });
+        if (candidateInfo) {
+            res.json({
+                email: candidateData.email,
+                name: candidateData.name,
+                contactNumber: candidateData.contactNumber,
+                DOB: candidateInfo.DOB,
+                gender: candidateInfo.gender,
+                experience: candidateInfo.experience,
+                qualification: candidateInfo.qualification,
+                about: candidateInfo.about,
+                desiredCitiesToWork: candidateInfo.desiredCitiesToWork,
+                isOpenToWork: candidateInfo.isOpenToWork,
+                noticePeriod: candidateInfo.noticePeriod,
+                currentJobLocation: candidateInfo.currentJobLocation,
+                workingExperience: candidateInfo.workingExperience,
+                education: candidateInfo.education,
+                resumes: candidateInfo.resumes,
+                success: true
+            });
+        } else {
+            // for new user
+            res.json({
+                email: candidateData.email,
+                name: candidateData.name,
+                contactNumber: candidateData.contactNumber,
+                success: true
+            });
+        }
     } else {
         res.json({ success: false, message: "Cannot get data" });
     }
 })
 
 // TODO : education, currentWorkingExperience contains object
-const updateProfile = asyncHandler(async(req, res) => {
+const updateProfile = asyncHandler(async (req, res) => {
+
+    // candidate information details
     const {
         name,
         contactNumber,
@@ -224,8 +237,12 @@ const updateProfile = asyncHandler(async(req, res) => {
         noticePeriod,
         currentJobLocation,
     } = req.body;
+
+    // candidate main details
     let user = req.user;
+
     // const profileImage = req.files;
+
     const candidateUpdatedData = {
         name: name,
         contactNumber: contactNumber,
@@ -245,15 +262,38 @@ const updateProfile = asyncHandler(async(req, res) => {
     }
 
     const result = await Candidate.findOneAndUpdate({ _id: user._id }, candidateUpdatedData, { new: true });
-    const result1 = await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, candidateInfoUpdatedData, { new: true });
-    if (result && result1) {
-        res.json({ message: "successfully update profile", success: true, data: [...candidateInfoUpdatedData, ...candidateUpdatedData] });
+
+    if (result) {
+        const response = await CandidateInfo.findOne({ candidateId: user._id });
+        if (response) {
+            // for old user
+            const result1 = await CandidateInfo.updateOne({ candidateId: user._id }, candidateInfoUpdatedData, { new: true });
+            if (result1) {
+                res.json({ message: "Successfully update profile", success: true, data: { ...candidateInfoUpdatedData, ...candidateUpdatedData } });
+            } else {
+                res.json({ message: "Somthing went wrong during update the profile", success: false });
+            }
+        } else {
+            // for new user 
+            const newInfo = new CandidateInfo({ candidateId: user._id, ...candidateInfoUpdatedData });
+            await newInfo.save()
+                .then((data, err) => {
+                    if (data) {
+                        res.json({ message: "Successfully update profile", success: true, data: { ...candidateInfoUpdatedData, ...candidateUpdatedData } });
+                    } else {
+                        console.log(err);
+                        res.json({ message: "Somthing went wrong during update the profile", success: false });
+                    }
+                }).catch((err) => {
+                    res.json({ message: "Somthing went wrong during update the profile", success: false });
+                });
+        }
     } else {
         res.json({ message: "Somthing went wrong during update the profile", success: false });
     }
 });
 
-const getApplicationStatus = asyncHandler(async(req, res) => {
+const getApplicationStatus = asyncHandler(async (req, res) => {
     const { _id } = req.body;
     const result = await jobApplication.findOne({ _id });
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import {
@@ -18,7 +18,7 @@ import {
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 const MyResumes = () => {
   const [open, setOpen] = useState(false);
@@ -64,8 +64,8 @@ const MyResumes = () => {
 
   var rows = [];
   let [resumeData, setResumeData] = useState([]);
-
-  const getResumes = () => {
+  
+  useEffect(() => {
     axios
       .get("http://localhost:5000/candidate/getAllMyResumes")
       .then((response) => {
@@ -80,12 +80,7 @@ const MyResumes = () => {
         // console.log(rows[0][0].resumeName);
         // console.log(rows[0][1].resumeName);
       })
-      .catch(() => {});
-  };
-
-  useEffect(() => {
-    getResumes();
-    console.log(resumeData);
+      .catch(() => { });
   }, []);
 
   // const rows = [
@@ -101,8 +96,8 @@ const MyResumes = () => {
     formData.append("token", token);
     axios
       .post("http://localhost:5000/candidate/uploadMyResume", formData)
-      .then(() => {})
-      .catch(() => {});
+      .then(() => { })
+      .catch(() => { });
   };
 
   return (

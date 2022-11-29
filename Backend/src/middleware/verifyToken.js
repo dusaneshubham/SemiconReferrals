@@ -6,7 +6,6 @@ const recruiter = require('../models/recruiter');
 
 const verifyToken = expressAsyncHandler(async(req, res, next) => {
     const { token } = req.body;
-    // console.log("req" + req.body);
 
     if (token) {
         const result = await jwt.verify(token, process.env.SECRETKEY);
