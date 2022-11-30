@@ -182,7 +182,7 @@ const Dashboard = () => {
           ))}
         </List>
       </Drawer>
-      <Box component="main" className="bg-light" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" className="bg-light" sx={{ flexGrow: 1, p: 3, minHeight:"100vh" }}>
         <DrawerHeader />
         <Outlet />
       </Box>

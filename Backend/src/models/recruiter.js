@@ -34,4 +34,4 @@ const recruiterSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-module.exports = mongoose.model('Recuiter', recruiterSchema);
+module.exports = mongoose.model('Recruiter', recruiterSchema);
