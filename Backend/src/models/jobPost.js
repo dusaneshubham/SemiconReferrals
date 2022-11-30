@@ -1,6 +1,13 @@
 const mongoose = require("mongoose");
 
 const jobPostSchema = new mongoose.Schema({
+
+    recruiterId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Recruiter',
+        required: true
+    },
+
     jobTitle: {
         type: String,
         required: true
@@ -9,37 +16,6 @@ const jobPostSchema = new mongoose.Schema({
     jobCategory: {
         type: String,
         required: true
-    },
-
-    recruiterID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Recruiter',
-    },
-
-    jobType: {
-        type: String,
-        // enum: ["Full Time", "Part Time", "Internship"],
-        required: true,
-    },
-
-    modeOfWork: {
-        type: String,
-        enum: ["Remote", "Work from Office"]
-    },
-
-    location: {
-        type: String,
-        required: true
-    },
-
-    applicationDeadline: {
-        type: Date,
-        required: true
-    },
-
-    skillsRequired: {
-        type: Array,
-        // required: true
     },
 
     jobDescription: {
@@ -52,37 +28,16 @@ const jobPostSchema = new mongoose.Schema({
         required: true
     },
 
-    minSalary: {
-        type: Number,
-        // required: true,
-        default: 0
-    },
-
-    maxSalary: {
-        type: Number,
-        default: 0
-    },
-
-    salaryType: {
-        type: String,
-        enum: ["Hour", "Day", "Week", "Month", "Year"],
-        // required: true
-    },
-
-    designation: {
-        type: String,
-        // required: true
-    },
-
-    numberOfVacancies: {
-        type: Number,
+    applicationDeadline: {
+        type: Date,
         required: true
     },
 
-    numberOfApplicants: {
-        type: Number,
+
+    jobType: {
+        type: String,
+        // enum: ["Full Time", "Part Time", "Internship"],
         required: true,
-        default: 0
     },
 
     experience: {
@@ -95,13 +50,50 @@ const jobPostSchema = new mongoose.Schema({
         required: true
     },
 
+    location: {
+        type: String,
+        required: true
+    },
+
+    numberOfVacancies: {
+        type: Number,
+        required: true
+    },
+
     jobLevel: {
         type: String,
         required: true
     },
 
+    designation: {
+        type: String,
+        required: true
+    },
+
+    salary: {
+        type: String,
+    },
+
+
+    modeOfWork: {
+        type: String,
+        enum: ["Remote", "Work from Office"]
+    },
+
+    skillsRequired: {
+        type: Array,
+        // required: true
+    },
+
     keywords: {
         type: Array,
+    },
+
+
+    numberOfApplications: {
+        type: Number,
+        required: true,
+        default: 0
     },
 
     status: {

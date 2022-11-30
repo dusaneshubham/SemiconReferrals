@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import {
@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import Draggable from "react-draggable";
+import axios from "axios";
 
 function PaperComponent(props) {
   return (
@@ -29,6 +30,34 @@ function PaperComponent(props) {
 }
 
 const PendingPost = () => {
+  // For confirmation dialog box
+  const [openApproval, setOpenApproval] = useState(false);
+  const [openRejection, setOpenRejection] = useState(false);
+  const [jobDetail, setJobDetails] = useState("");
+
+  useEffect(() => {
+    //token
+    const token = localStorage.getItem("token");
+    // fetch resumes of current user
+    axios
+      .post("http://localhost:5000/jobs/getJobDetails", { token })
+      .then((res) => res.data)
+      .then((response) => {
+        if (response.success) {
+          setJobDetails(response.jobDetails);
+          console.log(response.jobDetails);
+        } else {
+          console.log(response.message);
+          // setAlert({ error: response.message });
+          // TODO: redirect path
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        // setAlert({ error: "Something went wrong with server!" });
+      });
+  }, []);
+
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -49,21 +78,11 @@ const PendingPost = () => {
     },
   }));
 
-  function createData(
-    companyName,
-    employerProfile,
-    viewJobPost
-  ) {
+  function createData(companyName, employerProfile, viewJobPost) {
     return { companyName, employerProfile, viewJobPost };
   }
 
-  const rows = [
-    createData("Google", "View", "View"),
-  ];
-
-  // For confirmation dialog box
-  const [openApproval, setOpenApproval] = React.useState(false);
-  const [openRejection, setOpenRejection] = React.useState(false);
+  const rows = [createData("Google", "View", "View")];
 
   const handleClickOpenApproval = () => {
     setOpenApproval(true);
@@ -93,7 +112,7 @@ const PendingPost = () => {
           </TableHead>
           <TableBody>
             {rows.map((row) => (
-              <StyledTableRow key={row.employerName}>
+              <StyledTableRow key={row.companyName}>
                 <StyledTableCell>{row.companyName}</StyledTableCell>
                 <StyledTableCell>
                   <Link>{row.employerProfile}</Link>
@@ -101,22 +120,24 @@ const PendingPost = () => {
                 <StyledTableCell>
                   <Link>{row.viewJobPost}</Link>
                 </StyledTableCell>
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleClickOpenApproval}
-                  style={{ margin: "10px" }}
-                >
-                  Approve
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={handleClickOpenRejection}
-                  style={{ margin: "10px" }}
-                >
-                  Reject
-                </Button>
+                <StyledTableCell>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    onClick={handleClickOpenApproval}
+                    style={{ margin: "10px" }}
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="error"
+                    onClick={handleClickOpenRejection}
+                    style={{ margin: "10px" }}
+                  >
+                    Reject
+                  </Button>
+                </StyledTableCell>
               </StyledTableRow>
             ))}
           </TableBody>

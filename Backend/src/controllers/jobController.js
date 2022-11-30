@@ -1,25 +1,24 @@
-const expressAsyncHandler = require("express-async-handler");
-const job = require("../models/jobPost");
+const asyncHandler = require("express-async-handler");
+const JobPost = require("../models/jobPost");
 
-const getAllJobDetails = expressAsyncHandler(async (req, res) => {
-    const data = await job.find();
-
-    res.json({ message: "All job post data", data: data, status: "success" });
+const getAllJobDetails = asyncHandler(async(req, res) => {
+    const data = await JobPost.find();
+    res.json({ message: "All job post data", data: data, status: true });
 });
 
-const getPerticularJobDetails = asyncHandler(async (req, res) => {
-    const { _id } = req.body;
+const getJobDetails = asyncHandler(async(req, res) => {
+    const user = req.user;
 
-    const details = await job.findOne({ id: _id });
+    const jobDetails = await JobPost.find({ recruiterId: user._id });
 
-    if (details) {
-        res.json({ message: "Job details", data: details, status: "success" })
+    if (jobDetails) {
+        res.json({ message: "Job details found", data: jobDetails, status: true })
     } else {
-        res.json({ message: "Job not found!", status: "error" });
+        res.json({ message: "Jobs not found!", status: false });
     }
 });
 
 module.exports = {
     getAllJobDetails,
-    getPerticularJobDetails
+    getJobDetails,
 }

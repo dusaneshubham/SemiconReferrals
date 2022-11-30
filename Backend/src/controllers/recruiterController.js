@@ -213,12 +213,14 @@ const updateProfile = asyncHandler(async(req, res) => {
 
 const jobPost = asyncHandler(async(req, res) => {
     let user = req.user;
+    console.log("id: " + user._id);
     const jobDetails = new JobPost({
         recruiterId: user._id,
         jobTitle: req.body.jobTitle,
         jobCategory: req.body.jobCategory,
         jobDescription: req.body.jobDescription,
         keyResponsibilities: req.body.keyResponsibilities,
+        designation: req.body.designation,
         applicationDeadline: req.body.applicationDeadline,
         qualification: req.body.qualification,
         experience: req.body.experience,
@@ -226,6 +228,9 @@ const jobPost = asyncHandler(async(req, res) => {
         jobLevel: req.body.jobLevel,
         numberOfVacancies: req.body.numberOfVacancies,
         location: req.body.location,
+        salary: req.body.salary,
+        skillsRequired: req.body.skills,
+        keywords: req.body.keywords,
     })
 
     jobDetails.save((err, data) => {

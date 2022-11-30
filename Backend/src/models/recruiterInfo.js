@@ -51,4 +51,4 @@ const recruiterInfoSchema = new mongoose.Schema({
 
 }, { timestamps: true });
 
-module.exports = mongoose.model('RecuiterInfo', recruiterInfoSchema);
+module.exports = mongoose.model('RecruiterInfo', recruiterInfoSchema);
