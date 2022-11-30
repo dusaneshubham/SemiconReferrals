@@ -98,146 +98,7 @@ const updatePassword = asyncHandler(async (req, res) => {
     }
 });
 
-// Logout Candidate
-const logoutCandidate = asyncHandler(async (req, res) => {
-    res.clearCookie("token");
-    res.json({ message: "Logged out", success: true });
-});
-
-const uploadMyResume = asyncHandler(async (req, res) => {
-    let user = req.user;
-    // console.log(user);
-    let myResumes = await CandidateInfo.findOne({ candidateId: user._id }).select({ "resumes": 1 });
-
-    if (!myResumes) {
-        resume = [];
-        resume.push({ fileName: req.file.filename, url: 'http://localhost:5000/resumes/' + req.file.filename });
-        let data = new CandidateInfo({
-            candidateId: user._id,
-            resumes: resume
-        });
-        await data.save().then(() => {
-            res.json({ message: "Resume has been uploaded!", success: true })
-        }).catch(() => {
-            res.json({ message: "Resume has not been uploaded due to server error!", success: false })
-        });
-    } else {
-        myResumes.resumes.push({ fileName: req.file.filename, url: 'http://localhost:5000/resumes/' + req.file.filename });
-        await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: myResumes.resumes }, { new: true }).then((data) => {
-            if (data) {
-                res.json({ message: "Resume has been uploaded!", success: true, resumes: data.resumes })
-            } else {
-                res.json({ message: "Resume has not been uploaded due to server error!", success: false })
-            }
-        }).catch((err) => {
-            console.log(err);
-            res.json({ message: "Resume has not been uploaded due to server error!", success: false })
-        });
-    }
-});
-
-const getAllMyResumes = asyncHandler(async (req, res) => {
-    const user = req.user;
-    let data = await CandidateInfo.findOne({ candidateId: user._id });
-    if (data) {
-        res.json({ message: "Resumes", resumes: data.resumes, success: true });
-    } else {
-        res.json({ message: "User not found!", success: false });
-    }
-});
-
-const deleteResume = asyncHandler(async (req, res) => {
-    const { resumeData } = req.body;
-    const user = req.user;
-    if (resumeData) {
-        await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: resumeData }, { new: true })
-            .then((data) => {
-                if (data) {
-                    res.json({ message: "Successfully delete resume!!", success: true, resumes: data.resumes });
-                } else {
-                    res.json({ message: "Invalid user!!", success: false });
-                }
-            }).catch((err) => {
-                console.log(err);
-                res.json({ message: "Somthing went wrong during delete resume!!", success: false });
-            });
-    } else {
-        res.json({ message: "Invalid request!", success: false });
-    }
-});
-
-const applyForJob = asyncHandler(async (req, res) => {
-    const { candidateId, jobId } = req.body;
-    let resume = req.files;
-
-    const jobApplication = new jobApplication({
-        candidateId,
-        jobId,
-        resume
-    });
-
-    await jobApplication.save()
-        .then(() => {
-            res.json({ message: "successfully apply for job", success: true });
-        }).catch(() => {
-            res.json({ message: "Something went wrong during apply for job", success: false });
-        })
-
-});
-
-const withdrawApplication = asyncHandler(async (req, res) => {
-    const { _id } = req.body;
-
-    const result = await jobApplication.deleteOne({ _id });
-
-    if (result) {
-        res.json({ message: "successfully withdraw your application", status: "success" });
-    } else {
-        res.json({ message: "We can't withdraw application", success: false });
-    }
-});
-
-const getCandidateDetails = asyncHandler(async (req, res) => {
-    let user = req.user;
-    let candidateData = await Candidate.findOne({ _id: user._id });
-
-    if (candidateData) {
-        let candidateInfo = await CandidateInfo.findOne({ candidateId: user._id });
-        if (candidateInfo) {
-            res.json({
-                email: candidateData.email,
-                name: candidateData.name,
-                contactNumber: candidateData.contactNumber,
-                DOB: candidateInfo.DOB,
-                gender: candidateInfo.gender,
-                experience: candidateInfo.experience,
-                qualification: candidateInfo.qualification,
-                about: candidateInfo.about,
-                desiredCitiesToWork: candidateInfo.desiredCitiesToWork,
-                isOpenToWork: candidateInfo.isOpenToWork,
-                noticePeriod: candidateInfo.noticePeriod,
-                currentJobLocation: candidateInfo.currentJobLocation,
-                workingExperience: candidateInfo.workingExperience,
-                education: candidateInfo.education,
-                resumes: candidateInfo.resumes,
-                linkedIn: candidateInfo.linkedIn,
-                success: true
-            });
-        } else {
-            // for new user
-            res.json({
-                email: candidateData.email,
-                name: candidateData.name,
-                contactNumber: candidateData.contactNumber,
-                DOB: candidateInfo.DOB,
-                success: true
-            });
-        }
-    } else {
-        res.json({ success: false, message: "Cannot get data" });
-    }
-})
-
+// update profile
 const updateProfile = asyncHandler(async (req, res) => {
     // candidate information details
     const {
@@ -311,47 +172,7 @@ const updateProfile = asyncHandler(async (req, res) => {
     }
 });
 
-const updateWorkingExperience = asyncHandler(async (req, res) => {
-    const { currentWorkingExperience } = req.body;
-    const user = req.user;
-    await CandidateInfo.findOneAndUpdate({ candidateID: user._id }, { workingExperience: currentWorkingExperience }, { new: true })
-        .then((data, err) => {
-            if (data) {
-                // console.log("data", data);
-                res.json({ message: "Successfully update profile!!", success: true });
-            } else {
-                console.log("err", err);
-                res.json({ message: "Job experience has not been uploaded due to server error!", success: false });
-            }
-        }).catch((err) => {
-            console.log(err);
-            res.json({ message: "Experience has not been uploaded due to server error!", success: false });
-        });
-});
-
-const updateEducationDetails = asyncHandler(async (req, res) => {
-    const { educationDetails } = req.body;
-    const user = req.user;
-
-    if (educationDetails) {
-        await CandidateInfo.findOneAndUpdate({ candidateID: user._id }, { education: educationDetails }, { new: true })
-            .then((data, err) => {
-                if (data) {
-                    // console.log("data", data);
-                    res.json({ message: "Successfully update profile!!", success: true });
-                } else {
-                    console.log("err", err);
-                    res.json({ message: "Educational details has not been uploaded due to server error!", success: false });
-                }
-            }).catch((err) => {
-                console.log(err);
-                res.json({ message: "Experience has not been uploaded due to server error!", success: false });
-            });
-    } else {
-        res.json({ message: "Invalid request!!", success: false });
-    }
-});
-
+// change password
 const changePassword = asyncHandler(async (req, res) => {
     const { oldPassword, newPassword } = req.body;
     const user = req.user;
@@ -379,6 +200,132 @@ const changePassword = asyncHandler(async (req, res) => {
     }
 });
 
+// Logout Candidate
+const logoutCandidate = asyncHandler(async (req, res) => {
+    res.clearCookie("token");
+    res.json({ message: "Logged out", success: true });
+});
+
+// get candidate details
+const getCandidateDetails = asyncHandler(async (req, res) => {
+    let user = req.user;
+    let candidateData = await Candidate.findOne({ _id: user._id });
+
+    if (candidateData) {
+        let candidateInfo = await CandidateInfo.findOne({ candidateId: user._id });
+        if (candidateInfo) {
+            res.json({
+                email: candidateData.email,
+                name: candidateData.name,
+                contactNumber: candidateData.contactNumber,
+                DOB: candidateInfo.DOB,
+                gender: candidateInfo.gender,
+                experience: candidateInfo.experience,
+                qualification: candidateInfo.qualification,
+                about: candidateInfo.about,
+                desiredCitiesToWork: candidateInfo.desiredCitiesToWork,
+                isOpenToWork: candidateInfo.isOpenToWork,
+                noticePeriod: candidateInfo.noticePeriod,
+                currentJobLocation: candidateInfo.currentJobLocation,
+                workingExperience: candidateInfo.workingExperience,
+                education: candidateInfo.education,
+                resumes: candidateInfo.resumes,
+                linkedIn: candidateInfo.linkedIn,
+                followings: candidateInfo.followings,
+                success: true
+            });
+        } else {
+            // for new user
+            res.json({
+                email: candidateData.email,
+                name: candidateData.name,
+                contactNumber: candidateData.contactNumber,
+                DOB: candidateInfo.DOB,
+                success: true
+            });
+        }
+    } else {
+        res.json({ success: false, message: "Cannot get data" });
+    }
+});
+
+// update working experience
+const updateWorkingExperience = asyncHandler(async (req, res) => {
+    const { currentWorkingExperience } = req.body;
+    const user = req.user;
+    await CandidateInfo.findOneAndUpdate({ candidateID: user._id }, { workingExperience: currentWorkingExperience }, { new: true })
+        .then((data, err) => {
+            if (data) {
+                // console.log("data", data);
+                res.json({ message: "Successfully update profile!!", success: true });
+            } else {
+                console.log("err", err);
+                res.json({ message: "Job experience has not been uploaded due to server error!", success: false });
+            }
+        }).catch((err) => {
+            console.log(err);
+            res.json({ message: "Experience has not been uploaded due to server error!", success: false });
+        });
+});
+
+// update education details
+const updateEducationDetails = asyncHandler(async (req, res) => {
+    const { educationDetails } = req.body;
+    const user = req.user;
+
+    if (educationDetails) {
+        await CandidateInfo.findOneAndUpdate({ candidateID: user._id }, { education: educationDetails }, { new: true })
+            .then((data, err) => {
+                if (data) {
+                    // console.log("data", data);
+                    res.json({ message: "Successfully update profile!!", success: true });
+                } else {
+                    console.log("err", err);
+                    res.json({ message: "Educational details has not been uploaded due to server error!", success: false });
+                }
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Experience has not been uploaded due to server error!", success: false });
+            });
+    } else {
+        res.json({ message: "Invalid request!!", success: false });
+    }
+});
+
+// apply for job
+const applyForJob = asyncHandler(async (req, res) => {
+    const { candidateId, jobId } = req.body;
+    let resume = req.files;
+
+    const jobApplication = new jobApplication({
+        candidateId,
+        jobId,
+        resume
+    });
+
+    await jobApplication.save()
+        .then(() => {
+            res.json({ message: "successfully apply for job", success: true });
+        }).catch(() => {
+            res.json({ message: "Something went wrong during apply for job", success: false });
+        })
+
+});
+
+// withdraw application
+const withdrawApplication = asyncHandler(async (req, res) => {
+    const { _id } = req.body;
+
+    const result = await jobApplication.deleteOne({ _id });
+
+    if (result) {
+        res.json({ message: "successfully withdraw your application", status: "success" });
+    } else {
+        res.json({ message: "We can't withdraw application", success: false });
+    }
+});
+
+// get application status
 const getApplicationStatus = asyncHandler(async (req, res) => {
     const { _id } = req.body;
     const result = await jobApplication.findOne({ _id });
@@ -390,20 +337,97 @@ const getApplicationStatus = asyncHandler(async (req, res) => {
     }
 });
 
+// get all application jobApplication
+const getAllApplication = asyncHandler(async (req, res) => {
+    const user = req.user;
+    const result = await jobApplication.find({ candidateId: user._id });
+    if (result) {
+        res.json({ message: "All job application", data: result, success: true });
+    } else {
+        res.json({ message: "Error occure during find job application", success: false });
+    }
+});
+
+// upload resume
+const uploadMyResume = asyncHandler(async (req, res) => {
+    let user = req.user;
+    // console.log(user);
+    let myResumes = await CandidateInfo.findOne({ candidateId: user._id }).select({ "resumes": 1 });
+
+    if (!myResumes) {
+        resume = [];
+        resume.push({ fileName: req.file.filename, url: 'http://localhost:5000/resumes/' + req.file.filename });
+        let data = new CandidateInfo({
+            candidateId: user._id,
+            resumes: resume
+        });
+        await data.save().then(() => {
+            res.json({ message: "Resume has been uploaded!", success: true })
+        }).catch(() => {
+            res.json({ message: "Resume has not been uploaded due to server error!", success: false })
+        });
+    } else {
+        myResumes.resumes.push({ fileName: req.file.filename, url: 'http://localhost:5000/resumes/' + req.file.filename });
+        await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: myResumes.resumes }, { new: true }).then((data) => {
+            if (data) {
+                res.json({ message: "Resume has been uploaded!", success: true, resumes: data.resumes })
+            } else {
+                res.json({ message: "Resume has not been uploaded due to server error!", success: false })
+            }
+        }).catch((err) => {
+            console.log(err);
+            res.json({ message: "Resume has not been uploaded due to server error!", success: false })
+        });
+    }
+});
+
+// delete resume
+const deleteResume = asyncHandler(async (req, res) => {
+    const { resumeData } = req.body;
+    const user = req.user;
+    if (resumeData) {
+        await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: resumeData }, { new: true })
+            .then((data) => {
+                if (data) {
+                    res.json({ message: "Successfully delete resume!!", success: true, resumes: data.resumes });
+                } else {
+                    res.json({ message: "Invalid user!!", success: false });
+                }
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Somthing went wrong during delete resume!!", success: false });
+            });
+    } else {
+        res.json({ message: "Invalid request!", success: false });
+    }
+});
+
+// get all resume
+const getAllMyResumes = asyncHandler(async (req, res) => {
+    const user = req.user;
+    let data = await CandidateInfo.findOne({ candidateId: user._id });
+    if (data) {
+        res.json({ message: "Resumes", resumes: data.resumes, success: true });
+    } else {
+        res.json({ message: "User not found!", success: false });
+    }
+});
+
 module.exports = {
     registerCandidate,
     loginCandidate,
     updatePassword,
+    updateProfile,
+    changePassword,
     logoutCandidate,
+    getCandidateDetails,
+    updateWorkingExperience,
+    updateEducationDetails,
     applyForJob,
     withdrawApplication,
-    updateProfile,
     getApplicationStatus,
+    getAllApplication,
     uploadMyResume,
     deleteResume,
     getAllMyResumes,
-    updateWorkingExperience,
-    updateEducationDetails,
-    changePassword,
-    getCandidateDetails
 };
