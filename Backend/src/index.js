@@ -3,6 +3,7 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
+const path = require('path');
 
 const adminRoute = require('./routes/adminRoute');
 const candidateRoute = require('./routes/candidateRoute');
@@ -20,6 +21,9 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
+
+// resumes path
+app.use("/resumes", express.static(path.join(__dirname, '/resumes/')));
 
 // Defining Routes
 app.use("/verify-token", verifyToken);
