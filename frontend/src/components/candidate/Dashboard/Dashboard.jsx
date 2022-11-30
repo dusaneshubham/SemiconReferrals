@@ -68,15 +68,18 @@ const Dashboard = () => {
                 }
               })
               .catch((err) => {
+                setLoading(false);
                 console.log(err);
                 setAlert({ error: "Something went wrong with server!" });
               });
           } else {
+            setLoading(false);
             setAlert({ error: res.message });
           }
         })
         .catch((err) => {
           console.log(err);
+          setLoading(false);
           setAlert({ error: "Something went wrong with server!" });
         });
     }
