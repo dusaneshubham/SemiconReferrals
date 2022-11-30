@@ -3,73 +3,84 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import axios from "axios";
 import { useState } from "react";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 import { Button, Snackbar, Slide } from "@mui/material";
-import ReactLoading from "react-loading";
+// import ReactLoading from "react-loading";
 import MuiAlert from "@mui/material/Alert";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-const UpdateProfile = () => {
+const JobPost = () => {
   // alert
   const [alert, setAlert] = useState({});
 
   // loading
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
 
-  // user details
-  const [userDetails, setUserDetails] = useState({
-    name: "",
-    companyName: "",
-    email: "",
-    contactNumber: "",
-    companyWebsite: "",
-    linkedin: "",
-    totalExperience: "",
-    teamName: "",
-    teamSize: "",
+  // job post details
+  const [jobPostDetails, setJobPostDetails] = useState({
+    jobTitle: "",
+    jobCategory: "",
+    jobDescription: "",
+    keyResponsibilities: "",
+    applicationDeadline: "",
+    qualification: "",
+    experience: "",
+    jobType: "",
+    jobLevel: "",
+    numberOfVacancies: "",
     location: "",
-    designation: "",
-    currentExperience: "",
-    teamWorkDescription: "",
   });
 
-  useEffect(() => {
-    // Getting user details from backend
-    let token = localStorage.getItem("token");
-    if (token) {
-      axios
-        .post("http://localhost:5000/recruiter/getRecruiterDetails", { token })
-        .then((res) => res.data)
-        .then(async (res) => {
-          await setUserDetails({ ...userDetails, ...res });
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.log(err);
-          setLoading(false);
-          // TODO: logout
-        });
-    } else {
-      setAlert({ error: "Unauthorized user!" });
-    }
-  }, []);
+  // useEffect(() => {
+  //   // Getting job details from backend
+  //   let token = localStorage.getItem("token");
+  //   if (token) {
+  //     axios
+  //       .post("http://localhost:5000/recruiter/getRecruiterDetails", { token })
+  //       .then((res) => res.data)
+  //       .then(async (res) => {
+  //         await setJobPostDetails({ ...jobPostDetails, ...res });
+  //         setLoading(false);
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //         setLoading(false);
+  //         // TODO: logout
+  //       });
+  //   } else {
+  //     setAlert({ error: "Unauthorized user!" });
+  //   }
+  // }, []);
 
-  // update data
-  const updateEmployerProfile = () => {
+  // upload Job Post
+  const uploadJobPost = () => {
     let token = localStorage.getItem("token");
     if (token) {
       axios
-        .post("http://localhost:5000/recruiter/updateProfile", {
-          ...userDetails,
+        .post("http://localhost:5000/recruiter/jobPost", {
+          ...jobPostDetails,
           token: token,
         })
         .then((response) => response.data)
         .then((res) => {
           if (res.success) {
             setAlert({ success: res.message });
+            setJobPostDetails({
+              jobTitle: "",
+              jobCategory: "",
+              jobDescription: "",
+              keyResponsibilities: "",
+              applicationDeadline: "",
+              qualification: "",
+              experience: "",
+              jobType: "",
+              jobLevel: "",
+              numberOfVacancies: "",
+              location: "",
+            });
           } else {
             setAlert({ error: res.message });
           }
@@ -94,23 +105,23 @@ const UpdateProfile = () => {
     setAlert({});
   };
 
-  if (loading) {
-    return (
-      <>
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "70vh" }}
-        >
-          <ReactLoading
-            type="bubbles"
-            color="#1976d2"
-            height={100}
-            width={100}
-          />
-        </div>
-      </>
-    );
-  } else {
+  // if (loading) {
+  //   return (
+  //     <>
+  //       <div
+  //         className="d-flex justify-content-center align-items-center"
+  //         style={{ height: "70vh" }}
+  //       >
+  //         <ReactLoading
+  //           type="bubbles"
+  //           color="#1976d2"
+  //           height={100}
+  //           width={100}
+  //         />
+  //       </div>
+  //     </>
+  //   );
+  // } else {
     return (
       <>
         <div className="row">
@@ -148,10 +159,10 @@ const UpdateProfile = () => {
                   </label>
                   <input
                     type="text"
-                    defaultValue={userDetails.jobTitle}
+                    value={jobPostDetails.jobTitle}
                     onChange={(e) =>
-                      setUserDetails({
-                        ...userDetails,
+                      setJobPostDetails({
+                        ...jobPostDetails,
                         jobTitle: e.target.value,
                       })
                     }
@@ -168,10 +179,10 @@ const UpdateProfile = () => {
                   <select
                     id="job-category"
                     className="form-select"
-                    value={userDetails.jobCategory}
+                    value={jobPostDetails.jobCategory}
                     onChange={(e) =>
-                      setUserDetails({
-                        ...userDetails,
+                      setJobPostDetails({
+                        ...jobPostDetails,
                         jobCategory: e.target.value,
                       })
                     }
@@ -195,12 +206,12 @@ const UpdateProfile = () => {
                   </label>
                   <CKEditor
                     editor={ClassicEditor}
-                    data=""
+                    data={jobPostDetails.jobDescription}
                     onChange={(e, editor) => {
                       const data = editor.getData();
                       // console.log({ e, editor, data });
-                      setUserDetails({
-                        ...userDetails,
+                      setJobPostDetails({
+                        ...jobPostDetails,
                         jobDescription: data,
                       });
                     }}
@@ -214,15 +225,171 @@ const UpdateProfile = () => {
                   </label>
                   <CKEditor
                     editor={ClassicEditor}
-                    data=""
+                    data={jobPostDetails.keyResponsibilities}
                     onChange={(e, editor) => {
                       const data = editor.getData();
                       // console.log({ e, editor, data });
-                      setUserDetails({
-                        ...userDetails,
+                      setJobPostDetails({
+                        ...jobPostDetails,
                         keyResponsibilities: data,
                       });
                     }}
+                  />
+                </div>
+
+                {/*------------------- Application Deadline ------------------*/}
+                <div className="col-md-6">
+                  <label htmlFor="application-deadline" className="form-label">
+                    Application Deadline
+                  </label>
+                  <input
+                    type="date"
+                    value={jobPostDetails.applicationDeadline}
+                    onChange={(e) =>
+                      setJobPostDetails({
+                        ...jobPostDetails,
+                        applicationDeadline: e.target.value,
+                      })
+                    }
+                    className="form-control"
+                    id="application-deadline"
+                  />
+                </div>
+
+                {/*------------------- Job Qualifications -----------------*/}
+                <div className="col-md-6">
+                  <label htmlFor="qualification" className="form-label">
+                    Job Qualification
+                  </label>
+                  <select
+                    id="qualification"
+                    className="form-select"
+                    value={jobPostDetails.qualification}
+                    onChange={(e) =>
+                      setJobPostDetails({
+                        ...jobPostDetails,
+                        qualification: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">-- Select --</option>
+                    <option value="Bachelor">Bachelor</option>
+                    <option value="Master">Master</option>
+                    <option value="PHD">PHD</option>
+                  </select>
+                </div>
+
+                {/*------------------- Job Type -----------------*/}
+                <div className="col-md-6">
+                  <label htmlFor="job-type" className="form-label">
+                    Job Type
+                  </label>
+                  <select
+                    id="job-type"
+                    className="form-select"
+                    value={jobPostDetails.jobType}
+                    onChange={(e) =>
+                      setJobPostDetails({
+                        ...jobPostDetails,
+                        jobType: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">-- Select --</option>
+                    <option value="Full Time">Full Time</option>
+                    <option value="Contract">Contract</option>
+                    <option value="Internship">Internship</option>
+                    <option value="Part Time">Part Time</option>
+                  </select>
+                </div>
+
+                {/*--------------------- Job Experience ---------------------*/}
+                <div className="col-md-6">
+                  <label htmlFor="experience" className="form-label">
+                    Job Experience
+                  </label>
+                  <select
+                    id="experience"
+                    value={jobPostDetails.experience}
+                    onChange={(e) =>
+                      setJobPostDetails({
+                        ...jobPostDetails,
+                        experience: e.target.value,
+                      })
+                    }
+                    className="form-select"
+                  >
+                    <option value="">-- Select --</option>
+                    <option value="Fresher">Fresher</option>
+                    <option value="Trained Professional">
+                      Trained Professional (0-1 year)
+                    </option>
+                    <option value="1-3 years">1-3 years</option>
+                    <option value="3-5 years">3-5 years</option>
+                    <option value="6-10 years">6-10 years</option>
+                    <option value="10+ years">10+ years</option>
+                  </select>
+                </div>
+
+                {/*--------------------- Job Level ---------------------*/}
+                <div className="col-md-6">
+                  <label htmlFor="job-level" className="form-label">
+                    Job Level
+                  </label>
+                  <select
+                    id="job-level"
+                    className="form-select"
+                    value={jobPostDetails.jobLevel}
+                    onChange={(e) =>
+                      setJobPostDetails({
+                        ...jobPostDetails,
+                        jobLevel: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="">-- Select --</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Senior">Senior</option>
+                    <option value="Junior">Junior</option>
+                    <option value="Lead">Lead</option>
+                  </select>
+                </div>
+
+                {/*------------------- Number of Vacancies ------------------*/}
+                <div className="col-md-6">
+                  <label htmlFor="vacancies" className="form-label">
+                    Number of Vacancies
+                  </label>
+                  <input
+                    type="number"
+                    value={jobPostDetails.numberOfVacancies}
+                    onChange={(e) =>
+                      setJobPostDetails({
+                        ...jobPostDetails,
+                        numberOfVacancies: e.target.value,
+                      })
+                    }
+                    className="form-control"
+                    id="vacancies"
+                  />
+                </div>
+
+                {/*------------------- Job Location ------------------*/}
+                <div className="col-md-6">
+                  <label htmlFor="location" className="form-label">
+                    Job Location
+                  </label>
+                  <input
+                    type="text"
+                    value={jobPostDetails.location}
+                    onChange={(e) =>
+                      setJobPostDetails({
+                        ...jobPostDetails,
+                        location: e.target.value,
+                      })
+                    }
+                    className="form-control"
+                    id="location"
                   />
                 </div>
 
@@ -232,7 +399,7 @@ const UpdateProfile = () => {
                     variant="contained"
                     type="submit"
                     style={{ float: "right", margin: "15px 0" }}
-                    onClick={updateEmployerProfile}
+                    onClick={uploadJobPost}
                   >
                     Post
                   </Button>
@@ -243,7 +410,7 @@ const UpdateProfile = () => {
         </div>
       </>
     );
-  }
+  // }
 };
 
-export default UpdateProfile;
+export default JobPost;

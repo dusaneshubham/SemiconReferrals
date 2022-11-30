@@ -6,21 +6,25 @@ const jobPostSchema = new mongoose.Schema({
         required: true
     },
 
-    companyID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
+    jobCategory: {
+        type: String,
+        required: true
     },
 
-    typeOfJob: {
+    recruiterID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Recruiter',
+    },
+
+    jobType: {
         type: String,
-        enum: ["Full Time", "Part Time", "Internship"],
+        // enum: ["Full Time", "Part Time", "Internship"],
         required: true,
     },
 
     modeOfWork: {
         type: String,
-        enum: ["Remote", "Work from Office"],
-        required: true
+        enum: ["Remote", "Work from Office"]
     },
 
     location: {
@@ -28,31 +32,14 @@ const jobPostSchema = new mongoose.Schema({
         required: true
     },
 
-    deadlineToApply: {
-        type: String, // date + time = String
-        required: true
-    },
-
-    DOB: {
+    applicationDeadline: {
         type: Date,
-        required: false
-    },
-
-    password: {
-        type: String,
-        required: true,
-        minLength: 8
-    },
-
-    profileImage: {
-        type: String,
         required: true
-            // TODO : put default image
     },
 
     skillsRequired: {
         type: Array,
-        required: true
+        // required: true
     },
 
     jobDescription: {
@@ -67,27 +54,27 @@ const jobPostSchema = new mongoose.Schema({
 
     minSalary: {
         type: Number,
-        required: true,
+        // required: true,
         default: 0
     },
 
     maxSalary: {
         type: Number,
-        required: false
+        default: 0
     },
 
     salaryType: {
         type: String,
         enum: ["Hour", "Day", "Week", "Month", "Year"],
-        required: true
+        // required: true
     },
 
     designation: {
         type: String,
-        required: true
+        // required: true
     },
 
-    numberOfOpenings: {
+    numberOfVacancies: {
         type: Number,
         required: true
     },
@@ -98,26 +85,23 @@ const jobPostSchema = new mongoose.Schema({
         default: 0
     },
 
-    minExperienceOfCandidate: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-
-    maxExperienceOfCandidate: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-
-    qualificationOfCandidate: {
+    experience: {
         type: String,
-        required: true,
+        required: true
+    },
+
+    qualification: {
+        type: String,
+        required: true
+    },
+
+    jobLevel: {
+        type: String,
+        required: true
     },
 
     keywords: {
         type: Array,
-        required: false,
     },
 
     status: {
@@ -128,8 +112,7 @@ const jobPostSchema = new mongoose.Schema({
     },
 
     remarks: {
-        type: String,
-        required: false,
+        type: String
     }
 
 }, { timestamps: true });

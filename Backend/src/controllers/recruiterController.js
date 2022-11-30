@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const Recruiter = require('../models/recruiter');
 const RecruiterInfo = require('../models/recruiterInfo');
+const JobPost = require('../models/jobPost');
 const bcrypt = require('bcrypt');
 const { isEmail } = require('validator');
 
@@ -136,7 +137,6 @@ const getRecruiterDetails = asyncHandler(async(req, res) => {
 })
 
 const updateProfile = asyncHandler(async(req, res) => {
-    console.log(1);
     // recruiter information details
     const {
         name,
@@ -211,10 +211,38 @@ const updateProfile = asyncHandler(async(req, res) => {
     }
 });
 
+const jobPost = asyncHandler(async(req, res) => {
+    let user = req.user;
+    const jobDetails = new JobPost({
+        recruiterId: user._id,
+        jobTitle: req.body.jobTitle,
+        jobCategory: req.body.jobCategory,
+        jobDescription: req.body.jobDescription,
+        keyResponsibilities: req.body.keyResponsibilities,
+        applicationDeadline: req.body.applicationDeadline,
+        qualification: req.body.qualification,
+        experience: req.body.experience,
+        jobType: req.body.jobType,
+        jobLevel: req.body.jobLevel,
+        numberOfVacancies: req.body.numberOfVacancies,
+        location: req.body.location,
+    })
+
+    jobDetails.save((err, data) => {
+        if (err) {
+            console.log(err);
+            return res.json({ message: "Error in creating a job post", success: false });
+        } else {
+            return res.json({ message: "Successfully created the job post", success: true });
+        }
+    })
+});
+
 module.exports = {
     registerRecruiter,
     loginRecruiter,
     updatePassword,
     getRecruiterDetails,
-    updateProfile
+    updateProfile,
+    jobPost
 }
