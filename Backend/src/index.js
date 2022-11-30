@@ -35,7 +35,6 @@ app.use("/admin", adminRoute);
 app.use("/candidate", candidateRoute);
 app.use("/recruiter", recruiterRoute);
 app.use("/jobs", jobsRoute);
-// app.use("/company", companyRoute);
 
 mongoose.connect(process.env.MONGO_URI, {
         useNewUrlParser: true,

@@ -11,12 +11,12 @@ const { isEmail } = require('validator');
 
 // Generate the token
 const generateToken = (user) => {
-    return jwt.sign({ _id: user._id, type:"admin" }, process.env.SECRETKEY);
+    return jwt.sign({ _id: user._id, type: "admin" }, process.env.SECRETKEY);
 }
 
 // TODO : To be removed afterwards
 // Register admin
-const registerAdmin = asyncHandler(async (req, res) => {
+const registerAdmin = asyncHandler(async(req, res) => {
     // const { name, email, password } = req.body;
 
     // if (!name && !email && !password) {
@@ -39,7 +39,7 @@ const registerAdmin = asyncHandler(async (req, res) => {
 });
 
 // login admin
-const loginAdmin = asyncHandler(async (req, res) => {
+const loginAdmin = asyncHandler(async(req, res) => {
     const { email, password } = req.body;
 
     // validation
@@ -64,7 +64,7 @@ const loginAdmin = asyncHandler(async (req, res) => {
 });
 
 // update password
-const updatePassword = asyncHandler(async (req, res) => {
+const updatePassword = asyncHandler(async(req, res) => {
     const { email, password, confirmPassword } = req.body;
 
     if (!email || !password || !confirmPassword) {
@@ -84,7 +84,7 @@ const updatePassword = asyncHandler(async (req, res) => {
     }
 });
 
-const approveCompany = asyncHandler(async (req, res) => {
+const approveCompany = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
     const isExistCompany = await Company.findOne({ _id });
@@ -100,7 +100,7 @@ const approveCompany = asyncHandler(async (req, res) => {
     }
 });
 
-const approveRecruiter = asyncHandler(async (req, res) => {
+const approveRecruiter = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
     const isExistRecruiter = await Recruiter.findOne({ _id });
@@ -116,7 +116,7 @@ const approveRecruiter = asyncHandler(async (req, res) => {
     }
 });
 
-const rejectCompany = asyncHandler(async (req, res) => {
+const rejectCompany = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
     const isExistCompany = await Company.findOne({ _id });
@@ -132,7 +132,7 @@ const rejectCompany = asyncHandler(async (req, res) => {
     }
 });
 
-const approvePost = asyncHandler(async (req, res) => {
+const approvePost = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
     const isExistJobPost = await JobPost.findOne({ _id });
@@ -148,7 +148,7 @@ const approvePost = asyncHandler(async (req, res) => {
     }
 });
 
-const rejectPost = asyncHandler(async (req, res) => {
+const rejectPost = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
     const isExistJobPost = await JobPost.findOne({ _id });
@@ -164,7 +164,7 @@ const rejectPost = asyncHandler(async (req, res) => {
     }
 });
 
-const blockCompany = asyncHandler(async (req, res) => {
+const blockCompany = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
     const isExistCompany = await Company.findOne({ _id });
@@ -180,7 +180,7 @@ const blockCompany = asyncHandler(async (req, res) => {
     }
 });
 
-const unblockCompany = asyncHandler(async (req, res) => {
+const unblockCompany = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
     const isExistCompany = await Company.findOne({ id: _id });
@@ -196,7 +196,7 @@ const unblockCompany = asyncHandler(async (req, res) => {
     }
 });
 
-const getStatistics = asyncHandler(async (req, res) => {
+const getStatistics = asyncHandler(async(req, res) => {
     const numberOfCandidate = await Candidate.find().count();
 
     // Statistics of company
@@ -259,7 +259,7 @@ const getStatistics = asyncHandler(async (req, res) => {
     res.json({ message: "Statistics", data });
 });
 
-const approveJobApplication = asyncHandler(async (req, res) => {
+const approveJobApplication = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
     const newPost = await JobPost.findOneAndUpdate(_id, { isApprovedByAdmin: true }, { new: true });
@@ -270,7 +270,7 @@ const approveJobApplication = asyncHandler(async (req, res) => {
     }
 });
 
-const rejectJobApplication = asyncHandler(async (req, res) => {
+const rejectJobApplication = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
     const newPost = await post.findOneAndUpdate(_id, { isApprovedByAdmin: false }, { new: true });
@@ -294,5 +294,5 @@ module.exports = {
     unblockCompany,
     approveJobApplication,
     rejectJobApplication,
-    getStatistics
+    getStatistics,
 };

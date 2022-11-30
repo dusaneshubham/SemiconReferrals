@@ -33,19 +33,17 @@ const PendingPost = () => {
   // For confirmation dialog box
   const [openApproval, setOpenApproval] = useState(false);
   const [openRejection, setOpenRejection] = useState(false);
-  const [jobDetail, setJobDetails] = useState("");
+  const [pendingJobs, setPendingJobs] = useState([]);
 
   useEffect(() => {
-    //token
-    const token = localStorage.getItem("token");
-    // fetch resumes of current user
+    // fetch pending jobs
     axios
-      .post("http://localhost:5000/jobs/getJobDetails", { token })
+      .get("http://localhost:5000/jobs/getPendingJobs")
       .then((res) => res.data)
       .then((response) => {
+        console.log(response.data);
         if (response.success) {
-          setJobDetails(response.jobDetails);
-          console.log(response.jobDetails);
+          setPendingJobs(response.data);
         } else {
           console.log(response.message);
           // setAlert({ error: response.message });
@@ -78,11 +76,11 @@ const PendingPost = () => {
     },
   }));
 
-  function createData(companyName, employerProfile, viewJobPost) {
-    return { companyName, employerProfile, viewJobPost };
-  }
+  // function createData(companyName, employerProfile, viewJobPost) {
+  //   return { companyName, employerProfile, viewJobPost };
+  // }
 
-  const rows = [createData("Google", "View", "View")];
+  // const rows = [createData("Google", "View", "View")];
 
   const handleClickOpenApproval = () => {
     setOpenApproval(true);
@@ -111,14 +109,14 @@ const PendingPost = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.companyName}>
-                <StyledTableCell>{row.companyName}</StyledTableCell>
+            {pendingJobs.map((data, index) => (
+              <StyledTableRow key={data._id}>
+                <StyledTableCell>{data.companyName}</StyledTableCell>
                 <StyledTableCell>
-                  <Link>{row.employerProfile}</Link>
+                  <Link>{data.recruiterId}</Link>
                 </StyledTableCell>
                 <StyledTableCell>
-                  <Link>{row.viewJobPost}</Link>
+                  <Link>{data._id}</Link>
                 </StyledTableCell>
                 <StyledTableCell>
                   <Button
