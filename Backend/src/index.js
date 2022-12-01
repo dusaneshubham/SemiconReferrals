@@ -13,6 +13,7 @@ const sendEmail = require('./middleware/sendEmail');
 const verifyEmail = require('./middleware/verifyEmail');
 const sendForgetPassMail = require('./middleware/sendForgetPassMail');
 const verifyToken = require('./middleware/verifyToken');
+const { getTokenData } = require('./controllers/commonController');
 
 dotenv.config();
 const app = express();
@@ -26,7 +27,7 @@ app.use(cors());
 app.use("/resumes", express.static(path.join(__dirname, '/resumes/')));
 
 // Defining Routes
-app.use("/verify-token", verifyToken);
+app.use("/verify-token", verifyToken, getTokenData);
 app.use("/verify-mail", verifyEmail);
 app.use("/send-mail", sendEmail);
 app.use("/send-forget-pass-mail", sendForgetPassMail);

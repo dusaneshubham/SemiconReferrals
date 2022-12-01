@@ -14,7 +14,7 @@ const JobExperience = (prop) => {
         jobStartDate: "",
         jobEndDate: "",
         description: "",
-        isCurrentlyWorking: ""
+        isCurrentlyWorking: false
     }]);
 
     useEffect(() => {
@@ -29,7 +29,7 @@ const JobExperience = (prop) => {
             jobStartDate: "",
             jobEndDate: "",
             description: "",
-            isCurrentlyWorking: ""
+            isCurrentlyWorking: false
         }]);
     }
 

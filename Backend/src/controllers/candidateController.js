@@ -253,6 +253,7 @@ const getCandidateDetails = asyncHandler(async (req, res) => {
 const updateWorkingExperience = asyncHandler(async (req, res) => {
     const { currentWorkingExperience } = req.body;
     const user = req.user;
+
     await CandidateInfo.findOneAndUpdate({ candidateID: user._id }, { workingExperience: currentWorkingExperience }, { new: true })
         .then((data, err) => {
             if (data) {
