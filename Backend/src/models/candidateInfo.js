@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const bcrypt = require('bcrypt');
 
 const candidateInfoSchema = new mongoose.Schema({
 
@@ -101,10 +100,16 @@ const candidateInfoSchema = new mongoose.Schema({
         ref: "Recruiter"
     }],
 
-    resumes: {
-        type: Array,
-        default: []
+    defaultResumeId: {
+        type: mongoose.SchemaTypes.ObjectId,
+        refPath: 'resumes',
+        default: null,
     },
+
+    resumes: [{
+        fileName: String,
+        url: String,
+    }],
 
     desiredCitiesToWork: {
         type: String

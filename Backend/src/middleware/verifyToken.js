@@ -11,11 +11,11 @@ const verifyToken = expressAsyncHandler(async(req, res, next) => {
         const result = await jwt.verify(token, process.env.SECRETKEY);
         if (result) {
             let user;
+            req.tokenData = result;
             if (result.type === "candidate") {
                 user = await candidate.findOne({ _id: result._id });
                 if (user) {
                     req.user = user;
-                    // res.json({ message: "User data", data: result, success: true });
                     next();
                 } else {
                     res.json({ message: "Your token is invalid or expired!", success: false });
@@ -24,7 +24,6 @@ const verifyToken = expressAsyncHandler(async(req, res, next) => {
                 user = await admin.findOne({ _id: result._id });
                 if (user) {
                     req.user = user;
-                    // res.json({ message: "User data", data: result, success: true });
                     next();
                 } else {
                     res.json({ message: "Your token is invalid or expired!", success: false });
@@ -33,7 +32,6 @@ const verifyToken = expressAsyncHandler(async(req, res, next) => {
                 user = await recruiter.findOne({ _id: result._id });
                 if (user) {
                     req.user = user;
-                    // res.json({ message: "User data", data: result, success: true });
                     next();
                 } else {
                     res.json({ message: "Your token is invalid or expired!", success: false });
