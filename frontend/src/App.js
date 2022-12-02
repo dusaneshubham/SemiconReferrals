@@ -36,6 +36,7 @@ function App() {
         <Route exact path="/jobdescription" element={<JobDescription />} />
 
         <Route exact path="/admin" element={<AdminDashboard />}>
+          <Route path="" element={<AdminDashboardComponent />} />
           <Route path="dashboard" element={<AdminDashboardComponent />} />
           <Route path="pendingapplications" element={<PendingApplications />} />
           <Route path="pendingpost" element={<PendingPost />} />
@@ -43,6 +44,7 @@ function App() {
 
         <Route exact path="/candidate/profile" element={<CandidateProfile />} />
         <Route exact path="/candidate" element={<CandidateDashboard />}>
+          <Route path="" element={<CandidateDashboardComponent />} />
           <Route path="dashboard" element={<CandidateDashboardComponent />} />
           {/* <Route path="viewprofile" element={<CandidateProfile />} /> */}
           <Route path="updateprofile" element={<CandidateUpdateProfile />} />
@@ -56,6 +58,7 @@ function App() {
         </Route>
 
         <Route exact path="/employer" element={<EmployerDashboard />}>
+          <Route path="" element={<EmployerDashboardComponent />} />
           <Route path="dashboard" element={<EmployerDashboardComponent />} />
           <Route path="jobpost" element={<JobPost />} />
           <Route path="savedcandidates" element={<EmployerSavedCandidates />} />
