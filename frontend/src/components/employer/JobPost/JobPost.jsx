@@ -13,7 +13,6 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 const JobPost = () => {
-  // alert
   const [alert, setAlert] = useState({});
   const [skills, setSkills] = useState([]);
   const [keywords, setKeywords] = useState([]);
@@ -88,7 +87,6 @@ const JobPost = () => {
                 //   jobCategory: "",
                 //   jobDescription: "",
                 //   keyResponsibilities: "",
-                //   designation: "",
                 //   applicationDeadline: "",
                 //   qualification: "",
                 //   experience: "",
@@ -241,25 +239,6 @@ const JobPost = () => {
                       keyResponsibilities: data,
                     });
                   }}
-                />
-              </div>
-
-              {/*------------------- Role / Designation ------------------*/}
-              <div className="col-md-6">
-                <label htmlFor="designation" className="form-label">
-                  Role / Designation <span style={{ color: "red" }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  value={jobPostDetails.designation}
-                  onChange={(e) =>
-                    setJobPostDetails({
-                      ...jobPostDetails,
-                      designation: e.target.value,
-                    })
-                  }
-                  className="form-control"
-                  id="designation"
                 />
               </div>
 

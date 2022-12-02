@@ -65,11 +65,6 @@ const jobPostSchema = new mongoose.Schema({
         required: true
     },
 
-    designation: {
-        type: String,
-        required: true
-    },
-
     salary: {
         type: String,
     },

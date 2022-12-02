@@ -58,24 +58,23 @@ const PendingPost = () => {
   };
   // ------------------------------------------------------- //
 
-  // ------------------- fetch pending jobs -----------------------
-  const fetchPendingJobs = () => {
-    axios
-      .get("http://localhost:5000/jobs/getPendingJobs")
-      .then((res) => res.data)
-      .then((response) => {
-        if (response.success) {
-          setPendingJobs(response.data);
-        } else {
-          console.log(response.message);
-        }
-      })
-      .catch((err) => {
-        setAlert({ error: "Something went wrong with server!" });
-      });
-  };
-
   useEffect(() => {
+    // ------------------- fetch pending jobs -----------------------
+    const fetchPendingJobs = () => {
+      axios
+        .get("http://localhost:5000/jobs/getPendingJobs")
+        .then((res) => res.data)
+        .then((response) => {
+          if (response.success) {
+            setPendingJobs(response.data);
+          } else {
+            console.log(response.message);
+          }
+        })
+        .catch((err) => {
+          setAlert({ error: "Something went wrong with server!" });
+        });
+    };
     fetchPendingJobs();
   }, []);
 
@@ -85,7 +84,7 @@ const PendingPost = () => {
       .post("http://localhost:5000/admin/approvePost", { postId })
       .then((response) => {
         setAlert({ success: response.message });
-        fetchPendingJobs();
+        setPendingJobs(response.data);
       })
       .catch((err) => {
         setAlert({ error: "Something went wrong with server!" });
@@ -98,7 +97,7 @@ const PendingPost = () => {
       .post("http://localhost:5000/admin/rejectPost", { postId })
       .then((response) => {
         setAlert({ success: response.message });
-        fetchPendingJobs();
+        setPendingJobs(response.data);
       })
       .catch((err) => {
         setAlert({ error: "Something went wrong with server!" });
@@ -134,7 +133,7 @@ const PendingPost = () => {
     setOpenRejection(true);
     setPostId(postId);
   };
-  
+
   const handleCloseApproval = () => {
     setOpenApproval(false);
     setPostId("");

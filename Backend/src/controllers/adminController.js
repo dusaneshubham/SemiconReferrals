@@ -137,9 +137,9 @@ const approvePost = asyncHandler(async(req, res) => {
 
     const isExistJobPost = await JobPost.findOne({ _id: postId });
     if (isExistJobPost) {
-        const updated = await JobPost.findOneAndUpdate({ _id: postId }, { status: "Approved" }, { new: true });
-        if (updated) {
-            res.json({ message: "Job Post has been approved !", success: true });
+        const updatedData = await JobPost.findOneAndUpdate({ _id: postId }, { status: "Approved" }, { new: true });
+        if (updatedData) {
+            res.json({ message: "Job Post has been approved !", data: updatedData, success: true });
         } else {
             res.json({ message: "Something went wrong during approval!!", success: false });
         }
@@ -155,7 +155,21 @@ const rejectPost = asyncHandler(async(req, res) => {
     if (isExistJobPost) {
         const deleted = await JobPost.findOneAndDelete({ _id: postId });
         if (deleted) {
-            res.json({ message: "Rejected post!", success: true });
+            JobPost.aggregate([{
+                        $match: {
+                            status: "Pending"
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "recruiterinfos",
+                            localField: "recruiterId",
+                            foreignField: "recruiterId",
+                            as: "recruiterinfos"
+                        },
+                    }
+                ]).then((data) => res.json({ message: "Rejected the post!", data: data, success: true }))
+                .catch(() => res.json({ message: "Unable to reject the post!", success: false }));
         } else {
             res.json({ message: "Something went wrong during rejection!!", success: false });
         }
@@ -239,7 +253,7 @@ const getStatistics = asyncHandler(async(req, res) => {
         numberOfRecruiter: numberOfRecruiter
     };
 
-    res.json({ message: "Statistics", statistics:data });
+    res.json({ message: "Statistics", statistics: data });
 });
 
 const approveJobApplication = asyncHandler(async(req, res) => {

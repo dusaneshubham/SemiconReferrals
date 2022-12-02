@@ -220,7 +220,6 @@ const jobPost = asyncHandler(async(req, res) => {
         jobCategory: req.body.jobCategory,
         jobDescription: req.body.jobDescription,
         keyResponsibilities: req.body.keyResponsibilities,
-        designation: req.body.designation,
         applicationDeadline: req.body.applicationDeadline,
         qualification: req.body.qualification,
         experience: req.body.experience,
