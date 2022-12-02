@@ -82,6 +82,7 @@ const PendingPost = () => {
   const approvePost = () => {
     axios
       .post("http://localhost:5000/admin/approvePost", { postId })
+      .then((res) => res.data)
       .then((response) => {
         setAlert({ success: response.message });
         setPendingJobs(response.data);
@@ -205,7 +206,7 @@ const PendingPost = () => {
                       <Button
                         variant="contained"
                         color="error"
-                        onClick={handleClickOpenRejection(data._id)}
+                        onClick={() => handleClickOpenRejection(data._id)}
                         style={{ margin: "10px" }}
                       >
                         Reject

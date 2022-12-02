@@ -139,7 +139,21 @@ const approvePost = asyncHandler(async(req, res) => {
     if (isExistJobPost) {
         const updatedData = await JobPost.findOneAndUpdate({ _id: postId }, { status: "Approved" }, { new: true });
         if (updatedData) {
-            res.json({ message: "Job Post has been approved !", data: updatedData, success: true });
+            JobPost.aggregate([{
+                        $match: {
+                            status: "Pending"
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: "recruiterinfos",
+                            localField: "recruiterId",
+                            foreignField: "recruiterId",
+                            as: "recruiterinfos"
+                        },
+                    }
+                ]).then((data) => res.json({ message: "Approved the post!", data: data, success: true }))
+                .catch(() => res.json({ message: "Unable to approve the post!", success: false }));
         } else {
             res.json({ message: "Something went wrong during approval!!", success: false });
         }
