@@ -133,13 +133,13 @@ const rejectCompany = asyncHandler(async(req, res) => {
 });
 
 const approvePost = asyncHandler(async(req, res) => {
-    const { _id } = req.body;
+    const { postId } = req.body;
 
-    const isExistJobPost = await JobPost.findOne({ _id });
+    const isExistJobPost = await JobPost.findOne({ _id: postId });
     if (isExistJobPost) {
-        const _company = await JobPost.findOneAndUpdate(_id, { status: "Approved" }, { new: true });
-        if (_company) {
-            res.json({ message: "successfully updated status!", success: true });
+        const updated = await JobPost.findOneAndUpdate({ _id: postId }, { status: "Approved" }, { new: true });
+        if (updated) {
+            res.json({ message: "Job Post has been approved !", success: true });
         } else {
             res.json({ message: "Something went wrong during approval!!", success: false });
         }
@@ -149,13 +149,13 @@ const approvePost = asyncHandler(async(req, res) => {
 });
 
 const rejectPost = asyncHandler(async(req, res) => {
-    const { _id } = req.body;
+    const { postId } = req.body;
 
-    const isExistJobPost = await JobPost.findOne({ _id });
+    const isExistJobPost = await JobPost.findOne({ _id: postId });
     if (isExistJobPost) {
-        const _company = await JobPost.findOneAndUpdate(_id, { status: "Rejected" }, { new: true });
-        if (_company) {
-            res.json({ message: "successfully updated status!", success: true });
+        const deleted = await JobPost.findOneAndDelete({ _id: postId });
+        if (deleted) {
+            res.json({ message: "Rejected post!", success: true });
         } else {
             res.json({ message: "Something went wrong during rejection!!", success: false });
         }
