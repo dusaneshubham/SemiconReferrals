@@ -33,7 +33,8 @@ const MyResumes = () => {
   const [open, setOpen] = useState(false);
   const [resume, setResume] = useState();
   const [resumeData, setResumeData] = useState([]);
-  const [deleteResumeIndex, setDeleteResumeIndex] = useState();
+  const [defaultResumeId, setDefaultResumeId] = useState("");
+  const [deleteResume, setDeleteResume] = useState();
 
   useEffect(() => {
     //token
@@ -44,6 +45,7 @@ const MyResumes = () => {
       .then((response) => {
         if (response.success) {
           setResumeData(response.resumes);
+          setDefaultResumeId(response.defaultResumeId);
         } else {
           setAlert({ error: response.message });
           // TODO: redirect path
@@ -72,8 +74,10 @@ const MyResumes = () => {
       .then((res) => {
         if (res.success) {
           setAlert({ success: res.message });
-          document.getElementById('resume').value = "";
           setResumeData(res.resumes)
+          if (res.defaultResumeId)
+            setDefaultResumeId(res.defaultResumeId);
+          document.getElementById('resume').value = "";
         } else {
           setAlert({ error: res.message });
         }
@@ -88,19 +92,18 @@ const MyResumes = () => {
     saveAs.saveAs(url, "MyResume");
   }
 
-  const handleClickOpen = (index) => {
-    setDeleteResumeIndex(index);
+  const handleClickOpen = (id, fileName) => {
+    setDeleteResume({ id: id, fileName: fileName });
     setOpen(true);
   };
 
   const handleClickClose = () => {
-    setDeleteResumeIndex();
+    setDeleteResume();
     setOpen(false);
   };
 
-  const deleteResume = async () => {
-    const data = resumeData.filter((_, index) => index !== deleteResumeIndex);
-    axios.post("http://localhost:5000/candidate/deleteResume", { resumeData: data, token: token })
+  const handleDeleteResume = async () => {
+    axios.post("http://localhost:5000/candidate/deleteResume", { id: deleteResume.id, fileName: deleteResume.fileName, token: token })
       .then((res) => res.data)
       .then((res) => {
         if (res.success) {
@@ -115,6 +118,22 @@ const MyResumes = () => {
         setAlert({ error: "Something went wrong with server!" });
       });
     setOpen(false);
+  }
+
+  const makeDefault = async (id) => {
+    await axios.post("http://localhost:5000/candidate/makeDefaultResume", { token: token, id: id })
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setDefaultResumeId(res.defaultResumeId);
+        } else {
+          setAlert({ error: res.message });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setAlert({ message: "Something went wrong with server!" });
+      })
   }
 
   //------------------- Ignore this part bcz it's meaningless but mandatory ------------------- //
@@ -195,6 +214,7 @@ const MyResumes = () => {
               <StyledTableCell>Resume Name</StyledTableCell>
               <StyledTableCell>Download</StyledTableCell>
               <StyledTableCell>Delete</StyledTableCell>
+              <StyledTableCell>Set Default</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -217,13 +237,35 @@ const MyResumes = () => {
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={() => handleClickOpen(index)}
+                      onClick={() => handleClickOpen(data._id, data.fileName)}
                       style={{ margin: "10px" }}
                       startIcon={<DeleteIcon />}
                     >
                       Delete
                     </Button>
                   </StyledTableCell>
+                  {
+                    data._id === defaultResumeId ?
+                      <StyledTableCell>
+                        <Button
+                          variant="contained"
+                          color="success"
+                          style={{ margin: "10px" }}
+                        >
+                          Default
+                        </Button>
+                      </StyledTableCell>
+                      :
+                      <StyledTableCell>
+                        <Button
+                          variant="outlined"
+                          style={{ margin: "10px" }}
+                          onClick={() => makeDefault(data._id)}
+                        >
+                          Set Default
+                        </Button>
+                      </StyledTableCell>
+                  }
                 </StyledTableRow>
               );
             })}
@@ -242,7 +284,7 @@ const MyResumes = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={deleteResume}>
+          <Button autoFocus onClick={handleDeleteResume}>
             Yes
           </Button>
           <Button onClick={handleClickClose} autoFocus>

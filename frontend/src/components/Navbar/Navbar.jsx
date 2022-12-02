@@ -156,14 +156,16 @@ const Navbar = () => {
                         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
                         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
                     >
-                        <MenuItem>
-                            <ListItemIcon>
-                                <AccountCircle fontSize="small" />
-                            </ListItemIcon>
-                            {type === "recruiter" && <NavLink to="/employer" className='text-decoration-none text-black'>Dashboard</NavLink>}
-                            {type === "admin" && <NavLink to="/admin" className='text-decoration-none text-black'>Dashboard</NavLink>}
-                            {type === "candidate" && <NavLink to="/candidate" className='text-decoration-none text-black'>Dashboard</NavLink>}
-                        </MenuItem>
+                        {<NavLink
+                            to={type === "admin" ? "/admin" : type === "recruiter" ? "/employer" : type === "candidate" ? "/candidate" : ''}
+                            className='text-decoration-none text-black'>
+                            <MenuItem>
+                                <ListItemIcon>
+                                    <AccountCircle fontSize="small" />
+                                </ListItemIcon>
+                                Dashboard
+                            </MenuItem>
+                        </NavLink>}
                         <MenuItem onClick={logout} className='text-black'>
                             <ListItemIcon>
                                 <Logout fontSize="small" />
