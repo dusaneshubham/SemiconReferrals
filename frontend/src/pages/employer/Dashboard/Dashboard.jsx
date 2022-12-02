@@ -21,8 +21,10 @@ import MuiAppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import DashboardIcon from "@mui/icons-material/Dashboard";
 import axios from 'axios';
+import {
+  Home, PostAdd, Person, ManageAccounts, PermIdentity, PeopleAlt, Logout
+} from "@mui/icons-material";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -37,6 +39,13 @@ const Dashboard = () => {
     savedcandidates: "Saved Candidates",
     followers: "Followers",
   };
+
+  const obj = [<Home />, <PostAdd />, <Person />, <ManageAccounts />, <PermIdentity />, <PeopleAlt />];
+
+  const logout = () => {
+    localStorage.clear();
+    navigate('/');
+  }
 
   // authentication
   useEffect(() => {
@@ -138,10 +147,6 @@ const Dashboard = () => {
     setOpen(false);
   };
 
-  let obj = {
-    dashboard: <DashboardIcon />,
-  };
-
   if (!loading) {
     return (
       <Box sx={{ display: "flex" }}>
@@ -179,7 +184,7 @@ const Dashboard = () => {
           <List>
             {Object.entries(sideNavbar).map(([key, value], index) => (
               <ListItem key={index} disablePadding sx={{ display: "block" }}>
-                <Link to={key}>
+                <Link to={key} className="text-decoration-none">
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -194,8 +199,7 @@ const Dashboard = () => {
                         justifyContent: "center",
                       }}
                     >
-                      {/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
-                      {obj.dashboard}
+                      {obj[index]}
                     </ListItemIcon>
 
                     <ListItemText
@@ -207,6 +211,30 @@ const Dashboard = () => {
                 </Link>
               </ListItem>
             ))}
+            <ListItem disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+                onClick={logout}>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Logout />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Logout"
+                  style={{ color: "var(--text)", textDecoration: "none" }}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
+            </ListItem>
           </List>
         </Drawer>
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
