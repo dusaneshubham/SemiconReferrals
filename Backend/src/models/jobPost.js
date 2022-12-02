@@ -1,57 +1,20 @@
 const mongoose = require("mongoose");
 
 const jobPostSchema = new mongoose.Schema({
+
+    recruiterId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Recruiter',
+        required: true
+    },
+
     jobTitle: {
         type: String,
         required: true
     },
 
-    companyID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company',
-    },
-
-    typeOfJob: {
+    jobCategory: {
         type: String,
-        enum: ["Full Time", "Part Time", "Internship"],
-        required: true,
-    },
-
-    modeOfWork: {
-        type: String,
-        enum: ["Remote", "Work from Office"],
-        required: true
-    },
-
-    location: {
-        type: String,
-        required: true
-    },
-
-    deadlineToApply: {
-        type: String, // date + time = String
-        required: true
-    },
-
-    DOB: {
-        type: Date,
-        required: false
-    },
-
-    password: {
-        type: String,
-        required: true,
-        minLength: 8
-    },
-
-    profileImage: {
-        type: String,
-        required: true
-            // TODO : put default image
-    },
-
-    skillsRequired: {
-        type: Array,
         required: true
     },
 
@@ -65,71 +28,79 @@ const jobPostSchema = new mongoose.Schema({
         required: true
     },
 
-    minSalary: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-
-    maxSalary: {
-        type: Number,
-        required: false
-    },
-
-    salaryType: {
-        type: String,
-        enum: ["Hour", "Day", "Week", "Month", "Year"],
+    applicationDeadline: {
+        type: Date,
         required: true
     },
 
-    designation: {
+
+    jobType: {
+        type: String,
+        // enum: ["Full Time", "Part Time", "Internship"],
+        required: true,
+    },
+
+    experience: {
         type: String,
         required: true
     },
 
-    numberOfOpenings: {
+    qualification: {
+        type: String,
+        required: true
+    },
+
+    location: {
+        type: String,
+        required: true
+    },
+
+    numberOfVacancies: {
         type: Number,
         required: true
     },
 
-    numberOfApplicants: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-
-    minExperienceOfCandidate: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-
-    maxExperienceOfCandidate: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-
-    qualificationOfCandidate: {
+    jobLevel: {
         type: String,
-        required: true,
+        required: true
+    },
+
+    salary: {
+        type: String,
+    },
+
+
+    modeOfWork: {
+        type: String,
+        enum: ["Remote", "Work from Office"]
+    },
+
+    skillsRequired: {
+        type: Array,
+        // required: true
     },
 
     keywords: {
         type: Array,
-        required: false,
+    },
+
+
+    numberOfApplications: {
+        type: Number,
+        required: true,
+        default: 0
     },
 
     status: {
         type: String,
-        enum: ["Approved", "Rejected", "Pending", "Blocked"],
+        // enum: ["Approved", "Rejected", "Pending", "Blocked"],
+        enum: ["Approved", "Pending", "Blocked"],
         required: true,
         default: "Pending",
     },
 
     remarks: {
-        type: String,
-        required: false,
+        type: String
     }
 
 }, { timestamps: true });

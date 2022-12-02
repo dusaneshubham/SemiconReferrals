@@ -9,6 +9,7 @@ const adminRoute = require('./routes/adminRoute');
 const candidateRoute = require('./routes/candidateRoute');
 const companyRoute = require('./routes/companyRoute');
 const recruiterRoute = require('./routes/recruiterRoute');
+const jobsRoute = require('./routes/jobsRoute');
 const sendEmail = require('./middleware/sendEmail');
 const verifyEmail = require('./middleware/verifyEmail');
 const sendForgetPassMail = require('./middleware/sendForgetPassMail');
@@ -34,12 +35,12 @@ app.use("/send-forget-pass-mail", sendForgetPassMail);
 app.use("/admin", adminRoute);
 app.use("/candidate", candidateRoute);
 app.use("/recruiter", recruiterRoute);
-app.use("/company", companyRoute);
+app.use("/jobs", jobsRoute);
 
 mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
     .then(() => console.log("Connected to Database"))
     .catch((err) => {
         console.log(err);

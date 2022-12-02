@@ -1,10 +1,14 @@
-#main-container {
-    padding: 30px 80px;
+#job-description-container h5 {
+    /* margin: 15px 0; */
+}
+
+#job-description-container p {
+    color: var(--text);
 }
 
 .skills-section {
-    color: #00000080;
-    border: 1px solid #00000080;
+    color: var(--text);
+    border: 1px solid var(--text);
     padding: 3px 12px;
     margin: 10px 20px 10px 0;
     border-radius: 30px;

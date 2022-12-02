@@ -1,25 +1,42 @@
-const expressAsyncHandler = require("express-async-handler");
-const job = require("../models/jobPost");
+const asyncHandler = require("express-async-handler");
+const JobPost = require("../models/jobPost");
+const RecruiterInfo = require("../models/recruiterInfo");
 
-const getAllJobDetails = expressAsyncHandler(async (req, res) => {
-    const data = await job.find();
-
-    res.json({ message: "All job post data", data: data, status: "success" });
+const getAllJobDetails = asyncHandler(async(req, res) => {
+    const data = await JobPost.find();
+    res.json({ message: "All job post data", data: data, success: true });
 });
 
-const getPerticularJobDetails = asyncHandler(async (req, res) => {
-    const { _id } = req.body;
-
-    const details = await job.findOne({ id: _id });
-
-    if (details) {
-        res.json({ message: "Job details", data: details, status: "success" })
+const getJobDetails = asyncHandler(async(req, res) => {
+    const user = req.user;
+    const jobDetails = await JobPost.find({ recruiterId: user._id });
+    if (jobDetails) {
+        res.json({ message: "Job details found", data: jobDetails, success: true })
     } else {
-        res.json({ message: "Job not found!", status: "error" });
+        res.json({ message: "Jobs not found!", success: false });
     }
+});
+
+const getPendingJobs = asyncHandler(async(req, res) => {
+    JobPost.aggregate([{
+                $match: {
+                    status: "Pending"
+                }
+            },
+            {
+                $lookup: {
+                    from: "recruiterinfos",
+                    localField: "recruiterId",
+                    foreignField: "recruiterId",
+                    as: "recruiterinfos"
+                },
+            }
+        ]).then((data) => res.json({ data: data, success: true }))
+        .catch(() => res.json({ success: false, message: "Unable to fetch data" }));
 });
 
 module.exports = {
     getAllJobDetails,
-    getPerticularJobDetails
+    getJobDetails,
+    getPendingJobs
 }

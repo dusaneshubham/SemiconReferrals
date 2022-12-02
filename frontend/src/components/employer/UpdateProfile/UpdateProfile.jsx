@@ -240,7 +240,7 @@ const UpdateProfile = () => {
                     Total Experience (in years)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     defaultValue={userDetails.totalExperience}
                     onChange={(e) =>
                       setUserDetails({
@@ -362,7 +362,7 @@ const UpdateProfile = () => {
                     Your experience in the current organization (in years)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     defaultValue={userDetails.currentExperience}
                     onChange={(e) =>
                       setUserDetails({
