@@ -11,7 +11,7 @@ const { isEmail } = require('validator');
 
 // Generate the token
 const generateToken = (user) => {
-    return jwt.sign({ _id: user._id, type:"admin" }, process.env.SECRETKEY);
+    return jwt.sign({ _id: user._id, type: "admin" }, process.env.SECRETKEY);
 }
 
 // TODO : To be removed afterwards
@@ -200,21 +200,19 @@ const getStatistics = asyncHandler(async (req, res) => {
     const numberOfCandidate = await Candidate.find().count();
 
     // Statistics of company
-    const numberOfPendingCompany = await Company.find({ status: "Pending" }).count();
+    // const numberOfPendingCompany = await Company.find({ status: "Pending" }).count();
 
-    const numberOfApprovedCompany = await Company.find({ status: "Approved" }).count();
+    // const numberOfApprovedCompany = await Company.find({ status: "Approved" }).count();
 
-    const numberOfRejectedCompany = await Company.find({ status: "Rejected" }).count();
+    // const numberOfRejectedCompany = await Company.find({ status: "Rejected" }).count();
 
-    const numberOfBlockedCompany = await Company.find({ status: "Block" }).count();
+    // const numberOfBlockedCompany = await Company.find({ status: "Block" }).count();
 
     // TODO : thinking
     // Statistics of job application
-    const numberOfPendingJobApplication = await JobApplication.find({ status: "Pending" }).count();
+    const numberOfJobApplication = await JobApplication.find().count()
 
-    const numberOfRejectedJobApplication = await JobApplication.find({ status: "Rejected" }).count();
-
-    const numberOfHiredJobApplication = await JobApplication.find({ status: "Hired" }).count();
+    const numberOfPendingJobApplication = await JobApplication.find({ isApprovedByAdmin: false }).count();
 
     // Statistics of job post
     const numberOfApprovedJobPost = await JobPost.find({ status: "Approved" }).count();
@@ -224,24 +222,13 @@ const getStatistics = asyncHandler(async (req, res) => {
     const numberOfRejectedJobPost = await JobPost.find({ status: "Rejected" }).count();
 
     // Statistics of Recruiter
-    const numberOfActiveRecruiter = await Recruiter.find({ isActive: true }).count();
-
-    const numberOfBlockRecruiter = await Recruiter.find({ isActive: false }).count();
+    const numberOfRecruiter = await Recruiter.find().count();
 
     const data = {
         numberOfCandidate: numberOfCandidate,
-        company: {
-            total: numberOfPendingCompany + numberOfApprovedCompany + numberOfRejectedCompany + numberOfBlockedCompany,
-            pending: numberOfPendingCompany,
-            approved: numberOfApprovedCompany,
-            reject: numberOfRejectedCompany,
-            blocked: numberOfBlockedCompany
-        },
         jobApplication: {
-            total: numberOfPendingJobApplication + numberOfRejectedJobApplication + numberOfHiredJobApplication,
+            total: numberOfJobApplication,
             pending: numberOfPendingJobApplication,
-            rejected: numberOfRejectedJobApplication,
-            hired: numberOfHiredJobApplication
         },
         jobPost: {
             total: numberOfPendingJobPost + numberOfApprovedJobPost + numberOfRejectedJobPost,
@@ -249,14 +236,10 @@ const getStatistics = asyncHandler(async (req, res) => {
             approve: numberOfApprovedJobPost,
             reject: numberOfRejectedJobPost
         },
-        recruiter: {
-            total: numberOfActiveRecruiter + numberOfBlockRecruiter,
-            active: numberOfActiveRecruiter,
-            block: numberOfBlockRecruiter
-        }
+        numberOfRecruiter: numberOfRecruiter
     };
 
-    res.json({ message: "Statistics", data });
+    res.json({ message: "Statistics", statistics:data });
 });
 
 const approveJobApplication = asyncHandler(async (req, res) => {
