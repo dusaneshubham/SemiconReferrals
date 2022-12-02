@@ -56,6 +56,7 @@ const Dashboard = () => {
         await axios.post("http://localhost:5000/verify-token", { token })
           .then((res) => res.data)
           .then((res) => {
+            console.log(res);
             if (!res.success || res.tokenData.type !== "candidate") {
               navigate('/');
             } else {

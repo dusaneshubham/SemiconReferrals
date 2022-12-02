@@ -80,7 +80,7 @@ const Profile = () => {
           >
             Contact Shubham Dusane
             <hr />
-            <form className="row ">
+            <form className="row">
               <div className="col-md-12">
                 <input
                   type="text"

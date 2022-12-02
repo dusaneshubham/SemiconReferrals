@@ -46,7 +46,7 @@ function App() {
         <Route exact path="/candidate" element={<CandidateDashboard />}>
           <Route path="" element={<CandidateDashboardComponent />} />
           <Route path="dashboard" element={<CandidateDashboardComponent />} />
-          {/* <Route path="viewprofile" element={<CandidateProfile />} /> */}
+          <Route path="viewprofile/:id" element={<CandidateProfile />} />
           <Route path="updateprofile" element={<CandidateUpdateProfile />} />
           <Route path="myresumes" element={<CandidateResumes />} />
           <Route path="appliedjobs" element={<CandidateAppliedJobs />} />
