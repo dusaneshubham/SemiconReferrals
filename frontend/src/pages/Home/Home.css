@@ -67,23 +67,6 @@ ul {
     margin: 30px 0 !important;
 }
 
-.start-hiring-btn {
-    padding: 10px 20px;
-    background-color: var(--main-blue);
-    color: #ffffff;
-    border: none;
-    border-radius: 3px;
-}
-
-.start-hiring-btn-link {
-    color: #ffffff;
-    text-decoration: none;
-}
-
-.start-hiring-btn-link:hover {
-    color: var(--light-pink);
-}
-
 .top-resources ul li {
     margin: 2px 0 !important;
 }

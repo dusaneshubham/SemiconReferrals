@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
-
 :root {
     --light-pink: #FE93A0;
     --light-yellow: #F9F2D8;
@@ -11,4 +10,21 @@
 
 * {
     font-family: 'Roboto', sans-serif;
+}
+
+.main-btn {
+    padding: 10px 20px;
+    background-color: var(--main-blue);
+    color: #ffffff;
+    border: none;
+    border-radius: 3px;
+}
+
+.main-btn-link {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.main-btn-link:hover {
+    color: var(--light-pink);
 }

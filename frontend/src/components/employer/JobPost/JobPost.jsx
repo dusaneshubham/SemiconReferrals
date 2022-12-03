@@ -65,8 +65,7 @@ const JobPost = () => {
       jobLevel &&
       numberOfVacancies &&
       location &&
-      skills &&
-      keywords
+      skills
     ) {
       if (todayDate < applicationDeadline) {
         // Application deadline should be of future only
@@ -419,26 +418,30 @@ const JobPost = () => {
               </div>
 
               {/*----------------- Job Skills ------------------*/}
-              <label htmlFor="skills" className="form-label">
-                Job Skills
-              </label>
-              <TagsInput
-                id="skills"
-                value={skills}
-                onChange={setSkills}
-                placeHolder="Enter Skill"
-              />
+              <div>
+                <label htmlFor="skills" className="form-label">
+                  Job Skills <span style={{ color: "red" }}>*</span>
+                </label>
+                <TagsInput
+                  id="skills"
+                  value={skills}
+                  onChange={setSkills}
+                  placeHolder="Enter Skill"
+                />
+              </div>
 
               {/*----------------- Job Tags / Keywords ------------------*/}
-              <label htmlFor="keywords" className="form-label">
-                Job Tags / Keywords
-              </label>
-              <TagsInput
-                id="keywords"
-                value={keywords}
-                onChange={setKeywords}
-                placeHolder="Enter Keyword"
-              />
+              <div>
+                <label htmlFor="keywords" className="form-label">
+                  Job Tags / Keywords
+                </label>
+                <TagsInput
+                  id="keywords"
+                  value={keywords}
+                  onChange={setKeywords}
+                  placeHolder="Enter Keyword"
+                />
+              </div>
 
               {/*--------------------- Submit Button ---------------------*/}
               <div className="col-12">

@@ -2,14 +2,15 @@ const asyncHandler = require("express-async-handler");
 const JobPost = require("../models/jobPost");
 const RecruiterInfo = require("../models/recruiterInfo");
 
+// not used yet
 const getAllJobDetails = asyncHandler(async(req, res) => {
     const data = await JobPost.find();
     res.json({ message: "All job post data", data: data, success: true });
 });
 
 const getJobDetails = asyncHandler(async(req, res) => {
-    const user = req.user;
-    const jobDetails = await JobPost.find({ recruiterId: user._id });
+    const { postId } = req.body;
+    const jobDetails = await JobPost.findOne({ _id: postId });
     if (jobDetails) {
         res.json({ message: "Job details found", data: jobDetails, success: true })
     } else {

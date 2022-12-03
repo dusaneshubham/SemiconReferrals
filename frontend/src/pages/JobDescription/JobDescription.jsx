@@ -1,73 +1,87 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./job-description.css";
+import axios from "axios";
 
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import JobOverview from "../../components/JobDescription/JobOverview";
 
 const JobDescription = () => {
-  let skillsRequired = [
-    "HTML",
-    "CSS",
-    "JavaScript",
-    "Node",
-    "PHP",
-    "C++",
-    "Java",
-    "Ruby",
-    "Python",
-    "Machine Learning",
-    "Artificial Intelligence",
-  ];
+  const [jobDetail, setJobDetail] = useState({
+    jobTitle: "",
+    JobDescription: "",
+    keyResponsibilities: "",
+    numberOfVacancies: 0,
+    applicationDeadline: "",
+    jobType: "",
+    experience: "",
+    qualification: "",
+    location: "",
+    jobLevel: "",
+    salary: "",
+    skillsRequired: [],
+  });
+
+  // let skillsRequired = [
+  //   "HTML",
+  //   "CSS",
+  //   "JavaScript",
+  //   "Node",
+  //   "PHP",
+  //   "C++",
+  //   "Java",
+  //   "Ruby",
+  //   "Python",
+  //   "Machine Learning",
+  //   "Artificial Intelligence",
+  // ];
+
+  // console.log(document.URL);
+  const postId = "638796710ec0dccdff086548";
+
+  useEffect(() => {
+    const getJobDetail = () => {
+      axios
+        .post("http://localhost:5000/jobs/getJobDetails", { postId })
+        .then((res) => res.data)
+        .then((response) => {
+          setJobDetail(response.data);
+          // console.log(response.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+    getJobDetail();
+  }, []);
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <div className="container" id="job-description-container">
         {/* -------- Title -------- */}
-        <h4>Software Developer</h4>
+        <h4>{jobDetail.jobTitle}</h4>
 
         <div className="row my-5">
           <div id="left" className="col-md-9">
             {/* ---------------- Job Description ------------------- */}
             <h5>Job Description</h5>
-            <p className="mb-5">
-              As a Product Designer, you will work within a Product Delivery
-              Team fused with UX, engineering, product and data talent. You will
-              help the team design beautiful interfaces that solve business
-              challenges for our clients. We work with a number of Tier 1 banks
-              on building web-based applications for AML, KYC and Sanctions List
-              management workflows. This role is ideal if you are looking to
-              segue your career into the FinTech or Big Data arenas.
-            </p>
+            <p
+              className="mb-5"
+              dangerouslySetInnerHTML={{ __html: jobDetail.jobDescription }}
+            ></p>
             {/* ----------------- Key Responsibilities ------------------- */}
             <h5>Key Responsibilities</h5>
-            <p className="mb-5">
-              <ul>
-                <li>
-                  Be involved in every step of the product design cycle from
-                  discovery to developer handoff and user acceptance testing.
-                </li>
-                <li>
-                  Work with BAs, product managers and tech teams to lead the
-                  Product Design
-                </li>
-                <li>
-                  Maintain quality of the design process and ensure that when
-                  designs are translated into code they accurately reflect the
-                  design specifications.
-                </li>
-                <li>
-                  Accurately estimate design tickets during planning sessions.
-                </li>
-              </ul>
+            <p className="mb-5"
+              dangerouslySetInnerHTML=
+              {{ __html: jobDetail.keyResponsibilities }}>
             </p>
             {/* ----------------- Skills Required ------------------ */}
             <h5>Skills Required</h5>
             <div className="d-flex flex-wrap">
-              {skillsRequired.map((skill) => (
+              {jobDetail.skillsRequired.map((skill, index) => (
                 <div className="skills-section">{skill}</div>
               ))}
             </div>
@@ -75,18 +89,44 @@ const JobDescription = () => {
 
           <div id="right" className="col-md-3">
             <JobOverview
-              key=""
-              jobPostedDate="10/12/2023"
-              location="Ahmedabad"
-              salary="$10000 - $200000 per month"
-              deadline="10/12/2024"
-              experience="Trained Professional (0-1 year)"
-              qualification="Bachelor"
-              jobType="Full Time"
-              jobLevel="Senior"
-              vacancies="10"
+              // jobPostedDate={jobDetail.createdAt.toLocaleString("default", {month:"long"})}
+              jobPostedDate={jobDetail.createdAt}
+              location={jobDetail.location}
+              salary={jobDetail.salary}
+              deadline={jobDetail.applicationDeadline}
+              experience={jobDetail.experience}
+              qualification={jobDetail.qualification}
+              jobType={jobDetail.jobType}
+              jobLevel={jobDetail.jobLevel}
+              vacancies={jobDetail.numberOfVacancies}
             />
           </div>
+        </div>
+
+        {/* ------------------- Apply Now Button ------------------ */}
+        <div
+          style={{ margin: "20px 0", width: "100%" }}
+          className="d-flex justify-content-center"
+        >
+          <button style={{ width: "300px" }} className="main-btn">
+            Apply Now
+          </button>
+        </div>
+
+        {/* -------------------- Save Job Button -------------------- */}
+        <div
+          style={{ margin: "20px 0", width: "100%" }}
+          className="d-flex justify-content-center"
+        >
+          <button
+            style={{
+              width: "300px",
+              backgroundColor: "var(--main-orange)",
+            }}
+            className="main-btn"
+          >
+            Save This Job
+          </button>
         </div>
       </div>
 
@@ -94,5 +134,6 @@ const JobDescription = () => {
     </>
   );
 };
+
 
 export default JobDescription;
