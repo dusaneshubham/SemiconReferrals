@@ -10,7 +10,6 @@ const recruiterInfoSchema = new mongoose.Schema({
 
     companyName: {
         type: String,
-        required: true
     },
 
     companyWebsite: {
@@ -48,6 +47,12 @@ const recruiterInfoSchema = new mongoose.Schema({
     teamWorkDescription: {
         type: String
     },
+
+    saveProfile: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Candidate',
+        unique: true
+    }
 
 }, { timestamps: true });
 

@@ -28,17 +28,18 @@ import axios from 'axios';
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [id, setId] = useState("");
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const sideNavbar = {
-    dashboard: "Dashboard",
-    viewprofile: "View Profile",
-    updateprofile: "Update Profile",
-    myresumes: "My Resumes",
-    appliedjobs: "Applied Jobs",
-    savedjobs: "Saved Jobs",
-    followedemployers: "Followed Employers",
+    "Dashboard": "dashboard",
+    "View Profile": "viewprofile/" + id,
+    "Update Profile": "updateprofile",
+    "My Resumes": "myresumes",
+    "Applied Jobs": "appliedjobs",
+    "Saved Jobs": "savedjobs",
+    "Followed Employers": "followedemployers",
   };
 
   const obj = [<Home />, <Person />, <ManageAccounts />, <Description />, <AssignmentTurnedIn />, <Bookmark />, <PeopleAlt />];
@@ -56,10 +57,10 @@ const Dashboard = () => {
         await axios.post("http://localhost:5000/verify-token", { token })
           .then((res) => res.data)
           .then((res) => {
-            console.log(res);
             if (!res.success || res.tokenData.type !== "candidate") {
               navigate('/');
             } else {
+              setId(res.tokenData._id);
               setLoading(false);
             }
           }).catch((err) => {
@@ -184,9 +185,9 @@ const Dashboard = () => {
           </DrawerHeader>
           <Divider />
           <List>
-            {Object.entries(sideNavbar).map(([key, value], index) => (
+            {Object.entries(sideNavbar).map(([name, url], index) => (
               <ListItem key={index} disablePadding sx={{ display: "block" }}>
-                <Link to={key} className="text-decoration-none">
+                <Link to={url} className="text-decoration-none">
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -205,7 +206,7 @@ const Dashboard = () => {
                     </ListItemIcon>
 
                     <ListItemText
-                      primary={value}
+                      primary={name}
                       style={{ color: "var(--text)", textDecoration: "none" }}
                       sx={{ opacity: open ? 1 : 0 }}
                     />

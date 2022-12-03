@@ -1,0 +1,25 @@
+.profile {
+    min-width: 800px !important;
+}
+
+.profile .section {
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 5px;
+    border: 1px solid rgba(226, 226, 226, 0.651);
+    font-size: medium;
+}
+
+.profile .header {
+    padding-bottom: 10px;
+    color: var(--main-orange);
+    border-bottom: 1px solid var(--main-orange);
+}
+
+.profile .text-orange {
+    color: var(--main-orange);
+}
+
+.profile .bg-orange {
+    background-color: var(--main-orange) !important;
+}

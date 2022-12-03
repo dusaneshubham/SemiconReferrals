@@ -46,7 +46,6 @@ function App() {
         <Route exact path="/candidate" element={<CandidateDashboard />}>
           <Route path="" element={<CandidateDashboardComponent />} />
           <Route path="dashboard" element={<CandidateDashboardComponent />} />
-          <Route path="viewprofile/:id" element={<CandidateProfile />} />
           <Route path="updateprofile" element={<CandidateUpdateProfile />} />
           <Route path="myresumes" element={<CandidateResumes />} />
           <Route path="appliedjobs" element={<CandidateAppliedJobs />} />
@@ -56,6 +55,7 @@ function App() {
             element={<CandidateFollowedEmployers />}
           />
         </Route>
+        <Route exact path="/candidate/viewprofile/:id" element={<CandidateProfile />} />
 
         <Route exact path="/employer" element={<EmployerDashboard />}>
           <Route path="" element={<EmployerDashboardComponent />} />
