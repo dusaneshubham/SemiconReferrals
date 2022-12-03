@@ -137,7 +137,38 @@ const getRecruiterDetails = asyncHandler(async (req, res) => {
     } else {
         res.json({ success: false, message: "Cannot get data" });
     }
-})
+});
+
+const getRecruiterDetailsById = asyncHandler(async (req, res) => {
+    const { id } = req.body;
+    if (id) {
+        const result = await Recruiter.findOne({ recruiterId: id }).select({ email: 1, contactNumber: 1, name: 1, createdAt: 1 });
+        const info = await RecruiterInfo.findOne({ recruiterId: id });
+        if (info && result) {
+            const data = {
+                name: result.name,
+                email: result.email,
+                contactNumber: result.contactNumber,
+                companyName: info.companyName,
+                companyWebsite: info.companyWebsite,
+                totalExperience: info.totalExperience,
+                linkedin: info.linkedin,
+                teamName: info.teamName,
+                teamSize: info.teamSize,
+                location: info.location,
+                designation: info.designation,
+                experienceInCurrentOrganization: info.experienceInCurrentOrganization,
+                teamWorkDescription: info.teamWorkDescription,
+                createDate: result.createdAt,
+            };
+            res.json({ message: "Recruiter information", data: data, success: true });
+        } else {
+            res.json({ message: "User not found!", success: false });
+        }
+    } else {
+        res.json({ message: "Invalid request", success: false });
+    }
+});
 
 const updateProfile = asyncHandler(async (req, res) => {
     // recruiter information details
@@ -291,6 +322,7 @@ module.exports = {
     loginRecruiter,
     updatePassword,
     getRecruiterDetails,
+    getRecruiterDetailsById,
     updateProfile,
     jobPost,
     saveProfile,

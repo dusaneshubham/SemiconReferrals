@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import ReactLoading from "react-loading";
-import { CalendarMonth, CardMembership, Download, Email, Favorite, Female, Male, School, Transgender, Visibility } from '@mui/icons-material';
+import { CalendarMonth, CardMembership, Download, Email, Favorite, Female, LinkedIn, Male, School, Transgender, Visibility } from '@mui/icons-material';
 import { Timeline, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import './Profile.css';
@@ -10,6 +10,7 @@ import { Button, FormControl, OutlinedInput } from "@mui/material";
 import saveAs from 'file-saver';
 import { Snackbar, Slide } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
+import Footer from "../../../components/Footer/Footer";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -161,9 +162,20 @@ const Profile = () => {
           </Alert>
         </Snackbar>
         {/* --------------------------------------------------- */}
-        <div className="container px-0 profile">
+        <div className="container px-0 py-3 profile">
+          <div className="w-75 m-auto text-orange">
+            <h2 className="d-inline-block">
+              {data.name}
+            </h2>
+            {data.linkedIn !== "" &&
+              <div className="float-end">
+                <a href={data.linkedIn} target="_blank" rel="noreferrer">
+                  <LinkedIn fontSize="large" />
+                </a>
+              </div>}
+          </div>
           <div className="row">
-            <div className="col-7 mx-3">
+            <div className="col-md-7 mx-3">
 
               {/*--------------------- Candidate Details ---------------------*/}
               <div className="section">
@@ -322,7 +334,7 @@ const Profile = () => {
 
             </div>
 
-            <div className="col-4 section bg-light">
+            <div className="col-md-4 mx-3 section bg-light">
               Contact {data.name}
               <hr />
               <div className="form">
@@ -356,6 +368,7 @@ const Profile = () => {
             </div>
           </div>
         </div>
+        <Footer />
       </>
     );
   }
