@@ -245,6 +245,45 @@ const getCandidateDetails = asyncHandler(async (req, res) => {
     }
 });
 
+// get candidate details by id
+const getCandidateDetailsId = asyncHandler(async (req, res) => {
+    const { id } = req.body;
+
+    if (id) {
+        const result = await Candidate.findOne({ candidateId: id }).select({ email: 1, contactNumber: 1, name: 1 });
+        const info = await CandidateInfo.findOne({ candidateId: id });
+        if (info && result) {
+            const data = {
+                name: result.name,
+                email: result.email,
+                contactNumber: result.contactNumber,
+                skills: info.skills,
+                savedPost: info.savedPost,
+                followings: info.followings,
+                resumes: info.resumes,
+                education: info.education,
+                workingExperience: info.workingExperience,
+                DOB: info.DOB,
+                gender: info.gender,
+                experience: info.experience,
+                qualification: info.qualification,
+                about: info.about,
+                currentJobLocation: info.currentJobLocation,
+                desiredCitiesToWork: info.desiredCitiesToWork,
+                isOpenToWork: info.isOpenToWork,
+                noticePeriod: info.noticePeriod,
+                linkedIn: info.linkedIn,
+                defaultResumeId: info.defaultResumeId,
+            };
+            res.json({ message: "Candidate information", data: data, success: true });
+        } else {
+            res.json({ message: "User not found!", success: false });
+        }
+    } else {
+        res.json({ message: "Invalid request", success: false });
+    }
+});
+
 // update working experience
 const updateWorkingExperience = asyncHandler(async (req, res) => {
     const { currentWorkingExperience } = req.body;
@@ -480,6 +519,7 @@ module.exports = {
     updateProfile,
     changePassword,
     getCandidateDetails,
+    getCandidateDetailsId,
     updateWorkingExperience,
     updateEducationDetails,
     applyForJob,

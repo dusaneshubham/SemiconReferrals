@@ -9,7 +9,8 @@ const candidateInfoSchema = new mongoose.Schema({
     },
 
     gender: {
-        type: String
+        type: String,
+        enum: ['Male', 'Female', 'Other']
     },
 
     DOB: {
@@ -101,7 +102,7 @@ const candidateInfoSchema = new mongoose.Schema({
     }],
 
     defaultResumeId: {
-        type: mongoose.SchemaTypes.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         refPath: 'resumes',
         default: null,
     },

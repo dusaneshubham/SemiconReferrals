@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerRecruiter, loginRecruiter, updatePassword, getRecruiterDetails, updateProfile, jobPost } = require('../controllers/recruiterController');
+const { registerRecruiter, loginRecruiter, updatePassword, getRecruiterDetails, updateProfile, jobPost, saveProfile } = require('../controllers/recruiterController');
 const verifyToken = require('../middleware/verifyToken');
 
 // registration
@@ -10,5 +10,6 @@ router.post("/update-password", updatePassword);
 router.post("/getRecruiterDetails", verifyToken, getRecruiterDetails);
 router.post("/updateProfile", verifyToken, updateProfile);
 router.post("/jobPost", verifyToken, jobPost);
+router.post("/saveProfile", verifyToken, saveProfile);
 
 module.exports = router;
