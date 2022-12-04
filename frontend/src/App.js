@@ -21,6 +21,7 @@ import CandidateFollowedEmployers from "./components/candidate/FollowedEmployers
 import ForgetPassword from "./pages/ForgetPassword";
 
 import EmployerDashboard from "./pages/employer/Dashboard/Dashboard";
+import EmployerProfile from "./pages/employer/Profile/Profile";
 import EmployerDashboardComponent from "./components/employer/Dashboard/Dashboard";
 import EmployerSavedCandidates from "./components/employer/SavedCandidates/SavedCandidates";
 import EmployerFollowers from "./components/employer/Followers/Followers";
@@ -64,6 +65,7 @@ function App() {
           <Route path="updateprofile" element={<EmployerUpdateProfile />} />
           <Route path="followers" element={<EmployerFollowers />} />
         </Route>
+        <Route exact path="/employer/viewprofile/:id" element={<EmployerProfile />} />
 
         <Route
           exact

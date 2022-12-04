@@ -28,16 +28,17 @@ import {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [id, setId] = useState("");
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const sideNavbar = {
-    dashboard: "Dashboard",
-    jobpost: "Post a Job",
-    viewprofile: "View Profile",
-    updateprofile: "Update Profile",
-    savedcandidates: "Saved Candidates",
-    followers: "Followers",
+    "Dashboard": "dashboard",
+    "Post a Job": "jobpost",
+    "View Profile": "viewprofile/" + id,
+    "Update Profile": "updateprofile",
+    "Saved Candidates": "savedcandidates",
+    "Followers": "followers",
   };
 
   const obj = [<Home />, <PostAdd />, <Person />, <ManageAccounts />, <PermIdentity />, <PeopleAlt />];
@@ -58,6 +59,7 @@ const Dashboard = () => {
             if (!res.success || res.tokenData.type !== "recruiter") {
               navigate('/');
             } else {
+              setId(res.tokenData._id);
               setLoading(false);
             }
           }).catch((err) => {
@@ -182,9 +184,9 @@ const Dashboard = () => {
           </DrawerHeader>
           <Divider />
           <List>
-            {Object.entries(sideNavbar).map(([key, value], index) => (
+            {Object.entries(sideNavbar).map(([name, url], index) => (
               <ListItem key={index} disablePadding sx={{ display: "block" }}>
-                <Link to={key} className="text-decoration-none">
+                <Link to={url} className="text-decoration-none">
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -203,7 +205,7 @@ const Dashboard = () => {
                     </ListItemIcon>
 
                     <ListItemText
-                      primary={value}
+                      primary={name}
                       style={{ color: "var(--text)", textDecoration: "none" }}
                       sx={{ opacity: open ? 1 : 0 }}
                     />
