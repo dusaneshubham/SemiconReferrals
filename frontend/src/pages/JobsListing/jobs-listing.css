@@ -1,10 +1,11 @@
-#main-container {
+/* #main-container {
     padding: 30px 100px;
     display: flex;
     text-align: left;
-}
+} */
 
-#filters-div {
+
+/* #filters-div {
     width: 30%;
     background-color: #F5F7FC;
     border-radius: 8px;
@@ -40,4 +41,4 @@ select {
 #joblists-div {
     width: 70%;
     padding: 10px 25px 25px 25px;
-}
+} */

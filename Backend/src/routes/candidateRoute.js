@@ -22,6 +22,6 @@ router.post("/changePassword", verifyToken, changePassword);
 router.post("/getCandidateDetails", verifyToken, getCandidateDetails);
 router.post("/getCandidateDetailsById", getCandidateDetailsId);
 router.post("/getapplicationstatus", getApplicationStatus);
-router.post("/getallapplication", verifyToken, getAllApplication);
+router.post("/getAllApplication", verifyToken, getAllApplication);
 
 module.exports = router;

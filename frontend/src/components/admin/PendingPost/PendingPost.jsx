@@ -96,6 +96,7 @@ const PendingPost = () => {
   const rejectPost = () => {
     axios
       .post("http://localhost:5000/admin/rejectPost", { postId })
+      .then((res) => res.data)
       .then((response) => {
         setAlert({ success: response.message });
         setPendingJobs(response.data);
@@ -178,6 +179,8 @@ const PendingPost = () => {
               <StyledTableCell></StyledTableCell>
             </TableRow>
           </TableHead>
+          
+          {/* ---------------------- Table Body -------------------- */}
           <TableBody>
             {pendingJobs
               ? pendingJobs.map((data, index) => (
@@ -188,10 +191,18 @@ const PendingPost = () => {
                     <StyledTableCell>
                       <Link>{data.recruiterId}</Link>
                     </StyledTableCell>
+
+                    {/* --------------- View Job Details Button ----------------- */}
                     <StyledTableCell>
-                      <Link>{data._id}</Link>
+                      <Link to={{ pathname: `/jobdescription/${data._id}` }}>
+                        <Button variant="contained" color="primary">
+                          View
+                        </Button>
+                      </Link>
                     </StyledTableCell>
+
                     <StyledTableCell>
+                      {/* ----------------- Approve Button ------------------ */}
                       <Button
                         variant="contained"
                         color="success"
@@ -203,6 +214,8 @@ const PendingPost = () => {
                       >
                         Approve
                       </Button>
+
+                      {/* ----------------- Reject Button ------------------ */}
                       <Button
                         variant="contained"
                         color="error"

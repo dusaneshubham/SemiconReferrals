@@ -15,20 +15,19 @@ import {
   DialogContentText,
   useMediaQuery,
   Snackbar,
-  Slide
+  Slide,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import MuiAlert from "@mui/material/Alert";
-import saveAs from 'file-saver';
+import saveAs from "file-saver";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const MyResumes = () => {
-
   const [alert, setAlert] = useState({});
   const [open, setOpen] = useState(false);
   const [resume, setResume] = useState();
@@ -40,7 +39,8 @@ const MyResumes = () => {
     //token
     const token = localStorage.getItem("token");
     // fetch resumes of current user
-    axios.post("http://localhost:5000/candidate/getAllMyResumes", { token })
+    axios
+      .post("http://localhost:5000/candidate/getAllMyResumes", { token })
       .then((res) => res.data)
       .then((response) => {
         if (response.success) {
@@ -55,42 +55,46 @@ const MyResumes = () => {
         console.log(err);
         setAlert({ error: "Something went wrong with server!" });
       });
-
   }, []);
 
   // token
   let token = localStorage.getItem("token");
 
-  // Resume sending to backend to upload
+  // ----------------------- Upload Resume -------------------------
   const uploadResume = (e) => {
     //form data
     const formData = new FormData();
     formData.append("resume", resume);
     formData.append("token", token);
 
-    // upload resumes for current user
-    axios.post("http://localhost:5000/candidate/uploadMyResume", formData)
-      .then((res) => res.data)
-      .then((res) => {
-        if (res.success) {
-          setAlert({ success: res.message });
-          setResumeData(res.resumes)
-          if (res.defaultResumeId)
-            setDefaultResumeId(res.defaultResumeId);
-          document.getElementById('resume').value = "";
-        } else {
-          setAlert({ error: res.message });
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setAlert({ error: "Something went wrong with server!" });
-      });
+    if (!resume) {
+      // if there is no resume selected
+      setAlert({ error: "No resume has been selected" });
+    } else {
+      // upload resumes for current user
+      axios
+        .post("http://localhost:5000/candidate/uploadMyResume", formData)
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.success) {
+            setAlert({ success: res.message });
+            setResumeData(res.resumes);
+            if (res.defaultResumeId) setDefaultResumeId(res.defaultResumeId);
+            document.getElementById("resume").value = "";
+          } else {
+            setAlert({ error: res.message });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setAlert({ error: "Something went wrong with server!" });
+        });
+    }
   };
 
   const downloadResume = (url) => {
     saveAs.saveAs(url, "MyResume");
-  }
+  };
 
   const handleClickOpen = (id, fileName) => {
     setDeleteResume({ id: id, fileName: fileName });
@@ -103,7 +107,12 @@ const MyResumes = () => {
   };
 
   const handleDeleteResume = async () => {
-    axios.post("http://localhost:5000/candidate/deleteResume", { id: deleteResume.id, fileName: deleteResume.fileName, token: token })
+    axios
+      .post("http://localhost:5000/candidate/deleteResume", {
+        id: deleteResume.id,
+        fileName: deleteResume.fileName,
+        token: token,
+      })
       .then((res) => res.data)
       .then((res) => {
         if (res.success) {
@@ -118,10 +127,14 @@ const MyResumes = () => {
         setAlert({ error: "Something went wrong with server!" });
       });
     setOpen(false);
-  }
+  };
 
   const makeDefault = async (id) => {
-    await axios.post("http://localhost:5000/candidate/makeDefaultResume", { token: token, id: id })
+    await axios
+      .post("http://localhost:5000/candidate/makeDefaultResume", {
+        token: token,
+        id: id,
+      })
       .then((res) => res.data)
       .then((res) => {
         if (res.success) {
@@ -133,8 +146,8 @@ const MyResumes = () => {
       .catch((err) => {
         console.log(err);
         setAlert({ message: "Something went wrong with server!" });
-      })
-  }
+      });
+  };
 
   //------------------- Ignore this part bcz it's meaningless but mandatory ------------------- //
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -200,13 +213,21 @@ const MyResumes = () => {
         </Alert>
       </Snackbar>
       <h4>Your Uploaded Resumes</h4>
-      <input
-        type="file"
-        onChange={(e) => setResume(e.target.files[0])}
-        name="resume"
-        id="resume"
-      />
-      <button onClick={uploadResume}>Upload</button>
+
+      {/* ------------------- Upload Resume -------------------- */}
+      <div style={{margin:"40px 0"}}>
+        <h5 style={{ color: "var(--main-blue)" }}>Add Resume</h5>
+        <input
+          type="file"
+          onChange={(e) => setResume(e.target.files[0])}
+          name="resume"
+          id="resume"
+        />
+        <button onClick={uploadResume} className="main-btn">
+          Add
+        </button>
+      </div>
+
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -244,28 +265,27 @@ const MyResumes = () => {
                       Delete
                     </Button>
                   </StyledTableCell>
-                  {
-                    data._id === defaultResumeId ?
-                      <StyledTableCell>
-                        <Button
-                          variant="contained"
-                          color="success"
-                          style={{ margin: "10px" }}
-                        >
-                          Default
-                        </Button>
-                      </StyledTableCell>
-                      :
-                      <StyledTableCell>
-                        <Button
-                          variant="outlined"
-                          style={{ margin: "10px" }}
-                          onClick={() => makeDefault(data._id)}
-                        >
-                          Set Default
-                        </Button>
-                      </StyledTableCell>
-                  }
+                  {data._id === defaultResumeId ? (
+                    <StyledTableCell>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        style={{ margin: "10px" }}
+                      >
+                        Default
+                      </Button>
+                    </StyledTableCell>
+                  ) : (
+                    <StyledTableCell>
+                      <Button
+                        variant="outlined"
+                        style={{ margin: "10px" }}
+                        onClick={() => makeDefault(data._id)}
+                      >
+                        Set Default
+                      </Button>
+                    </StyledTableCell>
+                  )}
                 </StyledTableRow>
               );
             })}
