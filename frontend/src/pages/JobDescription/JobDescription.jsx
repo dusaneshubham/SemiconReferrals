@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./job-description.css";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-
-import Navbar from "../../components/Navbar/Navbar";
+// import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import JobOverview from "../../components/JobDescription/JobOverview";
 
@@ -31,8 +29,6 @@ const JobDescription = () => {
 
   const [tokenData, setTokenData] = useState({ _id: "", type: "" });
 
-  // const postId = "638796710ec0dccdff086548";
-
   // --------------------------- get Job Detail ------------------------
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -53,7 +49,7 @@ const JobDescription = () => {
                     if (
                       jobResponse.data.status === "Pending" &&
                       tokenResponse.tokenData._id !==
-                        jobResponse.data.recruiterId &&
+                      jobResponse.data.recruiterId &&
                       tokenResponse.tokenData.type !== "admin"
                     ) {
                       navigate("/");
@@ -98,7 +94,7 @@ const JobDescription = () => {
     };
 
     getJobDetail();
-  }, []);
+  }, [navigate, postId]);
 
   const applyToJob = () => {
     const token = localStorage.getItem("token");

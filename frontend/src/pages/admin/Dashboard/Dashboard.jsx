@@ -183,7 +183,7 @@ const Dashboard = () => {
           <List>
             {Object.entries(sideNavbar).map(([key, value], index) => (
               <ListItem key={index} disablePadding sx={{ display: "block" }}>
-                <Link to={key} className="text-decoration-none">
+                <Link to={key} className={({ isActive }) => "text-decoration-none " + (isActive ? "active-link" : "")}>
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -239,7 +239,7 @@ const Dashboard = () => {
           <DrawerHeader />
           <Outlet />
         </Box>
-      </Box>
+      </Box >
     );
   }
 };

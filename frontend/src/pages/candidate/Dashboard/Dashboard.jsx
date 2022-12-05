@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 import { styled, useTheme } from "@mui/material/styles";
 import {
@@ -29,6 +29,7 @@ import axios from 'axios';
 const Dashboard = () => {
   const navigate = useNavigate();
   const [id, setId] = useState("");
+  const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -61,6 +62,7 @@ const Dashboard = () => {
               navigate('/');
             } else {
               setId(res.tokenData._id);
+              setName(res.data.name);
               setLoading(false);
             }
           }).catch((err) => {
@@ -169,7 +171,7 @@ const Dashboard = () => {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
-              Welcome - Shubham Dusane
+              Welcome - {name}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -187,7 +189,7 @@ const Dashboard = () => {
           <List>
             {Object.entries(sideNavbar).map(([name, url], index) => (
               <ListItem key={index} disablePadding sx={{ display: "block" }}>
-                <Link to={url} className="text-decoration-none">
+                <NavLink to={url} className={({ isActive }) => "text-decoration-none " + (isActive ? "active-link" : "")}>
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -211,7 +213,7 @@ const Dashboard = () => {
                       sx={{ opacity: open ? 1 : 0 }}
                     />
                   </ListItemButton>
-                </Link>
+                </NavLink>
               </ListItem>
             ))}
             <ListItem disablePadding sx={{ display: "block" }}>
