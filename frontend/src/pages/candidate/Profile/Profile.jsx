@@ -163,7 +163,7 @@ const Profile = () => {
         </Snackbar>
         {/* --------------------------------------------------- */}
         <div className="container px-0 py-3 profile">
-          <div className="w-75 m-auto text-orange">
+          <div className="w-75 m-auto text-orange section">
             <h2 className="d-inline-block">
               {data.name}
             </h2>
