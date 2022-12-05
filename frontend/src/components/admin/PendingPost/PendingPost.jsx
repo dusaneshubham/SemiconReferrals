@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import {
@@ -13,9 +13,17 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
+  Snackbar,
+  Slide,
 } from "@mui/material";
+import MuiAlert from "@mui/material/Alert";
 import { Link } from "react-router-dom";
 import Draggable from "react-draggable";
+import axios from "axios";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function PaperComponent(props) {
   return (
@@ -29,6 +37,75 @@ function PaperComponent(props) {
 }
 
 const PendingPost = () => {
+  // For confirmation dialog box
+  const [openApproval, setOpenApproval] = useState(false);
+  const [openRejection, setOpenRejection] = useState(false);
+  const [pendingJobs, setPendingJobs] = useState([]);
+  const [postId, setPostId] = useState("");
+  const [alert, setAlert] = useState({});
+
+  // ------------------- alert functions ------------------- //
+  const Transition = (props) => {
+    return <Slide {...props} direction="down" />;
+  };
+
+  // close alert
+  const handleClose = (_, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setAlert({});
+  };
+  // ------------------------------------------------------- //
+
+  useEffect(() => {
+    // ------------------- fetch pending jobs -----------------------
+    const fetchPendingJobs = () => {
+      axios
+        .get("http://localhost:5000/jobs/getPendingJobs")
+        .then((res) => res.data)
+        .then((response) => {
+          if (response.success) {
+            setPendingJobs(response.data);
+          } else {
+            console.log(response.message);
+          }
+        })
+        .catch((err) => {
+          setAlert({ error: "Something went wrong with server!" });
+        });
+    };
+    fetchPendingJobs();
+  }, []);
+
+  // ------------------------- Approve Post ---------------------------
+  const approvePost = () => {
+    axios
+      .post("http://localhost:5000/admin/approvePost", { postId })
+      .then((res) => res.data)
+      .then((response) => {
+        setAlert({ success: response.message });
+        setPendingJobs(response.data);
+      })
+      .catch((err) => {
+        setAlert({ error: "Something went wrong with server!" });
+      });
+  };
+
+  // ------------------------- Reject Post ---------------------------
+  const rejectPost = () => {
+    axios
+      .post("http://localhost:5000/admin/rejectPost", { postId })
+      .then((res) => res.data)
+      .then((response) => {
+        setAlert({ success: response.message });
+        setPendingJobs(response.data);
+      })
+      .catch((err) => {
+        setAlert({ error: "Something went wrong with server!" });
+      });
+  };
+
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -49,38 +126,49 @@ const PendingPost = () => {
     },
   }));
 
-  function createData(
-    companyName,
-    employerProfile,
-    viewJobPost
-  ) {
-    return { companyName, employerProfile, viewJobPost };
-  }
-
-  const rows = [
-    createData("Google", "View", "View"),
-  ];
-
-  // For confirmation dialog box
-  const [openApproval, setOpenApproval] = React.useState(false);
-  const [openRejection, setOpenRejection] = React.useState(false);
-
-  const handleClickOpenApproval = () => {
+  // ------------- click events functions for dialog boxes --------------
+  const handleClickOpenApproval = (postId) => {
     setOpenApproval(true);
+    setPostId(postId);
   };
-  const handleClickOpenRejection = () => {
+  const handleClickOpenRejection = (postId) => {
     setOpenRejection(true);
+    setPostId(postId);
   };
 
   const handleCloseApproval = () => {
     setOpenApproval(false);
+    setPostId("");
   };
   const handleCloseRejection = () => {
     setOpenRejection(false);
+    setPostId("");
   };
 
   return (
     <>
+      <Snackbar
+        autoHideDuration={2000}
+        open={alert.error ? true : false}
+        TransitionComponent={Transition}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="error" onClose={handleClose}>
+          <span className="my-alert">{alert.error}</span>
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        autoHideDuration={2000}
+        open={alert.success ? true : false}
+        TransitionComponent={Transition}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="success" onClose={handleClose}>
+          <span className="my-alert">{alert.success}</span>
+        </Alert>
+      </Snackbar>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -91,34 +179,55 @@ const PendingPost = () => {
               <StyledTableCell></StyledTableCell>
             </TableRow>
           </TableHead>
+          
+          {/* ---------------------- Table Body -------------------- */}
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.employerName}>
-                <StyledTableCell>{row.companyName}</StyledTableCell>
-                <StyledTableCell>
-                  <Link>{row.employerProfile}</Link>
-                </StyledTableCell>
-                <StyledTableCell>
-                  <Link>{row.viewJobPost}</Link>
-                </StyledTableCell>
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleClickOpenApproval}
-                  style={{ margin: "10px" }}
-                >
-                  Approve
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={handleClickOpenRejection}
-                  style={{ margin: "10px" }}
-                >
-                  Reject
-                </Button>
-              </StyledTableRow>
-            ))}
+            {pendingJobs
+              ? pendingJobs.map((data, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell>
+                      {data.recruiterinfos[0].companyName}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Link>{data.recruiterId}</Link>
+                    </StyledTableCell>
+
+                    {/* --------------- View Job Details Button ----------------- */}
+                    <StyledTableCell>
+                      <Link to={{ pathname: `/jobdescription/${data._id}` }}>
+                        <Button variant="contained" color="primary">
+                          View
+                        </Button>
+                      </Link>
+                    </StyledTableCell>
+
+                    <StyledTableCell>
+                      {/* ----------------- Approve Button ------------------ */}
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => {
+                          // passing post id to dialog box
+                          handleClickOpenApproval(data._id);
+                        }}
+                        style={{ margin: "10px" }}
+                      >
+                        Approve
+                      </Button>
+
+                      {/* ----------------- Reject Button ------------------ */}
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleClickOpenRejection(data._id)}
+                        style={{ margin: "10px" }}
+                      >
+                        Reject
+                      </Button>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))
+              : ""}
           </TableBody>
         </Table>
       </TableContainer>
@@ -135,7 +244,13 @@ const PendingPost = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleCloseApproval}>
+          <Button
+            autoFocus
+            onClick={() => {
+              handleCloseApproval();
+              approvePost();
+            }}
+          >
             Yes
           </Button>
           <Button onClick={handleCloseApproval}>No</Button>
@@ -154,7 +269,13 @@ const PendingPost = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleCloseRejection}>
+          <Button
+            autoFocus
+            onClick={() => {
+              handleCloseRejection();
+              rejectPost();
+            }}
+          >
             Yes
           </Button>
           <Button onClick={handleCloseRejection}>No</Button>

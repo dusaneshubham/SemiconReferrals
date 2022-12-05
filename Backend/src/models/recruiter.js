@@ -24,14 +24,8 @@ const recruiterSchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 8
-    },
-
-    isActive: {
-        type: Boolean,
-        required: true,
-        default: false
     }
 
 }, { timestamps: true });
 
-module.exports = mongoose.model('Recuiter', recruiterSchema);
+module.exports = mongoose.model('Recruiter', recruiterSchema);

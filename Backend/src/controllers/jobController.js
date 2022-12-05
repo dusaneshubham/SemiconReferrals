@@ -1,25 +1,64 @@
-const expressAsyncHandler = require("express-async-handler");
-const job = require("../models/jobPost");
+const asyncHandler = require("express-async-handler");
+const JobPost = require("../models/jobPost");
+const RecruiterInfo = require("../models/recruiterInfo");
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 
-const getAllJobDetails = expressAsyncHandler(async (req, res) => {
-    const data = await job.find();
-
-    res.json({ message: "All job post data", data: data, status: "success" });
+// not used yet
+const getAllJobDetails = asyncHandler(async(req, res) => {
+    const data = await JobPost.find();
+    res.json({ message: "All job post data", data: data, success: true });
 });
 
-const getPerticularJobDetails = asyncHandler(async (req, res) => {
-    const { _id } = req.body;
+const getJobDetails = asyncHandler(async(req, res) => {
+    const { postId } = req.body;
+    // let jobpost = await JobPost.findOne({ _id: postId });
+    // getting data of recruiterinfo also
+    // const recruiterInfo = await RecruiterInfo.findOne({ recruiterId: jobpost.recruiterId });
+    // console.log(jobpost);
+    // jobDetails = {...jobpost, ...recruiterInfo };
+    // if (jobDetails) {
+    //     res.json({ message: "Job details found", data: jobDetails, success: true })
+    // } else {
+    //     res.json({ message: "Jobs not found!", success: false });
+    // }
+    JobPost.aggregate([{
+            $match: {
+                _id: ObjectId(postId)
+            }
+        }, {
+            $lookup: {
+                from: "recruiterinfos",
+                localField: "recruiterId",
+                foreignField: "recruiterId",
+                as: "recruiterinfo"
+            },
+        }]).then((jobDetails) => {
+            res.json({ data: jobDetails[0], message: "Job details found", success: true })
+        })
+        .catch(() => res.json({ success: false, message: "Unable to fetch job data" }));
+});
 
-    const details = await job.findOne({ id: _id });
-
-    if (details) {
-        res.json({ message: "Job details", data: details, status: "success" })
-    } else {
-        res.json({ message: "Job not found!", status: "error" });
-    }
+const getPendingJobs = asyncHandler(async(req, res) => {
+    JobPost.aggregate([{
+                $match: {
+                    status: "Pending"
+                }
+            },
+            {
+                $lookup: {
+                    from: "recruiterinfos",
+                    localField: "recruiterId",
+                    foreignField: "recruiterId",
+                    as: "recruiterinfos"
+                },
+            }
+        ]).then((data) => res.json({ data: data, success: true }))
+        .catch(() => res.json({ success: false, message: "Unable to fetch data" }));
 });
 
 module.exports = {
     getAllJobDetails,
-    getPerticularJobDetails
+    getJobDetails,
+    getPendingJobs
 }

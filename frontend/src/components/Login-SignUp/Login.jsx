@@ -125,11 +125,11 @@ const Login = (prop) => {
                         <Button variant={type === "admin" ? "contained" : "outlined"} className="login-type-btn" onClick={() => setType("admin")}>
                             Admin
                         </Button>
-                        <Button variant={type === "candidate" ? "contained" : "outlined"} className="login-type-btn" onClick={() => setType("candidate")}>
-                            Candidate
-                        </Button>
                         <Button variant={type === "recruiter" ? "contained" : "outlined"} className="login-type-btn" onClick={() => setType("recruiter")}>
                             Recruiter
+                        </Button>
+                        <Button variant={type === "candidate" ? "contained" : "outlined"} className="login-type-btn" onClick={() => setType("candidate")}>
+                            Candidate
                         </Button>
                     </div>
                     <FormControl sx={{ m: 1, width: "99%" }} variant="outlined">

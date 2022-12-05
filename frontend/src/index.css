@@ -12,3 +12,24 @@
 * {
     font-family: 'Roboto', sans-serif;
 }
+
+.main-btn {
+    padding: 10px 20px;
+    background-color: var(--main-blue);
+    color: #ffffff;
+    border: none;
+    border-radius: 3px;
+}
+
+.main-btn-link {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.main-btn-link:hover {
+    color: var(--light-pink);
+}
+
+.active-link .MuiButtonBase-root {
+    background-color: rgb(228, 228, 228) !important;
+}

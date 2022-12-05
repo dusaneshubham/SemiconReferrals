@@ -42,8 +42,8 @@ const TopResources = () => {
               </li>
               <li>Get a New Member added to Your Team</li>
             </ul>
-            <button className="start-hiring-btn">
-              <Link className="start-hiring-btn-link">Start Hiring</Link>
+            <button className="main-btn">
+              <Link className="main-btn-link">Start Hiring</Link>
             </button>
           </div>
           {/* Illustration div */}

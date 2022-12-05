@@ -188,12 +188,12 @@ const UpdateProfile = () => {
               <span className="my-alert">{alert.success}</span>
             </Alert>
           </Snackbar>
-          {/--------------------- Personal Details *---------------------/}
+          {/*--------------------- Personal Details *---------------------*/}
           <div className="col-md-8 p-4 bg-white">
             <div style={{ margin: "10px 0" }}>
               <h4>Personal Information</h4>
               <div className="row g-3 p-4 bg-light">
-                {/--------------------- Name ---------------------/}
+                {/*--------------------- Name ---------------------*/}
                 <div className="col-md-6">
                   <label htmlFor="name" className="form-label">
                     Full Name
@@ -209,7 +209,7 @@ const UpdateProfile = () => {
                   />
                 </div>
 
-                {/--------------------- Email ---------------------/}
+                {/*--------------------- Email ---------------------*/}
                 <div className="col-md-6">
                   <label htmlFor="email" className="form-label">
                     Email
@@ -226,7 +226,7 @@ const UpdateProfile = () => {
                   />
                 </div>
 
-                {/--------------------- Gender ---------------------/}
+                {/*--------------------- Gender ---------------------*/}
                 <div className="col-md-6">
                   <label htmlFor="gender" className="form-label">
                     Gender
@@ -246,7 +246,7 @@ const UpdateProfile = () => {
                   </select>
                 </div>
 
-                {/--------------------- DOB ---------------------/}
+                {/*--------------------- DOB ---------------------*/}
                 <div className="col-md-6">
                   <label htmlFor="DOB" className="form-label">
                     Date Of Birth
@@ -262,7 +262,7 @@ const UpdateProfile = () => {
                   />
                 </div>
 
-                {/--------------------- Profile image ---------------------/}
+                {/*--------------------- Profile image ---------------------*/}
                 <div className="col-md-6">
                   <label htmlFor="profile-image" className="form-label">
                     Profile Image
@@ -274,7 +274,7 @@ const UpdateProfile = () => {
                   />
                 </div>
 
-                {/--------------------- Experience ---------------------/}
+                {/*--------------------- Experience ---------------------*/}
                 <div className="col-md-6">
                   <label htmlFor="experience" className="form-label">
                     Experience
@@ -302,7 +302,7 @@ const UpdateProfile = () => {
                   </select>
                 </div>
 
-                {/--------------------- Qualification ---------------------/}
+                {/*--------------------- Qualification ---------------------*/}
                 <div className="col-md-6">
                   <label htmlFor="qualification" className="form-label">
                     Qualification
@@ -325,7 +325,7 @@ const UpdateProfile = () => {
                   </select>
                 </div>
 
-                {/--------------------- Contact Number ---------------------/}
+                {/*--------------------- Contact Number ---------------------*/}
                 <div className="col-md-6">
                   <label htmlFor="contact-number" className="form-label">
                     Contact Number
@@ -344,7 +344,7 @@ const UpdateProfile = () => {
                   />
                 </div>
 
-                {/--------------------- About ---------------------/}
+                {/*--------------------- About ---------------------*/}
                 <div>
                   <label htmlFor="contact-number" className="form-label">
                     About Yourself
@@ -363,7 +363,7 @@ const UpdateProfile = () => {
                   />
                 </div>
 
-                {/--------------------- Submit Button ---------------------/}
+                {/*--------------------- Submit Button ---------------------*/}
                 <div className="col-12">
                   <Button
                     variant="contained"
@@ -379,12 +379,12 @@ const UpdateProfile = () => {
             </div>
           </div>
 
-          {/--------------------- Important Important ---------------------/}
+          {/*--------------------- Important Important ---------------------*/}
           <div className="col-md-8 p-4 bg-white">
             <div style={{ margin: "10px 0" }}>
               <h4>Important Information</h4>
               <div className="row g-3 p-4 bg-light">
-                {/--------------------- Qu-1 ---------------------/}
+                {/*--------------------- Qu-1 ---------------------*/}
                 <div className="col-md-12">
                   <label htmlFor="desired-cities" className="form-label">
                     What are your desired cities to work in? (You can enter
@@ -404,7 +404,7 @@ const UpdateProfile = () => {
                   />
                 </div>
 
-                {/--------------------- Qu-2 ---------------------/}
+                {/*--------------------- Qu-2 ---------------------*/}
                 <div className="col-md-12">
                   <label htmlFor="open-to-work" className="form-label">
                     Are you open to work? *
@@ -426,7 +426,7 @@ const UpdateProfile = () => {
                   </select>
                 </div>
 
-                {/--------------------- Qu-3 ---------------------/}
+                {/*--------------------- Qu-3 ---------------------*/}
                 <div className="col-md-12">
                   <label htmlFor="notice-period" className="form-label">
                     What is your notice period? *
@@ -450,7 +450,7 @@ const UpdateProfile = () => {
                   </select>
                 </div>
 
-                {/--------------------- Qu-4 ---------------------/}
+                {/*--------------------- Qu-4 ---------------------*/}
                 <div className="col-md-12">
                   <label htmlFor="current-job-location" className="form-label">
                     What is your current job location ? *
@@ -469,7 +469,7 @@ const UpdateProfile = () => {
                   />
                 </div>
 
-                {/--------------------- Submit Button ---------------------/}
+                {/*--------------------- Submit Button ---------------------*/}
                 <div className="col-12">
                   <Button
                     variant="contained"
@@ -485,7 +485,7 @@ const UpdateProfile = () => {
             </div>
           </div>
 
-          {/--------------------- Job Experience ---------------------/}
+          {/*--------------------- Job Experience ---------------------*/}
           <div className="col-md-8 p-4 bg-white">
             <JobExperience
               data={userDetails.workingExperience}
@@ -493,17 +493,17 @@ const UpdateProfile = () => {
             />
           </div>
 
-          {/--------------------- Educational Details ---------------------/}
+          {/*--------------------- Educational Details ---------------------*/}
           <div className="col-md-8 p-4 bg-white">
             <EducationDetails data={userDetails.education} alert={setAlert} />
           </div>
 
-          {/--------------------- Social link ---------------------/}
+          {/*--------------------- Social link ---------------------*/}
           <div className="col-md-8 p-4 bg-white">
             <div style={{ margin: "10px 0" }}>
               <h4>Social link</h4>
               <div className="row g-3 p-4 bg-light">
-                {/--------------------- LinkedIn link ---------------------/}
+                {/*--------------------- LinkedIn link ---------------------*/}
                 <div className="col-md-12">
                   <label htmlFor="linkedin-link" className="form-label">
                     LinkedIn
@@ -522,7 +522,7 @@ const UpdateProfile = () => {
                   />
                 </div>
 
-                {/--------------------- Submit Button ---------------------/}
+                {/*--------------------- Submit Button ---------------------*/}
                 <div className="col-12">
                   <Button
                     variant="contained"
@@ -538,12 +538,12 @@ const UpdateProfile = () => {
             </div>
           </div>
 
-          {/--------------------- Change password ---------------------/}
+          {/*--------------------- Change password ---------------------*/}
           <div className="col-md-8 p-4 bg-white">
             <div style={{ margin: "10px 0" }}>
               <h4>Change Password</h4>
               <div className="row g-3 p-4 bg-light">
-                {/--------------------- Old password ---------------------/}
+                {/*--------------------- Old password ---------------------*/}
                 <div className="col-md-6">
                   <FormControl sx={{ m: 1, width: "99%" }} variant="outlined">
                     <label htmlFor="linkedin-link" className="form-label">
@@ -580,7 +580,7 @@ const UpdateProfile = () => {
                   </FormControl>
                 </div>
 
-                {/--------------------- New password ---------------------/}
+                {/*--------------------- New password ---------------------*/}
                 <div className="col-md-6">
                   <FormControl sx={{ m: 1, width: "99%" }} variant="outlined">
                     <label htmlFor="linkedin-link" className="form-label">
@@ -619,7 +619,7 @@ const UpdateProfile = () => {
                   </FormControl>
                 </div>
 
-                {/--------------------- Submit ---------------------/}
+                {/*--------------------- Submit ---------------------*/}
                 <div className="col-12">
                   <Button
                     variant="contained"

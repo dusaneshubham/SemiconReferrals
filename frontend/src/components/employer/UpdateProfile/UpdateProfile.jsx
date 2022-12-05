@@ -45,7 +45,9 @@ const UpdateProfile = () => {
         .post("http://localhost:5000/recruiter/getRecruiterDetails", { token })
         .then((res) => res.data)
         .then(async (res) => {
-          await setUserDetails({ ...userDetails, ...res });
+          await setUserDetails((data) => {
+            return { ...data, ...res }
+          });
           setLoading(false);
         })
         .catch((err) => {
@@ -238,7 +240,7 @@ const UpdateProfile = () => {
                     Total Experience (in years)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     defaultValue={userDetails.totalExperience}
                     onChange={(e) =>
                       setUserDetails({
@@ -360,7 +362,7 @@ const UpdateProfile = () => {
                     Your experience in the current organization (in years)
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     defaultValue={userDetails.currentExperience}
                     onChange={(e) =>
                       setUserDetails({

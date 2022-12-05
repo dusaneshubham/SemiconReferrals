@@ -14,26 +14,142 @@ import {
   DialogContent,
   DialogContentText,
   useMediaQuery,
+  Snackbar,
+  Slide,
 } from "@mui/material";
 import DownloadIcon from "@mui/icons-material/Download";
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
-// import { useEffect } from "react";
+import MuiAlert from "@mui/material/Alert";
+import saveAs from "file-saver";
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const MyResumes = () => {
+  const [alert, setAlert] = useState({});
   const [open, setOpen] = useState(false);
   const [resume, setResume] = useState();
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const [resumeData, setResumeData] = useState([]);
+  const [defaultResumeId, setDefaultResumeId] = useState("");
+  const [deleteResume, setDeleteResume] = useState();
 
-  const handleClickOpen = () => {
+  useEffect(() => {
+    //token
+    const token = localStorage.getItem("token");
+    // fetch resumes of current user
+    axios
+      .post("http://localhost:5000/candidate/getAllMyResumes", { token })
+      .then((res) => res.data)
+      .then((response) => {
+        if (response.success) {
+          setResumeData(response.resumes);
+          setDefaultResumeId(response.defaultResumeId);
+        } else {
+          setAlert({ error: response.message });
+          // TODO: redirect path
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setAlert({ error: "Something went wrong with server!" });
+      });
+  }, []);
+
+  // token
+  let token = localStorage.getItem("token");
+
+  // ----------------------- Upload Resume -------------------------
+  const uploadResume = (e) => {
+    //form data
+    const formData = new FormData();
+    formData.append("resume", resume);
+    formData.append("token", token);
+
+    if (!resume) {
+      // if there is no resume selected
+      setAlert({ error: "No resume has been selected" });
+    } else {
+      // upload resumes for current user
+      axios
+        .post("http://localhost:5000/candidate/uploadMyResume", formData)
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.success) {
+            setAlert({ success: res.message });
+            setResumeData(res.resumes);
+            if (res.defaultResumeId) setDefaultResumeId(res.defaultResumeId);
+            document.getElementById("resume").value = "";
+          } else {
+            setAlert({ error: res.message });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setAlert({ error: "Something went wrong with server!" });
+        });
+    }
+  };
+
+  const downloadResume = (url) => {
+    saveAs.saveAs(url, "MyResume");
+  };
+
+  const handleClickOpen = (id, fileName) => {
+    setDeleteResume({ id: id, fileName: fileName });
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClickClose = () => {
+    setDeleteResume();
     setOpen(false);
   };
 
+  const handleDeleteResume = async () => {
+    axios
+      .post("http://localhost:5000/candidate/deleteResume", {
+        id: deleteResume.id,
+        fileName: deleteResume.fileName,
+        token: token,
+      })
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setAlert({ success: res.message });
+          setResumeData(res.resumes);
+        } else {
+          setAlert({ error: res.message });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setAlert({ error: "Something went wrong with server!" });
+      });
+    setOpen(false);
+  };
+
+  const makeDefault = async (id) => {
+    await axios
+      .post("http://localhost:5000/candidate/makeDefaultResume", {
+        token: token,
+        id: id,
+      })
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setDefaultResumeId(res.defaultResumeId);
+        } else {
+          setAlert({ error: res.message });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setAlert({ message: "Something went wrong with server!" });
+      });
+  };
+
+  //------------------- Ignore this part bcz it's meaningless but mandatory ------------------- //
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -54,82 +170,86 @@ const MyResumes = () => {
     },
   }));
 
-  function createData(resumeName, download, deleteResume) {
-    return {
-      resumeName,
-      download,
-      deleteResume,
-    };
-  }
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  // ------------------------------------------------------------------------------------------ //
 
-  var rows = [];
-  let [resumeData, setResumeData] = useState([]);
-  
-  useEffect(() => {
-    axios
-      .get("http://localhost:5000/candidate/getAllMyResumes")
-      .then((response) => {
-        let images = response.data.images;
-        setResumeData(
-          resumeData.push(
-            images.map((image) => {
-              return createData(image);
-            })[0].resumeName
-          )
-        );
-        // console.log(rows[0][0].resumeName);
-        // console.log(rows[0][1].resumeName);
-      })
-      .catch(() => { });
-  }, []);
-
-  // const rows = [
-  //   createData("Shubham_Dusane.pdf"),
-  //   createData("Shubham_Dusane_Resume.pdf"),
-  // ];
-
-  // Resume sending to backend to upload
-  const uploadResume = (e) => {
-    let token = localStorage.getItem("token");
-    const formData = new FormData();
-    formData.append("resume", resume);
-    formData.append("token", token);
-    axios
-      .post("http://localhost:5000/candidate/uploadMyResume", formData)
-      .then(() => { })
-      .catch(() => { });
+  // ------------------- alert functions ------------------- //
+  const Transition = (props) => {
+    return <Slide {...props} direction="down" />;
   };
+
+  // close alert
+  const handleClose = (_, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setAlert({});
+  };
+  // ------------------------------------------------------- //
 
   return (
     <>
+      <Snackbar
+        autoHideDuration={2000}
+        open={alert.error ? true : false}
+        TransitionComponent={Transition}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="error" onClose={handleClose}>
+          <span className="my-alert">{alert.error}</span>
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        autoHideDuration={2000}
+        open={alert.success ? true : false}
+        TransitionComponent={Transition}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="success" onClose={handleClose}>
+          <span className="my-alert">{alert.success}</span>
+        </Alert>
+      </Snackbar>
       <h4>Your Uploaded Resumes</h4>
-      <input
-        type="file"
-        onChange={(e) => setResume(e.target.files[0])}
-        name="resume"
-        id=""
-      />
-      <button onClick={uploadResume}>Upload</button>
+
+      {/* ------------------- Upload Resume -------------------- */}
+      <div style={{margin:"40px 0"}}>
+        <h5 style={{ color: "var(--main-blue)" }}>Add Resume</h5>
+        <input
+          type="file"
+          onChange={(e) => setResume(e.target.files[0])}
+          name="resume"
+          id="resume"
+        />
+        <button onClick={uploadResume} className="main-btn">
+          Add
+        </button>
+      </div>
+
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Company Name</StyledTableCell>
+              <StyledTableCell>Resume Name</StyledTableCell>
               <StyledTableCell>Download</StyledTableCell>
               <StyledTableCell>Delete</StyledTableCell>
+              <StyledTableCell>Set Default</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => {
+            {resumeData.map((data, index) => {
               return (
-                <StyledTableRow key={row.employerName}>
-                  <StyledTableCell>{row.resumeName}</StyledTableCell>
+                <StyledTableRow key={index}>
+                  <StyledTableCell>{data.fileName}</StyledTableCell>
                   <StyledTableCell>
                     <Button
                       variant="contained"
                       color="success"
                       style={{ margin: "10px" }}
                       startIcon={<DownloadIcon />}
+                      onClick={() => downloadResume(data.url)}
                     >
                       Download
                     </Button>
@@ -138,24 +258,44 @@ const MyResumes = () => {
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={handleClickOpen}
+                      onClick={() => handleClickOpen(data._id, data.fileName)}
                       style={{ margin: "10px" }}
                       startIcon={<DeleteIcon />}
                     >
                       Delete
                     </Button>
                   </StyledTableCell>
+                  {data._id === defaultResumeId ? (
+                    <StyledTableCell>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        style={{ margin: "10px" }}
+                      >
+                        Default
+                      </Button>
+                    </StyledTableCell>
+                  ) : (
+                    <StyledTableCell>
+                      <Button
+                        variant="outlined"
+                        style={{ margin: "10px" }}
+                        onClick={() => makeDefault(data._id)}
+                      >
+                        Set Default
+                      </Button>
+                    </StyledTableCell>
+                  )}
                 </StyledTableRow>
               );
             })}
           </TableBody>
         </Table>
       </TableContainer>
-
       <Dialog
         fullScreen={fullScreen}
         open={open}
-        onClose={handleClose}
+        onClose={handleClickClose}
         aria-labelledby="responsive-dialog-title"
       >
         <DialogContent>
@@ -164,10 +304,10 @@ const MyResumes = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose}>
+          <Button autoFocus onClick={handleDeleteResume}>
             Yes
           </Button>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={handleClickClose} autoFocus>
             No
           </Button>
         </DialogActions>

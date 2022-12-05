@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const bcrypt = require('bcrypt');
 
 const candidateInfoSchema = new mongoose.Schema({
 
@@ -10,7 +9,8 @@ const candidateInfoSchema = new mongoose.Schema({
     },
 
     gender: {
-        type: String
+        type: String,
+        enum: ['Male', 'Female', 'Other']
     },
 
     DOB: {
@@ -19,7 +19,7 @@ const candidateInfoSchema = new mongoose.Schema({
 
     profileImage: {
         type: String
-        // TODO : put default image
+            // TODO : put default image
     },
 
     about: {
@@ -91,7 +91,7 @@ const candidateInfoSchema = new mongoose.Schema({
         }
     }],
 
-    savedPost: [{
+    savedJobPost: [{
         type: mongoose.SchemaTypes.ObjectId,
         ref: "JobPost"
     }],
@@ -101,10 +101,16 @@ const candidateInfoSchema = new mongoose.Schema({
         ref: "Recruiter"
     }],
 
-    resumes: {
-        type: Array,
-        default: []
+    defaultResumeId: {
+        type: mongoose.Schema.Types.ObjectId,
+        refPath: 'resumes',
+        default: null,
     },
+
+    resumes: [{
+        fileName: String,
+        url: String,
+    }],
 
     desiredCitiesToWork: {
         type: String

@@ -1,19 +1,26 @@
 const mongoose = require("mongoose");
 
 const jobApplicationSchema = new mongoose.Schema({
-    candidateID: {
+
+    candidateId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Candidate',
     },
 
-    jobID: {
+    jobPostId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'JobPost',
     },
 
     resume: {
-        type: String,
-        required: true
+        filename: {
+            type: String,
+            required: true
+        },
+        url: {
+            type: String,
+            required: true
+        }
     },
 
     isApprovedByAdmin: {
@@ -24,13 +31,17 @@ const jobApplicationSchema = new mongoose.Schema({
 
     remarks: {
         type: String,
-        required: false,
     },
 
     status: {
         type: String,
         enum: ["Hired", "Rejected", "Pending"],
-        required: true
+        required: true,
+        default: "Pending"
+    },
+
+    coverLetter: {
+        type: String,
     }
 
 }, { timestamps: true });

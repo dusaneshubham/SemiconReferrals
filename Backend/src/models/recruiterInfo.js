@@ -10,7 +10,6 @@ const recruiterInfoSchema = new mongoose.Schema({
 
     companyName: {
         type: String,
-        required: true
     },
 
     companyWebsite: {
@@ -49,6 +48,12 @@ const recruiterInfoSchema = new mongoose.Schema({
         type: String
     },
 
+    saveProfile: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Candidate',
+        unique: true
+    }
+
 }, { timestamps: true });
 
-module.exports = mongoose.model('RecuiterInfo', recruiterInfoSchema);
+module.exports = mongoose.model('RecruiterInfo', recruiterInfoSchema);

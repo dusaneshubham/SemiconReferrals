@@ -1,7 +1,6 @@
-import React from "react";
-import "../../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
+import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
-import { Link, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 import { styled, useTheme } from "@mui/material/styles";
 import {
@@ -22,9 +21,12 @@ import MuiAppBar from "@mui/material/AppBar";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight"
-import DashboardIcon from "@mui/icons-material/Dashboard";
+import { Home, PendingActions, Article, Logout } from "@mui/icons-material/";
+import axios from 'axios';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const sideNavbar = {
@@ -32,6 +34,42 @@ const Dashboard = () => {
     pendingapplications: "Pending Applications",
     pendingpost: "Pending Post",
   };
+
+  let obj = [
+    <Home />,
+    <PendingActions />,
+    <Article />
+  ];
+
+  const logout = () => {
+    localStorage.clear();
+    navigate('/');
+  }
+
+  // authentication
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const auth = async () => {
+      if (token) {
+        await axios.post("http://localhost:5000/verify-token", { token })
+          .then((res) => res.data)
+          .then((res) => {
+            if (!res.success || res.tokenData.type !== "admin") {
+              navigate('/');
+            } else {
+              setLoading(false);
+            }
+          }).catch((err) => {
+            console.log(err);
+            navigate('/');
+          });
+      } else {
+        navigate('/');
+      }
+    }
+
+    auth();
+  }, [navigate]);
 
   const drawerWidth = 240;
 
@@ -108,81 +146,102 @@ const Dashboard = () => {
     setOpen(false);
   };
 
-  let obj = {
-    dashboard: <DashboardIcon />,
-  };
-
-  return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open}>
-        <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{
-              marginRight: 5,
-              ...(open && { display: "none" }),
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Admin - Semicon Referrals
-          </Typography>
-        </Toolbar>
-      </AppBar>
-      <Drawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "rtl" ? (
-              <ChevronRightIcon />
-            ) : (
-              <ChevronLeftIcon />
-            )}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          {Object.entries(sideNavbar).map(([key, value], index) => (
-            <ListItem key={index} disablePadding sx={{ display: "block" }}>
-              <Link to={key} >
-                <ListItemButton
-                  sx={{
-                    minHeight: 48,
-                    justifyContent: open ? "initial" : "center",
-                    px: 2.5,
-                  }}
-                >
-                  <ListItemIcon
+  if (!loading) {
+    return (
+      <Box sx={{ display: "flex" }}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open}>
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{
+                marginRight: 5,
+                ...(open && { display: "none" }),
+              }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" noWrap component="div">
+              Admin - Semicon Referrals
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === "rtl" ? (
+                <ChevronRightIcon />
+              ) : (
+                <ChevronLeftIcon />
+              )}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+          <List>
+            {Object.entries(sideNavbar).map(([key, value], index) => (
+              <ListItem key={index} disablePadding sx={{ display: "block" }}>
+                <NavLink to={key} className={({ isActive }) => "text-decoration-none " + (isActive ? "active-link" : "")}>
+                  <ListItemButton
                     sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
                     }}
                   >
-                    {/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
-                    {obj.dashboard}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={value}
-                    style={{ color: "var(--text)", textDecoration: "none" }}
-                    sx={{ opacity: open ? 1 : 0 }}
-                  />
-                </ListItemButton>
-              </Link>
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                      }}
+                    >
+                      {obj[index]}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={value}
+                      style={{ color: "var(--text)", textDecoration: "none" }}
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </ListItemButton>
+                </NavLink>
+              </ListItem>
+            ))}
+            <ListItem disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                sx={{
+                  minHeight: 48,
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                }}
+                onClick={logout}>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    mr: open ? 3 : "auto",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Logout />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Logout"
+                  style={{ color: "var(--text)", textDecoration: "none" }}
+                  sx={{ opacity: open ? 1 : 0 }}
+                />
+              </ListItemButton>
             </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <DrawerHeader />
-        <Outlet />
-      </Box>
-    </Box>
-  );
+          </List>
+        </Drawer>
+        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+          <DrawerHeader />
+          <Outlet />
+        </Box>
+      </Box >
+    );
+  }
 };
 
 export default Dashboard;

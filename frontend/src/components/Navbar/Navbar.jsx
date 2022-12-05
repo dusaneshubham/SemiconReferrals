@@ -1,36 +1,72 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom';
 import logoPath from '../../images/logo-semiconreferrals-rectangle.png';
-import { Menu as MenuIcon } from '@mui/icons-material';
-import { Box, SwipeableDrawer, Button, List, Divider, ListItem, ListItemButton, ListItemText } from '@mui/material';
+import { AccountCircle, Logout, Menu as MenuIcon } from '@mui/icons-material';
+import { Box, SwipeableDrawer, Button, List, Divider, ListItem, ListItemButton, ListItemText, Menu, MenuItem, ListItemIcon } from '@mui/material';
 import './Navbar.css';
 import LoginSignUpModal from '../Login-SignUp/LoginSignUp';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useEffect } from 'react';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import axios from 'axios';
 
 const Navbar = () => {
 
-    const [state, setState] = React.useState(false);
+    const [state, setState] = useState(false);
     const [loggedin, setLoggedin] = useState(false);
+    const [type, setType] = useState("");
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    const open = Boolean(anchorEl);
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (token) {
-            setLoggedin(true);
+
+        const tokenVerify = async () => {
+            if (token) {
+                await axios.post("http://localhost:5000/verify-token", { token })
+                    .then((data) => data.data)
+                    .then((data) => {
+                        if (data.success) {
+                            localStorage.setItem("type", data.tokenData.type);
+                            setType(data.tokenData.type);
+                            setLoggedin(true);
+                            setLoading(false);
+                        } else {
+                            localStorage.clear();
+                            window.location.reload();
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        localStorage.clear();
+                        window.location.reload();
+                    });
+            } else {
+                setLoading(false);
+            }
         }
+        tokenVerify();
     }, [])
 
     const toggleDrawer = (open) => (event) => {
-        if (
-            event &&
-            event.type === 'keydown' &&
-            (event.key === 'Tab' || event.key === 'Shift')
-        ) {
+        if (event && event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
             return;
         }
         setState(open);
     };
+
+    const logout = () => {
+        localStorage.clear();
+        window.location.reload();
+    }
 
     const list = () => (
         <Box
@@ -38,7 +74,7 @@ const Navbar = () => {
             role="presentation"
         >
             <List>
-                {!loggedin &&
+                {!loading && !loggedin &&
                     <ListItem className="d-flex justify-content-center">
                         <div>
                             <span data-bs-toggle="modal" data-bs-target="#loginSignUpModal">
@@ -90,27 +126,62 @@ const Navbar = () => {
                     <NavLink to="/faqs" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>FAQs</NavLink>
                     <NavLink to="/contact" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Contact</NavLink>
                     <div className='float-end'>
-                        {!loggedin &&
+                        {!loading && !loggedin &&
                             <span className="main-navbar-link" data-bs-toggle="modal" data-bs-target="#loginSignUpModal">
                                 <Button variant="contained" className="mx-1">
                                     Login / Register
                                 </Button>
                             </span>
                         }
-                        {loggedin && <Button variant="outlined" className="profile-btn border-0 py-1"><AccountCircleIcon fontSize='large' /></Button>}
-                        {loggedin && <Button variant="outlined" className="profile-btn border-0 py-1"><NotificationsIcon fontSize='large' /></Button>}
+                        {!loading && loggedin &&
+                            <Button
+                                variant="outlined"
+                                className="profile-btn border-0 m-sm-2 mt-2"
+                                onClick={handleClick}
+                                aria-controls={open ? 'account-menu' : undefined}
+                                aria-haspopup="true"
+                                aria-expanded={open ? 'true' : undefined}
+                            >
+                                <AccountCircleIcon />
+                            </Button>
+                        }
+                        {!loading && loggedin && <Button variant="outlined" className="profile-btn border-0 m-sm-2 mt-2"><NotificationsIcon /></Button>}
                     </div>
-                    <React.Fragment>
-                        <Button className="menu-btn float-end mx-0 my-2" onClick={toggleDrawer(true)}><MenuIcon /></Button>
-                        <SwipeableDrawer
-                            open={state}
-                            onClose={toggleDrawer(false)}
-                            onOpen={toggleDrawer(true)}
-                            className='box'
-                        >
-                            {list()}
-                        </SwipeableDrawer>
-                    </React.Fragment>
+                    <Menu
+                        anchorEl={anchorEl}
+                        id="account-menu"
+                        open={open}
+                        onClose={handleClose}
+                        onClick={handleClose}
+                        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+                        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                    >
+                        {<NavLink
+                            to={type === "admin" ? "/admin" : type === "recruiter" ? "/employer" : type === "candidate" ? "/candidate" : ''}
+                            className='text-decoration-none text-black'>
+                            <MenuItem>
+                                <ListItemIcon>
+                                    <AccountCircle fontSize="small" />
+                                </ListItemIcon>
+                                Dashboard
+                            </MenuItem>
+                        </NavLink>}
+                        <MenuItem onClick={logout} className='text-black'>
+                            <ListItemIcon>
+                                <Logout fontSize="small" />
+                            </ListItemIcon>
+                            Logout
+                        </MenuItem>
+                    </Menu>
+                    <Button className="menu-btn float-end mx-0 m-sm-2 mt-2" onClick={toggleDrawer(true)}><MenuIcon /></Button>
+                    <SwipeableDrawer
+                        open={state}
+                        onClose={toggleDrawer(false)}
+                        onOpen={toggleDrawer(true)}
+                        className='box'
+                    >
+                        {list()}
+                    </SwipeableDrawer>
                     <LoginSignUpModal />
                 </div>
             </nav>

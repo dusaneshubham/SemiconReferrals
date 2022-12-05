@@ -1,27 +1,23 @@
 #job-overview {
-    background-color: #F5F7FC;
-    border-radius: 8px;
-    padding: 30px;
+    padding: 20px;
+    background-color: var(--bg-gray);
 }
 
-.data-div {
-    margin: 20px 0;
+.job-overview-data-div {
     display: flex;
+    margin: 20px 0;
 }
 
-.icon {
-    color: #1976d2;
+.job-overview-data-div .icon {
+    margin-right: 15px;
 }
 
-.data-right-div {
-    margin-left: 20px;
-}
-
-.data-right-div h6 {
-    margin-bottom: 4px;
-}
-
-.data-right-div span {
-    color: rgba(0, 0, 0, 0.5);
+.job-overview-data-right-div span {
+    position: relative;
+    top: -5px;
     font-size: 14px;
+}
+
+.job-overview-data-right-div h6 {
+    color: var(--text);
 }
