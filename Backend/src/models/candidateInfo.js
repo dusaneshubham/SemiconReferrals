@@ -91,7 +91,7 @@ const candidateInfoSchema = new mongoose.Schema({
         }
     }],
 
-    savedPost: [{
+    savedJobPost: [{
         type: mongoose.SchemaTypes.ObjectId,
         ref: "JobPost"
     }],

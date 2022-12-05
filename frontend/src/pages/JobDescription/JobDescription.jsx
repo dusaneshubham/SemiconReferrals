@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 import JobOverview from "../../components/JobDescription/JobOverview";
 import { useTheme } from "@mui/material/styles";
-import { Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
@@ -33,6 +33,7 @@ const JobDescription = () => {
 
   const [tokenData, setTokenData] = useState({ _id: "", type: "" });
 
+  const [isAppliedForTheJob, setIsAppliedForTheJob] = useState(false);
 
   // Dialog
   const [openDialog, setOpenDialog] = useState(false);
@@ -138,6 +139,25 @@ const JobDescription = () => {
     getJobDetail();
   }, [navigate, postId]);
 
+
+  // Check whether applied to the job or not
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    const isAppliedToJob = () => {
+      axios.post("http://localhost:5000/candidate/isAppliedToJob", { token, postId })
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.success) {
+            setIsAppliedForTheJob(true);
+          }
+        }).catch((err) => {
+          console.log(err);
+        })
+    }
+    isAppliedToJob();
+  }, [isAppliedForTheJob]);
+
+
   const applyToJob = () => {
     const token = localStorage.getItem("token");
     if (token && selectedResume) {
@@ -145,15 +165,28 @@ const JobDescription = () => {
         token,
         data: { resume: selectedResume, jobPostId: postId, coverLetter: coverLetter }
       })
-        .then((res) => res.data)
+        .then((response) => response.data)
         .then((res) => {
-          console.log(res.data)
+          console.log(res.data);
+          handleClose();
         })
         .catch((err) => {
           console.log(err);
         });
     }
   };
+
+  const saveThisJob = () => {
+    const token = localStorage.getItem("token");
+    axios.post("http://localhost:5000/candidate/saveTheJobPost", { token })
+      .then((response) => response.data)
+      .then(() => {
+
+      }).
+      catch((err) => {
+        console.log(err);
+      })
+  }
 
   return (
     <>
@@ -227,19 +260,34 @@ const JobDescription = () => {
         {/* ------------------- Apply Now Button ------------------ */}
         {tokenData.type === "candidate" && (
           <div>
-            <div
-              style={{ margin: "20px 0", width: "100%" }}
-              className="d-flex justify-content-center"
-            >
-              <button
-                style={{ width: "300px" }}
-                className="main-btn main-btn-link"
-                onClick={handleClickOpen}
+            {!isAppliedForTheJob && (
+              <div
+                style={{ margin: "20px 0", width: "100%" }}
+                className="d-flex justify-content-center"
               >
-                Apply Now
-              </button>
-            </div>
+                <button
+                  style={{ width: "300px" }}
+                  className="main-btn main-btn-link"
+                  onClick={handleClickOpen}
+                >
+                  Apply Now
+                </button>
+              </div>
+            )}
 
+            {/* ------------------ Already Applied -------------------- */}
+            {isAppliedForTheJob && (
+              <div
+                style={{ margin: "20px 0", width: "100%" }}
+                className="d-flex justify-content-center"
+              >
+                <Button style={{ width: "300px" }} variant="contained" disabled>
+                  Already Applied
+                </Button>
+              </div>
+            )}
+
+            {/* --------------------- Save This Job btn -------------------- */}
             <div
               style={{ margin: "20px 0", width: "100%" }}
               className="d-flex justify-content-center"
@@ -249,6 +297,7 @@ const JobDescription = () => {
                   width: "300px",
                   backgroundColor: "var(--main-orange)",
                 }}
+                onClick={saveThisJob}
                 className="main-btn main-btn-link"
               >
                 Save This Job
@@ -278,10 +327,10 @@ const JobDescription = () => {
                   <div>
                     <input
                       className="form-check-input"
-                      type="radio" 
+                      type="radio"
                       value={data.fileName}
                       name="selectResume"
-                      onChange={(e) => setSelectedResume(e.target.value)} 
+                      onChange={(e) => setSelectedResume(e.target.value)}
                     />
                     <label className="form-check-label" htmlFor="flexRadioDefault1">
                       {data.fileName.split("_")[1]}

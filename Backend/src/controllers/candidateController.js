@@ -351,7 +351,33 @@ const applyForJob = asyncHandler(async(req, res) => {
         }).catch(() => {
             res.json({ message: "Something went wrong during application for job", success: false });
         })
+});
 
+// check whether candidate has applied to the particular job or not
+const isAppliedToJob = asyncHandler(async(req, res) => {
+    const candidate = req.user;
+    const { postId } = req.body;
+    const isApplied = await JobApplication.findOne({ candidateId: candidate._id, jobPostId: postId }).count();
+    if (isApplied) {
+        res.json({ message: "Candidate has applied for the job", success: true });
+    } else {
+        res.json({ message: "Candidate have not applied for the job", success: false });
+    }
+})
+
+const saveTheJobPost = asyncHandler(async(req, res) => {
+    const candidate = req.user;
+    const { postId } = req.body;
+
+    const candidateInfo = await CandidateInfo.findOne({ candidateId: candidate._id });
+    let updated = (candidateInfo.savedJobPost).push(postId);
+    console.log(candidateInfo);
+
+    // if (isApplied) {
+    //     res.json({ message: "Candidate has applied for the job", success: true });
+    // } else {
+    //     res.json({ message: "Candidate have not applied for the job", success: false });
+    // }
 });
 
 // withdraw application
@@ -535,4 +561,6 @@ module.exports = {
     makeDefaultResume,
     deleteResume,
     getAllMyResumes,
+    isAppliedToJob,
+    saveTheJobPost
 };
