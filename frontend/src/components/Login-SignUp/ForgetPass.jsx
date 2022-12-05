@@ -85,11 +85,11 @@ const ForgetPass = () => {
                         <Button variant={data.type === "admin" ? "contained" : "outlined"} className="login-type-btn" onClick={() => setData({ ...data, type: "admin" })}>
                             Admin
                         </Button>
-                        <Button variant={data.type === "candidate" ? "contained" : "outlined"} className="login-type-btn" onClick={() => setData({ ...data, type: "candidate" })}>
-                            Candidate
-                        </Button>
                         <Button variant={data.type === "recruiter" ? "contained" : "outlined"} className="login-type-btn" onClick={() => setData({ ...data, type: "recruiter" })}>
                             Recruiter
+                        </Button>
+                        <Button variant={data.type === "candidate" ? "contained" : "outlined"} className="login-type-btn" onClick={() => setData({ ...data, type: "candidate" })}>
+                            Candidate
                         </Button>
                     </div>
                     <FormControl sx={{ m: 1, width: "99%" }} variant="outlined">
