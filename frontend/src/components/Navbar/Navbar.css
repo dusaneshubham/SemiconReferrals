@@ -34,14 +34,13 @@
 
 .menu-btn {
     display: none !important;
-    margin: 0 15px;
 }
 
 .box {
     display: none;
 }
 
-.profile-btn {
+.profile-btn, .menu-btn {
     border-radius: 50% !important;
     min-width: auto !important;
     padding: 5px !important;
@@ -62,9 +61,5 @@
 
     .box {
         display: initial;
-    }
-
-    .profile-btn {
-        margin: 5px !important;
     }
 }

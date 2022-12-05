@@ -136,16 +136,16 @@ const Navbar = () => {
                         {!loading && loggedin &&
                             <Button
                                 variant="outlined"
-                                className="profile-btn border-0 py-1"
+                                className="profile-btn border-0 m-sm-2 mt-2"
                                 onClick={handleClick}
                                 aria-controls={open ? 'account-menu' : undefined}
                                 aria-haspopup="true"
                                 aria-expanded={open ? 'true' : undefined}
                             >
-                                <AccountCircleIcon fontSize='large' />
+                                <AccountCircleIcon />
                             </Button>
                         }
-                        {!loading && loggedin && <Button variant="outlined" className="profile-btn border-0 py-1"><NotificationsIcon fontSize='large' /></Button>}
+                        {!loading && loggedin && <Button variant="outlined" className="profile-btn border-0 m-sm-2 mt-2"><NotificationsIcon /></Button>}
                     </div>
                     <Menu
                         anchorEl={anchorEl}
@@ -173,7 +173,7 @@ const Navbar = () => {
                             Logout
                         </MenuItem>
                     </Menu>
-                    <Button className="menu-btn float-end mx-0 my-2" onClick={toggleDrawer(true)}><MenuIcon /></Button>
+                    <Button className="menu-btn float-end mx-0 m-sm-2 mt-2" onClick={toggleDrawer(true)}><MenuIcon /></Button>
                     <SwipeableDrawer
                         open={state}
                         onClose={toggleDrawer(false)}
