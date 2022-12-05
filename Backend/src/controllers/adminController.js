@@ -3,7 +3,6 @@ const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/admin');
 const Candidate = require('../models/candidate');
-const Company = require('../models/company');
 const Recruiter = require('../models/recruiter');
 const JobApplication = require('../models/jobApplication');
 const JobPost = require('../models/jobPost');
@@ -84,21 +83,6 @@ const updatePassword = asyncHandler(async(req, res) => {
     }
 });
 
-const approveCompany = asyncHandler(async(req, res) => {
-    const { _id } = req.body;
-
-    const isExistCompany = await Company.findOne({ _id });
-    if (isExistCompany) {
-        const _company = await Company.findOneAndUpdate(_id, { status: "Approved" }, { new: true });
-        if (_company) {
-            res.json({ message: "successfully updated status!", success: true });
-        } else {
-            res.json({ message: "Something went wrong during approval!!", success: false });
-        }
-    } else {
-        res.json({ message: "Incorrect company id", success: false });
-    }
-});
 
 const approveRecruiter = asyncHandler(async(req, res) => {
     const { _id } = req.body;
@@ -112,23 +96,7 @@ const approveRecruiter = asyncHandler(async(req, res) => {
             res.json({ message: "Something went wrong during approval!!", success: false });
         }
     } else {
-        res.json({ message: "Incorrect company id", success: false });
-    }
-});
-
-const rejectCompany = asyncHandler(async(req, res) => {
-    const { _id } = req.body;
-
-    const isExistCompany = await Company.findOne({ _id });
-    if (isExistCompany) {
-        const _company = await Company.findOneAndUpdate(_id, { status: "Rejected" }, { new: true });
-        if (_company) {
-            res.json({ message: "successfully updated status!", success: true });
-        } else {
-            res.json({ message: "Something went wrong during rejection!!", success: false });
-        }
-    } else {
-        res.json({ message: "Incorrect company id", success: false });
+        res.json({ message: "Incorrect recruiter id", success: false });
     }
 });
 
@@ -192,49 +160,8 @@ const rejectPost = asyncHandler(async(req, res) => {
     }
 });
 
-const blockCompany = asyncHandler(async(req, res) => {
-    const { _id } = req.body;
-
-    const isExistCompany = await Company.findOne({ _id });
-    if (isExistCompany) {
-        const _company = await Company.findOneAndUpdate(_id, { status: "Blocked" }, { new: true });
-        if (_company) {
-            res.json({ message: "successfully updated status!", success: true });
-        } else {
-            res.json({ message: "Something went wrong during blocking!!", success: false });
-        }
-    } else {
-        res.json({ message: "Incorrect company id", success: false });
-    }
-});
-
-const unblockCompany = asyncHandler(async(req, res) => {
-    const { _id } = req.body;
-
-    const isExistCompany = await Company.findOne({ id: _id });
-    if (isExistCompany) {
-        const _company = await Company.findOneAndUpdate(_id, { status: "Approved" }, { new: true });
-        if (_company) {
-            res.json({ message: "successfully updated status!", success: true });
-        } else {
-            res.json({ message: "Something went wrong during unblocking!!", success: false });
-        }
-    } else {
-        res.json({ message: "Incorrect company id", success: false });
-    }
-});
-
 const getStatistics = asyncHandler(async(req, res) => {
     const numberOfCandidate = await Candidate.find().count();
-
-    // Statistics of company
-    // const numberOfPendingCompany = await Company.find({ status: "Pending" }).count();
-
-    // const numberOfApprovedCompany = await Company.find({ status: "Approved" }).count();
-
-    // const numberOfRejectedCompany = await Company.find({ status: "Rejected" }).count();
-
-    // const numberOfBlockedCompany = await Company.find({ status: "Block" }).count();
 
     // TODO : thinking
     // Statistics of job application
@@ -296,13 +223,9 @@ module.exports = {
     registerAdmin,
     loginAdmin,
     updatePassword,
-    approveCompany,
     approveRecruiter,
-    rejectCompany,
     approvePost,
     rejectPost,
-    blockCompany,
-    unblockCompany,
     approveJobApplication,
     rejectJobApplication,
     getStatistics,

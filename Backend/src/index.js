@@ -7,7 +7,6 @@ const path = require('path');
 
 const adminRoute = require('./routes/adminRoute');
 const candidateRoute = require('./routes/candidateRoute');
-const companyRoute = require('./routes/companyRoute');
 const recruiterRoute = require('./routes/recruiterRoute');
 const jobsRoute = require('./routes/jobsRoute');
 const sendEmail = require('./middleware/sendEmail');

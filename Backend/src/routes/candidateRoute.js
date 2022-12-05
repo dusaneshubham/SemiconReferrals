@@ -8,7 +8,7 @@ const verifyToken = require('../middleware/verifyToken');
 router.post("/register", registerCandidate);
 router.post("/login", loginCandidate);
 router.post("/update-password", updatePassword);
-router.post("/applyforjob", uploadResume.array('resume'), applyForJob);
+router.post("/applyforjob", verifyToken, applyForJob);
 router.post("/uploadMyResume", uploadResume.single('resume'), verifyToken, uploadMyResume);
 router.post("/makeDefaultResume", verifyToken, makeDefaultResume);
 router.post("/deleteResume", verifyToken, deleteResume);

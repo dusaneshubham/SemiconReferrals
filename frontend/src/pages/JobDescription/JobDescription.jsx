@@ -6,7 +6,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 import JobOverview from "../../components/JobDescription/JobOverview";
 import { useTheme } from "@mui/material/styles";
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, useMediaQuery } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const JobDescription = () => {
   const param = useParams();
@@ -33,16 +35,36 @@ const JobDescription = () => {
 
 
   // Dialog
-  const [openDialog, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [resumeData, setResumeData] = useState([]);
+  const [selectedResume, setSelectedResume] = useState("");
+  const [coverLetter, setCoverLetter] = useState("");
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   const handleClickOpen = () => {
-    setOpen(true);
+    const token = localStorage.getItem("token");
+    // fetch resumes of current user
+    axios
+      .post("http://localhost:5000/candidate/getAllMyResumes", { token })
+      .then((res) => res.data)
+      .then((response) => {
+        if (response.success) {
+          setResumeData(response.resumes);
+          console.log(response.resumes);
+        } else {
+          console.log("No resumes");
+          // TODO: redirect path
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    setOpenDialog(true);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenDialog(false);
   };
   // Dialog over
 
@@ -101,6 +123,7 @@ const JobDescription = () => {
                 navigate("/");
               } else {
                 setJobDetail(jobResponse.data);
+                // console.log("res"+jobResponse.data);
               }
             } else {
               navigate("/");
@@ -117,8 +140,18 @@ const JobDescription = () => {
 
   const applyToJob = () => {
     const token = localStorage.getItem("token");
-    if (token) {
-      // axios.post("http://localhost:5000/candidate/applyForJob")
+    if (token && selectedResume) {
+      axios.post("http://localhost:5000/candidate/applyForJob", {
+        token,
+        data: { resume: selectedResume, jobPostId: postId, coverLetter: coverLetter }
+      })
+        .then((res) => res.data)
+        .then((res) => {
+          console.log(res.data)
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 
@@ -200,11 +233,8 @@ const JobDescription = () => {
             >
               <button
                 style={{ width: "300px" }}
-                className="main-btn"
-                onClick={() => {
-                  handleClickOpen();
-                  applyToJob();
-                }}
+                className="main-btn main-btn-link"
+                onClick={handleClickOpen}
               >
                 Apply Now
               </button>
@@ -219,7 +249,7 @@ const JobDescription = () => {
                   width: "300px",
                   backgroundColor: "var(--main-orange)",
                 }}
-                className="main-btn"
+                className="main-btn main-btn-link"
               >
                 Save This Job
               </button>
@@ -228,6 +258,8 @@ const JobDescription = () => {
         )}
       </div>
 
+
+      {/* ------------------------- Dialog box --------------------------- */}
       <Dialog
         fullScreen={fullScreen}
         open={openDialog}
@@ -239,18 +271,51 @@ const JobDescription = () => {
         </DialogTitle>
         <hr />
         <DialogContent>
-          <DialogContentText>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" />
-                <label class="form-check-label" for="flexRadioDefault1">
-                  Default radio
-                </label>
-            </div>
-          </DialogContentText>
+          {
+            resumeData.map((data, index) => {
+              return (
+                <div className="form-check d-flex justify-content-between w-100 my-4">
+                  <div>
+                    <input
+                      className="form-check-input"
+                      type="radio" 
+                      value={data.fileName}
+                      name="selectResume"
+                      onChange={(e) => setSelectedResume(e.target.value)} 
+                    />
+                    <label className="form-check-label" htmlFor="flexRadioDefault1">
+                      {data.fileName.split("_")[1]}
+                    </label>
+                  </div>
+                  <button style={{ border: "1px solid var(--main-orange)", borderRadius: "30px", padding: "2px 12px" }}>
+                    <a href={data.url} rel="noreferrer" style={{ textDecoration: "none", color: "var(--main-orange)" }} target="_blank">
+                      Preview
+                    </a>
+                  </button>
+                </div>
+              )
+            })
+          }
+
+          {/*--------------------- Cover Letter ---------------------*/}
+          <div className="mt-5">
+            <label htmlFor="job-description" className="form-label">
+              Cover Letter
+            </label>
+            <CKEditor
+              editor={ClassicEditor}
+              data=""
+              onChange={(e, editor) => {
+                const data = editor.getData();
+                // console.log({ e, editor, data });
+                setCoverLetter(data);
+              }}
+            />
+          </div>
         </DialogContent>
         <hr />
         <DialogActions className="d-flex justify-content-center">
-          <button className="main-btn" onClick={handleClose} autoFocus>
+          <button className="main-btn main-btn-link" onClick={applyToJob} autoFocus>
             Apply
           </button>
         </DialogActions>

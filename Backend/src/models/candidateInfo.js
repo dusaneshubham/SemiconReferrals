@@ -19,7 +19,7 @@ const candidateInfoSchema = new mongoose.Schema({
 
     profileImage: {
         type: String
-        // TODO : put default image
+            // TODO : put default image
     },
 
     about: {
