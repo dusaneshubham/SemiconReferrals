@@ -29,6 +29,7 @@ import {
 const Dashboard = () => {
   const navigate = useNavigate();
   const [id, setId] = useState("");
+  const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
@@ -60,6 +61,7 @@ const Dashboard = () => {
               navigate('/');
             } else {
               setId(res.tokenData._id);
+              setName(res.data.name);
               setLoading(false);
             }
           }).catch((err) => {
@@ -168,7 +170,7 @@ const Dashboard = () => {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
-              Welcome - Shubham Dusane Employer
+              Welcome - {name}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -186,7 +188,7 @@ const Dashboard = () => {
           <List>
             {Object.entries(sideNavbar).map(([name, url], index) => (
               <ListItem key={index} disablePadding sx={{ display: "block" }}>
-                <Link to={url} className="text-decoration-none">
+                <Link to={url} className={({ isActive }) => "text-decoration-none " + (isActive ? "active-link" : "")}>
                   <ListItemButton
                     sx={{
                       minHeight: 48,

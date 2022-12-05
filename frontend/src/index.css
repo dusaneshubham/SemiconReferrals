@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
+
 :root {
     --light-pink: #FE93A0;
     --light-yellow: #F9F2D8;
@@ -27,4 +28,8 @@
 
 .main-btn-link:hover {
     color: var(--light-pink);
+}
+
+.active-link .MuiButtonBase-root {
+    background-color: rgb(228, 228, 228) !important;
 }

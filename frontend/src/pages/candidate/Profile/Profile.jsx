@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
 import ReactLoading from "react-loading";
-import { CalendarMonth, CardMembership, Download, Email, Favorite, Female, LinkedIn, Male, School, Transgender, Visibility } from '@mui/icons-material';
+import { CalendarMonth, CardMembership, Download, Email, Favorite, Female, KeyboardArrowLeft, LinkedIn, Male, School, Transgender, Visibility } from '@mui/icons-material';
 import { Timeline, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import './Profile.css';
@@ -162,8 +162,11 @@ const Profile = () => {
           </Alert>
         </Snackbar>
         {/* --------------------------------------------------- */}
+        <div className="back-btn py-2 px-3">
+          <Button onClick={() => window.history.go(-1)}><KeyboardArrowLeft /> Back</Button>
+        </div>
         <div className="container px-0 py-3 profile">
-          <div className="w-75 m-auto text-orange">
+          <div className="w-75 m-auto text-orange section">
             <h2 className="d-inline-block">
               {data.name}
             </h2>

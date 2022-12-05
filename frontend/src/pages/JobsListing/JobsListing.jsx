@@ -2,7 +2,7 @@ import React from "react";
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./jobs-listing.css";
 
-import Navbar from "../../components/Navbar/Navbar";
+// import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 
 import SearchIcon from "@mui/icons-material/Search";

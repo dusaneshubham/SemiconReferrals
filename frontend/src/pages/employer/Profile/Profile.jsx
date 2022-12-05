@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import ReactLoading from "react-loading";
-import { CardMembership, Email, LinkedIn, PeopleOutline, PhoneIphone, Public } from '@mui/icons-material';
+import { CardMembership, Email, KeyboardArrowLeft, LinkedIn, PeopleOutline, PhoneIphone, Public } from '@mui/icons-material';
 import './Profile.css';
 import { Button, FormControl, OutlinedInput } from "@mui/material";
 import { Snackbar, Slide } from "@mui/material";
@@ -104,8 +104,11 @@ const Profile = () => {
                     </Alert>
                 </Snackbar>
                 {/* --------------------------------------------------- */}
+                <div className="back-btn py-2 px-3">
+                    <Button onClick={() => window.history.go(-1)}><KeyboardArrowLeft /> Back</Button>
+                </div>
                 <div className="container px-0 py-3 profile">
-                    <div className="w-75 m-auto">
+                    <div className="w-75 m-auto section">
                         <div className="d-inline-block">
                             <h3 className="text-orange">{data.name}</h3>
                             <p className="text-smaller">{data.companyName}</p>
@@ -118,7 +121,7 @@ const Profile = () => {
                             </div>}
                     </div>
                     <div className="row">
-                        <div className="col-md-7 mx-3">
+                        <div className="col-md-7 mx-3 employer-profile">
 
                             {/*--------------------- About me ---------------------*/}
                             <div className="section bg-light">
@@ -137,7 +140,7 @@ const Profile = () => {
                                         <p className="text-black my-3"><span className='text-orange mx-1'><PhoneIphone /></span> <strong>Phone (This will be shown on public profile) </strong></p>
                                     </div>
                                     <div className="body-section2">
-                                        <p className="text-black my-3"><span className='text-orange mx-1'><PeopleOutline /></span> <strong>Employees: </strong><span className="text-secondary">{data.teamSize}</span></p>
+                                        <p className="text-black my-in-sm-3"><span className='text-orange mx-1'><PeopleOutline /></span> <strong>Employees: </strong><span className="text-secondary">{data.teamSize}</span></p>
                                         <p className="text-black my-3"><span className='text-orange mx-1'><Public /></span> <strong>Company website: </strong><span className="text-secondary">{data.companyWebsite}</span></p>
                                     </div>
                                 </div>
