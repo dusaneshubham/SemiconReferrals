@@ -110,15 +110,6 @@ function JobsListing() {
           <div id="joblists-div">
             <div style={{ display: "flex", justifyContent: "space-between" }}>
               <span>Showing 1-10 of 100 results</span>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="Sort by"
-              >
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
             </div>
 
             <div className="job-list">

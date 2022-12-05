@@ -12,28 +12,15 @@ const getAllJobDetails = asyncHandler(async(req, res) => {
 
 const getJobDetails = asyncHandler(async(req, res) => {
     const { postId } = req.body;
-    // const jobDetails = await JobPost.findOne({ _id: postId });
-    // if (jobDetails) {
-    //     res.json({ message: "Job details found", data: jobDetails, success: true })
-    // } else {
-    //     res.json({ message: "Jobs not found!", success: false });
-    // }
-    JobPost.aggregate([{
-            $match: {
-                _id: ObjectId(postId)
-            }
-        }, {
-            $lookup: {
-                from: "recruiterinfos",
-                localField: "recruiterId",
-                foreignField: "recruiterId",
-                as: "recruiterinfos"
-            },
-        }]).then((jobDetails) => {
-            console.log(jobDetails);
-            res.json({ data: jobDetails[0], message: "Job details found", success: true })
-        })
-        .catch(() => res.json({ success: false, message: "Unable to fetch job data" }));
+    const jobDetails = await JobPost.findOne({ _id: postId });
+    // getting data of recruiterinfo also
+    const recruiterInfo = await RecruiterInfo.findOne({ recruiterId: jobDetails.recruiterId });
+
+    if (jobDetails) {
+        res.json({ message: "Job details found", data: jobDetails, success: true })
+    } else {
+        res.json({ message: "Jobs not found!", success: false });
+    }
 });
 
 const getPendingJobs = asyncHandler(async(req, res) => {

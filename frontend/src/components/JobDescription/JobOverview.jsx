@@ -28,8 +28,8 @@ export default function JobOverview(props) {
             <LocationOnOutlinedIcon className="icon" />
           </div>
           <div className="job-overview-data-right-div">
-            <h6>Location</h6>
-            <span>{props.location}</span>
+            <span>Location</span>
+            <h6>{props.location}</h6>
           </div>
         </div>
       )}
@@ -41,8 +41,8 @@ export default function JobOverview(props) {
             <LocalAtmIcon className="icon" />
           </div>
           <div className="job-overview-data-right-div">
-            <h6>Salary</h6>
-            <span>{props.salary}</span>
+            <span>Salary</span>
+            <h6>{props.salary}</h6>
           </div>
         </div>
       )}
@@ -54,8 +54,8 @@ export default function JobOverview(props) {
             <HourglassTopIcon className="icon" />
           </div>
           <div className="job-overview-data-right-div">
-            <h6>Application Deadline</h6>
-            <span>{formatDate(props.deadline)}</span>
+            <span>Application Deadline</span>
+            <h6>{formatDate(props.deadline)}</h6>
           </div>
         </div>
       )}
@@ -67,8 +67,8 @@ export default function JobOverview(props) {
             <PersonOutlineOutlinedIcon className="icon" />
           </div>
           <div className="job-overview-data-right-div">
-            <h6>Experience</h6>
-            <span>{props.experience}</span>
+            <span>Experience</span>
+            <h6>{props.experience}</h6>
           </div>
         </div>
       )}
@@ -80,8 +80,8 @@ export default function JobOverview(props) {
             <WorkspacePremiumOutlinedIcon className="icon" />
           </div>
           <div className="job-overview-data-right-div">
-            <h6>Qualification</h6>
-            <span>{props.qualification}</span>
+            <span>Qualification</span>
+            <h6>{props.qualification}</h6>
           </div>
         </div>
       )}
@@ -93,8 +93,8 @@ export default function JobOverview(props) {
             <WorkspacePremiumOutlinedIcon className="icon" />
           </div>
           <div className="job-overview-data-right-div">
-            <h6>Job Type</h6>
-            <span>{props.jobType}</span>
+            <span>Job Type</span>
+            <h6>{props.jobType}</h6>
           </div>
         </div>
       )}
@@ -106,8 +106,8 @@ export default function JobOverview(props) {
             <WorkspacePremiumOutlinedIcon className="icon" />
           </div>
           <div className="job-overview-data-right-div">
-            <h6>Job Level</h6>
-            <span>{props.jobLevel}</span>
+            <span>Job Level</span>
+            <h6>{props.jobLevel}</h6>
           </div>
         </div>
       )}
@@ -119,8 +119,8 @@ export default function JobOverview(props) {
             <WorkspacePremiumOutlinedIcon className="icon" />
           </div>
           <div className="job-overview-data-right-div">
-            <h6>Number of vacancies</h6>
-            <span>{props.vacancies} openings</span>
+            <span>Number of vacancies</span>
+            <h6>{props.vacancies} openings</h6>
           </div>
         </div>
       )}
@@ -132,8 +132,8 @@ export default function JobOverview(props) {
             <CalendarTodayIcon className="icon" />
           </div>
           <div className="job-overview-data-right-div">
-            <h6>Job posted</h6>
-            <span>{formatDate(props.jobPostedDate)}</span>
+            <span>Job posted</span>
+            <h6>{formatDate(props.jobPostedDate)}</h6>
           </div>
         </div>
       )}
