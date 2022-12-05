@@ -1,93 +1,213 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
 import "./job-description.css";
+import axios from "axios";
+import { useNavigate, useParams } from "react-router-dom";
 
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import JobOverview from "../../components/JobDescription/JobOverview";
 
 const JobDescription = () => {
-  let skillsRequired = [
-    "HTML",
-    "CSS",
-    "JavaScript",
-    "Node",
-    "PHP",
-    "C++",
-    "Java",
-    "Ruby",
-    "Python",
-    "Machine Learning",
-    "Artificial Intelligence",
-  ];
+  const param = useParams();
+  const postId = param.id;
+  const navigate = useNavigate();
+
+  const [jobDetail, setJobDetail] = useState({
+    recruiterId: "",
+    jobTitle: "",
+    JobDescription: "",
+    keyResponsibilities: "",
+    numberOfVacancies: 0,
+    applicationDeadline: "",
+    jobType: "",
+    experience: "",
+    qualification: "",
+    location: "",
+    jobLevel: "",
+    salary: "",
+    skillsRequired: [],
+  });
+
+  const [tokenData, setTokenData] = useState({ _id: "", type: "" });
+
+  // const postId = "638796710ec0dccdff086548";
+
+  // --------------------------- get Job Detail ------------------------
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    const getJobDetail = () => {
+      // getting token data
+      if (token) {
+        axios
+          .post("http://localhost:5000/verify-token", { token })
+          .then((res) => res.data)
+          .then((tokenResponse) => {
+            if (tokenResponse.success) {
+              axios
+                .post("http://localhost:5000/jobs/getJobDetails", { postId })
+                .then((res) => res.data)
+                .then((jobResponse) => {
+                  if (jobResponse.success) {
+                    if (
+                      jobResponse.data.status === "Pending" &&
+                      tokenResponse.tokenData._id !==
+                        jobResponse.data.recruiterId &&
+                      tokenResponse.tokenData.type !== "admin"
+                    ) {
+                      navigate("/");
+                    } else {
+                      setJobDetail(jobResponse.data);
+                    }
+                  } else {
+                    navigate("/");
+                  }
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
+              setTokenData(tokenResponse.tokenData);
+            } else {
+              console.log(tokenResponse.message);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        axios
+          .post("http://localhost:5000/jobs/getJobDetails", { postId })
+          .then((res) => res.data)
+          .then((jobResponse) => {
+            if (jobResponse.success) {
+              if (jobResponse.data.status === "Pending") {
+                navigate("/");
+              } else {
+                console.log(jobResponse.data);
+                setJobDetail(jobResponse.data);
+              }
+            } else {
+              navigate("/");
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    };
+
+    getJobDetail();
+  }, []);
+
+  const applyToJob = () => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      // axios.post("http://localhost:5000/candidate/applyForJob")
+    }
+  };
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <div className="container" id="job-description-container">
         {/* -------- Title -------- */}
-        <h4>Software Developer</h4>
+        <h2 style={{ color: "var(--main-blue)" }}>{jobDetail.jobTitle}</h2>
+
+        {/* --------- Company Name --------- */}
+        <h5 style={{ color: "var(--main-orange)" }}>
+          {/* {jobDetail.recruiterinfos[0].companyName} */}
+          Google Software Ltd.
+        </h5>
 
         <div className="row my-5">
           <div id="left" className="col-md-9">
             {/* ---------------- Job Description ------------------- */}
-            <h5>Job Description</h5>
-            <p className="mb-5">
-              As a Product Designer, you will work within a Product Delivery
-              Team fused with UX, engineering, product and data talent. You will
-              help the team design beautiful interfaces that solve business
-              challenges for our clients. We work with a number of Tier 1 banks
-              on building web-based applications for AML, KYC and Sanctions List
-              management workflows. This role is ideal if you are looking to
-              segue your career into the FinTech or Big Data arenas.
-            </p>
+            {jobDetail.jobDescription && (
+              <div>
+                <h5>Job Description</h5>
+                <p
+                  className="mb-5"
+                  dangerouslySetInnerHTML={{ __html: jobDetail.jobDescription }}
+                ></p>
+              </div>
+            )}
+
             {/* ----------------- Key Responsibilities ------------------- */}
-            <h5>Key Responsibilities</h5>
-            <p className="mb-5">
-              <ul>
-                <li>
-                  Be involved in every step of the product design cycle from
-                  discovery to developer handoff and user acceptance testing.
-                </li>
-                <li>
-                  Work with BAs, product managers and tech teams to lead the
-                  Product Design
-                </li>
-                <li>
-                  Maintain quality of the design process and ensure that when
-                  designs are translated into code they accurately reflect the
-                  design specifications.
-                </li>
-                <li>
-                  Accurately estimate design tickets during planning sessions.
-                </li>
-              </ul>
-            </p>
+            {jobDetail.keyResponsibilities && (
+              <div>
+                <h5>Key Responsibilities</h5>
+                <p
+                  className="mb-5"
+                  dangerouslySetInnerHTML={{
+                    __html: jobDetail.keyResponsibilities,
+                  }}
+                ></p>
+              </div>
+            )}
+
             {/* ----------------- Skills Required ------------------ */}
-            <h5>Skills Required</h5>
-            <div className="d-flex flex-wrap">
-              {skillsRequired.map((skill) => (
-                <div className="skills-section">{skill}</div>
-              ))}
-            </div>
+            {jobDetail.skillsRequired && (
+              <div>
+                <h5>Skills Required</h5>
+                <div className="d-flex flex-wrap">
+                  {jobDetail.skillsRequired.map((skill, index) => (
+                    <div className="skills-section">{skill}</div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          <div id="right" className="col-md-3">
+          {/* ------------------ Job Overview ------------------ */}
+          <div id="job-overview-section" className="col-md-3">
             <JobOverview
-              key=""
-              jobPostedDate="10/12/2023"
-              location="Ahmedabad"
-              salary="$10000 - $200000 per month"
-              deadline="10/12/2024"
-              experience="Trained Professional (0-1 year)"
-              qualification="Bachelor"
-              jobType="Full Time"
-              jobLevel="Senior"
-              vacancies="10"
+              jobPostedDate={jobDetail.createdAt}
+              location={jobDetail.location}
+              salary={jobDetail.salary}
+              deadline={jobDetail.applicationDeadline}
+              experience={jobDetail.experience}
+              qualification={jobDetail.qualification}
+              jobType={jobDetail.jobType}
+              jobLevel={jobDetail.jobLevel}
+              vacancies={jobDetail.numberOfVacancies}
             />
           </div>
         </div>
+
+        {/* ------------------- Apply Now Button ------------------ */}
+        {tokenData.type === "candidate" && (
+          <div>
+            <div
+              style={{ margin: "20px 0", width: "100%" }}
+              className="d-flex justify-content-center"
+            >
+              <button
+                style={{ width: "300px" }}
+                className="main-btn"
+                onclick={applyToJob}
+              >
+                Apply Now
+              </button>
+            </div>
+
+            <div
+              style={{ margin: "20px 0", width: "100%" }}
+              className="d-flex justify-content-center"
+            >
+              <button
+                style={{
+                  width: "300px",
+                  backgroundColor: "var(--main-orange)",
+                }}
+                className="main-btn"
+              >
+                Save This Job
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <Footer />

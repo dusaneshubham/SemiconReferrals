@@ -54,65 +54,128 @@ const JobPost = () => {
     let todayDate = new Date().toJSON().slice(0, 10);
 
     if (
-      jobTitle &&
-      jobCategory &&
-      jobDescription &&
-      keyResponsibilities &&
-      applicationDeadline &&
-      qualification &&
-      experience &&
-      jobType &&
-      jobLevel &&
-      numberOfVacancies &&
-      location &&
-      skills &&
-      keywords
+      !jobTitle ||
+      !jobCategory ||
+      !jobDescription ||
+      !keyResponsibilities ||
+      !applicationDeadline ||
+      !qualification ||
+      !experience ||
+      !jobType ||
+      !jobLevel ||
+      !numberOfVacancies ||
+      !location ||
+      !skills
     ) {
-      if (todayDate < applicationDeadline) {
-        // Application deadline should be of future only
-        if (token) {
-          axios
-            .post("http://localhost:5000/recruiter/jobPost", {
-              ...jobPostDetails,
-              skills: skills,
-              keywords: keywords,
-              token: token,
-            })
-            .then((response) => response.data)
-            .then((res) => {
-              if (res.success) {
-                setAlert({ success: res.message });
-                // setJobPostDetails({
-                //   jobTitle: "",
-                //   jobCategory: "",
-                //   jobDescription: "",
-                //   keyResponsibilities: "",
-                //   applicationDeadline: "",
-                //   qualification: "",
-                //   experience: "",
-                //   jobType: "",
-                //   jobLevel: "",
-                //   numberOfVacancies: "",
-                //   location: "",
-                //   salary: "",
-                // });
-              } else {
-                setAlert({ error: res.message });
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-              setAlert({ error: "Something went wrong with server!" });
-            });
-        } else {
-          setAlert({ error: "Unauthorized user!!" });
-        }
-      } else {
-        setAlert({ error: "Application deadline should be of future only" });
-      }
-    } else {
       setAlert({ error: "All mandatory fields are required to fill !" });
+    } else if (numberOfVacancies <= 0) {
+      setAlert({ error: "Number of vacancies should be more than 0" });
+    } else if (todayDate >= applicationDeadline) {
+      setAlert({ error: "Application deadline should be of future only" });
+    } else if (!token) {
+      setAlert({ error: "Unauthorized user!!" });
     }
+    else {
+      axios
+        .post("http://localhost:5000/recruiter/jobPost", {
+          ...jobPostDetails,
+          skills: skills,
+          keywords: keywords,
+          token: token,
+        })
+        .then((response) => response.data)
+        .then((res) => {
+          if (res.success) {
+            setAlert({ success: res.message });
+            setJobPostDetails({
+              jobTitle: "",
+              jobCategory: "",
+              jobDescription: "",
+              keyResponsibilities: "",
+              applicationDeadline: "",
+              qualification: "",
+              experience: "",
+              jobType: "",
+              jobLevel: "",
+              numberOfVacancies: "",
+              location: "",
+              salary: "",
+            });
+          } else {
+            setAlert({ error: res.message });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setAlert({ error: "Something went wrong with server!" });
+        });
+    }
+
+    // if (
+    //   jobTitle &&
+    //   jobCategory &&
+    //   jobDescription &&
+    //   keyResponsibilities &&
+    //   applicationDeadline &&
+    //   qualification &&
+    //   experience &&
+    //   jobType &&
+    //   jobLevel &&
+    //   numberOfVacancies &&
+    //   location &&
+    //   skills
+    // ) {
+    //   if (numberOfVacancies > 0) {
+    //     if (todayDate < applicationDeadline) {
+    //       // Application deadline should be of future only
+    //       if (token) {
+    //         axios
+    //           .post("http://localhost:5000/recruiter/jobPost", {
+    //             ...jobPostDetails,
+    //             skills: skills,
+    //             keywords: keywords,
+    //             token: token,
+    //           })
+    //           .then((response) => response.data)
+    //           .then((res) => {
+    //             if (res.success) {
+    //               setAlert({ success: res.message });
+    //               setJobPostDetails({
+    //                 jobTitle: "",
+    //                 jobCategory: "",
+    //                 jobDescription: "",
+    //                 keyResponsibilities: "",
+    //                 applicationDeadline: "",
+    //                 qualification: "",
+    //                 experience: "",
+    //                 jobType: "",
+    //                 jobLevel: "",
+    //                 numberOfVacancies: "",
+    //                 location: "",
+    //                 salary: "",
+    //               });
+    //             } else {
+    //               setAlert({ error: res.message });
+    //             }
+    //           })
+    //           .catch((err) => {
+    //             console.log(err);
+    //             setAlert({ error: "Something went wrong with server!" });
+    //           });
+    //       } else {
+    //         setAlert({ error: "Unauthorized user!!" });
+    //       }
+    //     } else {
+    //       setAlert({
+    //         error: "Application deadline should be of future only",
+    //       });
+    //     }
+    //   } else {
+    //     setAlert({ error: "Number of vacancies should be more than 0" });
+    //   }
+    // } else {
+    //   setAlert({ error: "All mandatory fields are required to fill !" });
+    // }
   };
 
   const Transition = (props) => {
@@ -419,26 +482,30 @@ const JobPost = () => {
               </div>
 
               {/*----------------- Job Skills ------------------*/}
-              <label htmlFor="skills" className="form-label">
-                Job Skills
-              </label>
-              <TagsInput
-                id="skills"
-                value={skills}
-                onChange={setSkills}
-                placeHolder="Enter Skill"
-              />
+              <div>
+                <label htmlFor="skills" className="form-label">
+                  Job Skills <span style={{ color: "red" }}>*</span>
+                </label>
+                <TagsInput
+                  id="skills"
+                  value={skills}
+                  onChange={setSkills}
+                  placeHolder="Enter Skill"
+                />
+              </div>
 
               {/*----------------- Job Tags / Keywords ------------------*/}
-              <label htmlFor="keywords" className="form-label">
-                Job Tags / Keywords
-              </label>
-              <TagsInput
-                id="keywords"
-                value={keywords}
-                onChange={setKeywords}
-                placeHolder="Enter Keyword"
-              />
+              <div>
+                <label htmlFor="keywords" className="form-label">
+                  Job Tags / Keywords
+                </label>
+                <TagsInput
+                  id="keywords"
+                  value={keywords}
+                  onChange={setKeywords}
+                  placeHolder="Enter Keyword"
+                />
+              </div>
 
               {/*--------------------- Submit Button ---------------------*/}
               <div className="col-12">

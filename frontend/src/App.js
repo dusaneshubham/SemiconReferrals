@@ -34,7 +34,7 @@ function App() {
       <Routes>
         <Route exact path="/" element={<Home />} />
         <Route exact path="/jobslisting" element={<JobsListing />} />
-        <Route exact path="/jobdescription" element={<JobDescription />} />
+        <Route exact path="/jobdescription/:id" element={<JobDescription />} />
 
         <Route exact path="/admin" element={<AdminDashboard />}>
           <Route path="" element={<AdminDashboardComponent />} />
@@ -43,7 +43,6 @@ function App() {
           <Route path="pendingpost" element={<PendingPost />} />
         </Route>
 
-        <Route exact path="/candidate/profile" element={<CandidateProfile />} />
         <Route exact path="/candidate" element={<CandidateDashboard />}>
           <Route path="" element={<CandidateDashboardComponent />} />
           <Route path="dashboard" element={<CandidateDashboardComponent />} />

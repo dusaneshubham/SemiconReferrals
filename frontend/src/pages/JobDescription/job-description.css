@@ -1,5 +1,9 @@
+#job-description-container {
+    margin: 50px auto;
+}
+
 #job-description-container h5 {
-    /* margin: 15px 0; */
+    margin: 15px 0;
 }
 
 #job-description-container p {

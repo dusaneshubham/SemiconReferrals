@@ -132,7 +132,7 @@ const Profile = () => {
                                 <h5 className="header">Employer Details</h5>
                                 <div className="d-flex justify-content-between flex-wrap">
                                     <div className="body-section1">
-                                        <p className="text-black my-3"><span className='text-orange mx-1'><CardMembership /></span> <strong>Memeber Since: </strong><span className="text-secondary">{getDate(data.createDate)}</span></p>
+                                        <p className="text-black my-3"><span className='text-orange mx-1'><CardMembership /></span> <strong>Member Since: </strong><span className="text-secondary">{getDate(data.createDate)}</span></p>
                                         <p className="text-black my-3"><span className='text-orange mx-1'><Email /></span> <strong>Email: </strong><span className="text-secondary">{data.email}</span></p>
                                         <p className="text-black my-3"><span className='text-orange mx-1'><PhoneIphone /></span> <strong>Phone (This will be shown on public profile) </strong></p>
                                     </div>

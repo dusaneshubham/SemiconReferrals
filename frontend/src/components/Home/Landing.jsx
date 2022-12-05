@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom';
 const Landing = () => {
   return (
     <>
-      <div className="d-flex homepage-main">
+      <div className="d-flex" id="homepage-main">
         <div className="homepage-main-left">
           <h4>LOOKING FOR TOP RESOURCES</h4>
           <p style={{ margin: "20px auto" }}>
