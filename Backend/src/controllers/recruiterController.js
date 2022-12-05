@@ -317,6 +317,47 @@ const saveProfile = asyncHandler(async (req, res) => {
     }
 });
 
+// get saved recruiter
+const getSavedRecruiter = asyncHandler(async (req, res) => {
+    const user = req.user;
+
+    if (user._id) {
+        const result = await RecruiterInfo.findOne({ recruiterId: user._id }).populate("saveProfile");
+        if (result) {
+            res.json({ message: "Saved candidate profile", data: result, success: true });
+        } else {
+            res.json({ message: "User not found!!", success: false });
+        }
+    } else {
+        res.json({ message: "Invalid request", success: false });
+    }
+});
+
+// remove saved recruiter
+const removeSavedRecruiter = asyncHandler(async (req, res) => {
+    const user = req.user;
+    const { id } = req.body;
+
+    if (user && id) {
+        await RecruiterInfo.findOne({ recruiterId: user._id })
+            .then((result) => {
+                result.saveProfile.pull({ _id: id });
+                result.save()
+                    .then((data) => {
+                        res.json({ message: "Saved candidate profile", data: data, success: true });
+                    })
+                    .catch((err) => {
+                        res.json({ message: "Something went wrong during remove profile!!", success: false });
+                    });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Something went wrong during remove profile!!", success: false });
+            });
+    } else {
+        res.json({ message: "Invalid request", success: false });
+    }
+});
+
 module.exports = {
     registerRecruiter,
     loginRecruiter,
@@ -326,4 +367,6 @@ module.exports = {
     updateProfile,
     jobPost,
     saveProfile,
+    getSavedRecruiter,
+    removeSavedRecruiter
 }

@@ -104,6 +104,7 @@ const JobDescription = () => {
                   }
                 })
                 .catch((err) => {
+                  navigate("/");
                   console.log(err);
                 });
               setTokenData(tokenResponse.tokenData);

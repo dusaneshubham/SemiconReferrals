@@ -14,7 +14,7 @@ const getJobDetails = asyncHandler(async(req, res) => {
     const { postId } = req.body;
     // let jobpost = await JobPost.findOne({ _id: postId });
     // getting data of recruiterinfo also
-    // const recruiterInfo = await RecruiterInfo.findOne({ recruiterId: jobpost.recruiterId.toString() });
+    // const recruiterInfo = await RecruiterInfo.findOne({ recruiterId: jobpost.recruiterId });
     // console.log(jobpost);
     // jobDetails = {...jobpost, ...recruiterInfo };
     // if (jobDetails) {

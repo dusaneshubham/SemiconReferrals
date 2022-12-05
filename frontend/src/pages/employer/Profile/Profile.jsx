@@ -154,48 +154,13 @@ const Profile = () => {
                                 <h5 className="header">Employer Details</h5>
                                 <div className="d-flex justify-content-between flex-wrap">
                                     <div className="body-section1">
-                                        <p className="text-black mb-3">
-                                            <span className="text-orange mx-1">
-                                                <CardMembership />
-                                            </span>
-                                            <strong>Member Since: </strong>
-                                            <span className="text-secondary">
-                                                {getDate(data.createDate)}
-                                            </span>
-                                        </p>
-                                        <p className="text-black my-3">
-                                            <span className="text-orange mx-1">
-                                                <Email />
-                                            </span>
-                                            <strong>Email: </strong>
-                                            <span className="text-secondary">{data.email}</span>
-                                        </p>
-                                        <p className="text-black my-3">
-                                            <span className="text-orange mx-1">
-                                                <PhoneIphone />
-                                            </span>
-                                            <strong>
-                                                Phone (This will be shown on public profile)
-                                            </strong>
-                                        </p>
+                                        <p className="text-black mb-3"><span className='text-orange mx-1'><CardMembership /></span> <strong>Member Since: </strong><span className="text-secondary">{getDate(data.createDate)}</span></p>
+                                        <p className="text-black my-3"><span className='text-orange mx-1'><Email /></span> <strong>Email: </strong><span className="text-secondary">{data.email}</span></p>
+                                        <p className="text-black my-3"><span className='text-orange mx-1'><PhoneIphone /></span> <strong>Phone (This will be shown on public profile) </strong></p>
                                     </div>
                                     <div className="body-section2">
-                                        <p className="text-black mb-3">
-                                            <span className="text-orange mx-1">
-                                                <PeopleOutline />
-                                            </span>
-                                            <strong>Employees: </strong>
-                                            <span className="text-secondary">{data.teamSize}</span>
-                                        </p>
-                                        <p className="text-black my-3">
-                                            <span className="text-orange mx-1">
-                                                <Public />
-                                            </span>
-                                            <strong>Company website: </strong>
-                                            <span className="text-secondary">
-                                                {data.companyWebsite}
-                                            </span>
-                                        </p>
+                                        <p className="text-black mb-3"><span className='text-orange mx-1'><PeopleOutline /></span> <strong>Employees: </strong><span className="text-secondary">{data.teamSize}</span></p>
+                                        <p className="text-black my-3"><span className='text-orange mx-1'><Public /></span> <strong>Company website: </strong><span className="text-secondary">{data.companyWebsite}</span></p>
                                     </div>
                                 </div>
                             </div>

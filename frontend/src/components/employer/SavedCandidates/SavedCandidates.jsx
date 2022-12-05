@@ -17,17 +17,25 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { image2 } from "../../../images/images";
+import { useEffect, useState } from "react";
+import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 
 const SavedCandidates = () => {
-  const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const theme = useTheme();
+  const [candidates, setCandidates] = useState([]);
+  const [deleteId, setDeleteId] = useState("");
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const handleClickOpen = () => {
+  const handleClickOpen = (id) => {
+    setDeleteId(id);
     setOpen(true);
   };
 
   const handleClose = () => {
+    setDeleteId("");
     setOpen(false);
   };
 
@@ -51,14 +59,47 @@ const SavedCandidates = () => {
     },
   }));
 
-  function createData(location, employerName) {
-    return {
-      location,
-      employerName,
-    };
-  }
+  const token = localStorage.getItem("token");
 
-  const rows = [createData("Ahmedabad", "Shubham Dusane")];
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      const getData = async () => {
+        await axios.post("http://localhost:5000/recruiter/getSavedCandidate", { token: token })
+          .then((res) => res.data)
+          .then((res) => {
+            if (res.success) {
+              setCandidates(res.data.saveProfile);
+            } else {
+              // setAlert({ error: res.message });
+            }
+          }).catch((err) => {
+            console.log(err);
+            // setAlert({ error: "Something went wrong with server!" });
+          })
+      }
+
+      getData();
+    } else {
+      navigate('/');
+    }
+  }, [navigate]);
+
+  const removeProfile = () => {
+    axios.post("http://localhost:5000/recruiter/removeSavedCandidate", { token: token, id: deleteId })
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setCandidates(res.data.saveProfile);
+        } else {
+          console.log(res.message);
+        }
+      }).catch((err) => {
+        console.log(err);
+      });
+    setOpen(false);
+  }
 
   return (
     <>
@@ -73,33 +114,34 @@ const SavedCandidates = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.employerName}>
+            {candidates.map((element, index) => (
+              <StyledTableRow key={index}>
                 <StyledTableCell>
                   <div className="d-flex align-items-center">
                     <div style={{ marginRight: "15px" }}>
                       <img src={image2} width="50" height="50" alt="" />
                     </div>
                     <div>
-                      <div>{row.employerName}</div>
-                      <div style={{ color: "var(--text)" }}>{row.location}</div>
+                      <div className="text-orange">{element.name}</div>
                     </div>
                   </div>
                 </StyledTableCell>
                 <StyledTableCell>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleClickOpen}
-                  >
-                    View Profile
-                  </Button>
+                  <Link to={"/candidate/viewprofile/" + element._id} className="nav-link">
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleClickOpen}
+                    >
+                      View Profile
+                    </Button>
+                  </Link>
                 </StyledTableCell>
                 <StyledTableCell>
                   <Button
                     variant="contained"
                     color="error"
-                    onClick={handleClickOpen}
+                    onClick={() => handleClickOpen(element._id)}
                     startIcon={<DeleteIcon />}
                   >
                     Remove
@@ -107,6 +149,11 @@ const SavedCandidates = () => {
                 </StyledTableCell>
               </StyledTableRow>
             ))}
+            {candidates.length === 0 && <StyledTableRow>
+              <StyledTableCell colSpan="3" className="text-center text-secondary">
+                No data found!
+              </StyledTableCell>
+            </StyledTableRow>}
           </TableBody>
         </Table>
       </TableContainer>
@@ -123,7 +170,7 @@ const SavedCandidates = () => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button autoFocus onClick={handleClose}>
+          <Button autoFocus onClick={removeProfile}>
             Yes
           </Button>
           <Button onClick={handleClose} autoFocus>
