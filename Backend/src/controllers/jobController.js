@@ -27,7 +27,7 @@ const getJobDetails = asyncHandler(async(req, res) => {
                 from: "recruiterinfos",
                 localField: "recruiterId",
                 foreignField: "recruiterId",
-                as: "recruiterinfos"
+                as: "recruiterinfo"
             },
         }]).then((jobDetails) => {
             console.log(jobDetails);
