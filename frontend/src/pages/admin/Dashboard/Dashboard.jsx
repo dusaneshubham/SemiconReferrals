@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 
 import { styled, useTheme } from "@mui/material/styles";
 import {
@@ -183,7 +183,7 @@ const Dashboard = () => {
           <List>
             {Object.entries(sideNavbar).map(([key, value], index) => (
               <ListItem key={index} disablePadding sx={{ display: "block" }}>
-                <Link to={key} className={({ isActive }) => "text-decoration-none " + (isActive ? "active-link" : "")}>
+                <NavLink to={key} className={({ isActive }) => "text-decoration-none " + (isActive ? "active-link" : "")}>
                   <ListItemButton
                     sx={{
                       minHeight: 48,
@@ -206,7 +206,7 @@ const Dashboard = () => {
                       sx={{ opacity: open ? 1 : 0 }}
                     />
                   </ListItemButton>
-                </Link>
+                </NavLink>
               </ListItem>
             ))}
             <ListItem disablePadding sx={{ display: "block" }}>
