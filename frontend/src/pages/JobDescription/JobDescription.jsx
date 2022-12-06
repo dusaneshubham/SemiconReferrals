@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 import JobOverview from "../../components/JobDescription/JobOverview";
 import { useTheme } from "@mui/material/styles";
+import { KeyboardArrowLeft } from '@mui/icons-material';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
@@ -212,7 +213,9 @@ const JobDescription = () => {
   return (
     <>
       {/* <Navbar /> */}
-
+      <div className="back-btn py-2 px-3">
+        <Button onClick={() => window.history.go(-1)}><KeyboardArrowLeft /> Back</Button>
+      </div>
       <div className="container" id="job-description-container">
         {/* -------- Title -------- */}
         <h3 style={{ color: "var(--main-blue)" }}>{jobDetail.jobTitle}</h3>

@@ -7,8 +7,6 @@ const bcrypt = require('bcryptjs');
 const { isEmail } = require('validator');
 const fs = require('fs');
 const path = require('path');
-const mongoose = require("mongoose");
-const ObjectId = mongoose.Types.ObjectId;
 
 // Generate the token
 const generateToken = (user) => {
@@ -248,7 +246,7 @@ const getCandidateDetails = asyncHandler(async(req, res) => {
 });
 
 // get candidate details by id
-const getCandidateDetailsId = asyncHandler(async(req, res) => {
+const getCandidateDetailsById = asyncHandler(async(req, res) => {
     const { id } = req.body;
 
     if (id) {
@@ -260,7 +258,7 @@ const getCandidateDetailsId = asyncHandler(async(req, res) => {
                 email: result.email,
                 contactNumber: result.contactNumber,
                 skills: info.skills,
-                savedPost: info.savedPost,
+                savedJobPost: info.savedJobPost,
                 followings: info.followings,
                 resumes: info.resumes,
                 education: info.education,
@@ -552,6 +550,64 @@ const getAllMyResumes = asyncHandler(async(req, res) => {
     }
 });
 
+//follow recruiter
+const followRecruiter = asyncHandler(async(req, res) => {
+    const { candidateId, recruiterId } = req.body;
+
+    if (candidateId && recruiterId) {
+        const result = await CandidateInfo.findOne({ candidateId: candidateId });
+        if (result) {
+            result.followings.push(recruiterId);
+            CandidateInfo.findOneAndUpdate({ candidateId: candidateId }, { followings: result.followings }, { new: true })
+                .then(() => {
+                    res.json({ message: "Now you are followings this recruiter!!", success: true });
+                }).catch((err) => {
+                    console.log(err);
+                    res.json({ message: "Somthing went wrong during follow recruiter", success: false });
+                });
+        } else {
+            let followings = [recruiterId];
+            const newCandidate = new CandidateInfo({
+                candidateId: candidateId,
+                followings: followings
+            });
+
+            newCandidate.save()
+                .then(() => {
+                    res.json({ message: "Now you are following this recruiter!!", success: true });
+                })
+                .catch((err) => {
+                    console.log(err);
+                    res.json({ message: "Somthing went wrong during follow recruiter!!", success: false });
+                })
+        }
+    } else {
+        res.json({ message: "Invalid request", success: false });
+    }
+});
+
+// unfollow recruiter
+const unFollowRecruiter = asyncHandler(async(req, res) => {
+    const { candidateId, recruiterId } = req.body;
+
+    if (candidateId && recruiterId) {
+        const result = await CandidateInfo.findOne({ candidateId: candidateId });
+        if (result) {
+            result.followings.pull(recruiterId);
+            result.save()
+                .then(() => {
+                    res.json({ message: "Now you are unfollwing this recruiter", success: true });
+                }).catch((err) => {
+                    res.json({ message: "Somthing went wrong during unfollowing!!", success: false });
+                });
+        } else {
+            res.json({ message: "User not found!!", success: false });
+        }
+    } else {
+        res.json({ message: "Invalid request!!", succes: false });
+    }
+});
+
 module.exports = {
     registerCandidate,
     loginCandidate,
@@ -559,7 +615,7 @@ module.exports = {
     updateProfile,
     changePassword,
     getCandidateDetails,
-    getCandidateDetailsId,
+    getCandidateDetailsById,
     updateWorkingExperience,
     updateEducationDetails,
     applyForJob,
@@ -572,5 +628,7 @@ module.exports = {
     getAllMyResumes,
     isAppliedToJob,
     saveTheJobPost,
-    isSavedJob
+    isSavedJob,
+    followRecruiter,
+    unFollowRecruiter
 };

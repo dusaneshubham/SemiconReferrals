@@ -4,13 +4,9 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import axios from "axios";
 import { useState } from "react";
-import { Button, Snackbar, Slide } from "@mui/material";
-import MuiAlert from "@mui/material/Alert";
+import { Button } from "@mui/material";
 import { TagsInput } from "react-tag-input-component";
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import AlertPopUp from "../../AlertPopUp/AlertPopUp";
 
 const JobPost = () => {
   const [alert, setAlert] = useState({});
@@ -112,42 +108,15 @@ const JobPost = () => {
     }
   };
 
-  const Transition = (props) => {
-    return <Slide {...props} direction="down" />;
-  };
-
-  const handleClose = (_, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setAlert({});
-  };
-
   return (
     <>
       <div className="row">
-        <Snackbar
-          autoHideDuration={2000}
-          open={alert.error ? true : false}
-          TransitionComponent={Transition}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert severity="error" onClose={handleClose}>
-            <span className="my-alert">{alert.error}</span>
-          </Alert>
-        </Snackbar>
-        <Snackbar
-          autoHideDuration={2000}
-          open={alert.success ? true : false}
-          TransitionComponent={Transition}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert severity="success" onClose={handleClose}>
-            <span className="my-alert">{alert.success}</span>
-          </Alert>
-        </Snackbar>
+        {/* ---------------------- alert ---------------------- */}
+        <AlertPopUp
+          alert={alert}
+          setAlert={setAlert}
+        />
+        {/* --------------------------------------------------- */}
 
         {/*--------------------- Job Post ---------------------*/}
         <div className="col-md-8 p-4 bg-white">

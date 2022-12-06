@@ -12,23 +12,21 @@ import {
 } from "@mui/icons-material";
 import "./Profile.css";
 import { Button, FormControl, OutlinedInput } from "@mui/material";
-import { Snackbar, Slide } from "@mui/material";
-import MuiAlert from "@mui/material/Alert";
 import Footer from "../../../components/Footer/Footer";
 import axios from "axios";
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import AlertPopUp from "../../../components/AlertPopUp/AlertPopUp";
 
 const Profile = () => {
     const navigate = useNavigate();
     const param = useParams();
+    const [candidateId, setCandidateId] = useState("");
+    const [isFollow, setIsFollow] = useState(false);
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const id = param.id;
+        const token = localStorage.getItem("token");
         const getData = async () => {
             await axios
                 .post("http://localhost:5000/recruiter/getRecruiterDetailsById", { id })
@@ -46,6 +44,20 @@ const Profile = () => {
                     console.log(err);
                     navigate("/");
                 });
+
+            if (token) {
+                axios.post("http://localhost:5000/verify-token", { token })
+                    .then((res) => res.data)
+                    .then((res) => {
+                        console.log(res);
+                        if (res.success && res.tokenData.type === "candidate") {
+                            setCandidateId(res.tokenData._id);
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                        window.history.go(-1);
+                    })
+            }
         };
 
         getData();
@@ -54,16 +66,6 @@ const Profile = () => {
     // alert
     const [alert, setAlert] = useState({});
 
-    const Transition = (props) => {
-        return <Slide {...props} direction="down" />;
-    };
-
-    const handleClose = (_, reason) => {
-        if (reason === "clickaway") {
-            return;
-        }
-        setAlert({});
-    };
     const getDate = (date) => {
         const newDate = new Date(date);
         return (
@@ -74,6 +76,34 @@ const Profile = () => {
             newDate.getFullYear()
         );
     };
+
+    const followRecruiter = () => {
+        axios.post("http://localhost:5000/candidate/followRecruiter", { candidateId, recruiterId: param.id })
+            .then((res) => res.data)
+            .then((res) => {
+                if (res.success) {
+                    setIsFollow(true);
+                } else {
+                    setAlert({ error: res.message });
+                }
+            }).catch((err) => {
+                setAlert({ message: "Something went wrong with server!!" });
+            });
+    }
+
+    const unFollowRecruiter = () => {
+        axios.post("http://localhost:5000/candidate/unFollowRecruiter", { candidateId, recruiterId: param.id })
+            .then((res) => res.data)
+            .then((res) => {
+                if (res.success) {
+                    setIsFollow(false);
+                } else {
+                    setAlert({ error: res.message });
+                }
+            }).catch((err) => {
+                setAlert({ message: "Something went wrong with server!!" });
+            });
+    }
 
     if (loading) {
         return (
@@ -95,28 +125,10 @@ const Profile = () => {
         return (
             <>
                 {/* ---------------------- alert ---------------------- */}
-                <Snackbar
-                    autoHideDuration={2000}
-                    open={alert.error ? true : false}
-                    TransitionComponent={Transition}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                >
-                    <Alert severity="error" onClose={handleClose}>
-                        <span className="my-alert">{alert.error}</span>
-                    </Alert>
-                </Snackbar>
-                <Snackbar
-                    autoHideDuration={2000}
-                    open={alert.success ? true : false}
-                    TransitionComponent={Transition}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                >
-                    <Alert severity="success" onClose={handleClose}>
-                        <span className="my-alert">{alert.success}</span>
-                    </Alert>
-                </Snackbar>
+                <AlertPopUp
+                    alert={alert}
+                    setAlert={setAlert}
+                />
                 {/* --------------------------------------------------- */}
                 <div className="back-btn py-2 px-3">
                     <Button onClick={() => window.history.go(-1)}>
@@ -124,7 +136,7 @@ const Profile = () => {
                     </Button>
                 </div>
                 <div className="container px-0 py-3 profile">
-                    <div className="w-75 m-auto section">
+                    <div className="m-auto section">
                         <div className="d-inline-block">
                             <h3 className="text-orange">{data.name}</h3>
                             <p className="text-smaller">{data.companyName}</p>
@@ -136,6 +148,19 @@ const Profile = () => {
                                 </a>
                             </div>
                         )}
+                        {candidateId !== "" && <>
+                            <hr />
+                            <div className="d-flex justify-content-center">
+                                {/* --------------------- Save Candidate --------------------- */}
+                                {isFollow ?
+                                    <Button className="w-25" variant="contained" color="error" onClick={unFollowRecruiter}>UnFollow</Button>
+                                    :
+                                    <Button className="w-25" variant="contained" color="success" onClick={followRecruiter}>Follow</Button>
+                                }
+                                {/* ---------------------------------------------------------- */}
+                            </div>
+                        </>
+                        }
                     </div>
                     <div className="row">
                         <div className="col-md-7 mx-3 employer-profile">
@@ -192,7 +217,7 @@ const Profile = () => {
                             {/* ---------------------------------------------------- */}
                         </div>
 
-                        <div className="col-md-4 mx-3 section bg-light">
+                        <div className="col-md-4 mx-3 section bg-light h-25">
                             Contact {data.name}
                             <hr />
                             <div className="form">

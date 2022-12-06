@@ -211,7 +211,7 @@ const updateProfile = asyncHandler(async(req, res) => {
         teamWorkDescription: teamWorkDescription,
     }
 
-    console.log(recruiterUpdatedData, recruiterInfoUpdatedData);
+    // console.log(recruiterUpdatedData, recruiterInfoUpdatedData);
 
     const result = await Recruiter.findOneAndUpdate({ _id: user._id }, recruiterUpdatedData, { new: true });
 
@@ -286,7 +286,7 @@ const saveProfile = asyncHandler(async(req, res) => {
 
     if (id) {
         const result = await RecruiterInfo.findOne({ recruiterId: user._id });
-        console.log(result);
+        // console.log(result);
         if (!result) {
             let saveProfile = [];
             saveProfile.push(id);

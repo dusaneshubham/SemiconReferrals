@@ -12,6 +12,11 @@
     font-family: 'Roboto', sans-serif;
 }
 
+::-webkit-scrollbar {
+    /* width: 5px */
+    display: none;
+}
+
 .main-btn {
     padding: 10px 20px;
     background-color: var(--main-blue);

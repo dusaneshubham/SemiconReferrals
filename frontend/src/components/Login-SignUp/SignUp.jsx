@@ -1,16 +1,12 @@
 import React from 'react';
 import { useState } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { IconButton, OutlinedInput, InputAdornment, FormControl, Button, Snackbar, Slide } from '@mui/material';
+import { IconButton, OutlinedInput, InputAdornment, FormControl, Button } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Box from '@mui/material/Box';
 import { isEmail } from 'validator';
 import axios from 'axios';
-import MuiAlert from '@mui/material/Alert';
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import AlertPopUp from '../AlertPopUp/AlertPopUp';
 
 const SignUp = () => {
 
@@ -41,10 +37,6 @@ const SignUp = () => {
 
     const setSignUpInput = (prop) => (event) => {
         setSignUpData({ ...data, [prop]: event.target.value });
-    }
-
-    const Transition = (props) => {
-        return <Slide {...props} direction="down" />;
     }
 
     // ------------------------------- Backend ----------------------------------- //
@@ -93,34 +85,15 @@ const SignUp = () => {
         setLoading(false);
     }
 
-    const handleClose = (_, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setAlert({});
-    }
-
     return (
         <>
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                <Snackbar
-                    autoHideDuration={2000}
-                    open={alert.error ? true : false}
-                    TransitionComponent={Transition}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                >
-                    <Alert severity="error" onClose={handleClose}><span className="my-alert">{alert.error}</span></Alert>
-                </Snackbar>
-                <Snackbar
-                    autoHideDuration={2000}
-                    open={alert.success ? true : false}
-                    TransitionComponent={Transition}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                >
-                    <Alert severity="success" onClose={handleClose}><span className="my-alert">{alert.success}</span></Alert>
-                </Snackbar>
+                {/* ---------------------- alert ---------------------- */}
+                <AlertPopUp
+                    alert={alert}
+                    setAlert={setAlert}
+                />
+                {/* --------------------------------------------------- */}
                 <div>
                     <div>
                         <Button variant={type === "candidate" ? "contained" : "outlined"} className="type-btn" onClick={() => setType("candidate")}>

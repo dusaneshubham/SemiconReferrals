@@ -1,16 +1,12 @@
 import React from 'react';
 import { useState } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { OutlinedInput, FormControl, Button, Snackbar, Slide } from '@mui/material';
+import { OutlinedInput, FormControl, Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import { isEmail } from 'validator';
 import axios from 'axios';
-import MuiAlert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import AlertPopUp from '../AlertPopUp/AlertPopUp';
 
 const ForgetPass = () => {
     const navigate = useNavigate();
@@ -20,10 +16,6 @@ const ForgetPass = () => {
     });
     const [alert, setAlert] = useState({});
     const [loading, setLoading] = useState(false);
-
-    const Transition = (props) => {
-        return <Slide {...props} direction="down" />;
-    }
 
     const submit = async () => {
         setLoading(true);
@@ -52,34 +44,15 @@ const ForgetPass = () => {
         setLoading(false);
     }
 
-    const handleClose = (_, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setAlert({});
-    }
-
     return (
         <>
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                <Snackbar
-                    autoHideDuration={2000}
-                    open={alert.error ? true : false}
-                    TransitionComponent={Transition}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                >
-                    <Alert severity="error" onClose={handleClose}><span className="my-alert">{alert.error}</span></Alert>
-                </Snackbar>
-                <Snackbar
-                    autoHideDuration={2000}
-                    open={alert.success ? true : false}
-                    TransitionComponent={Transition}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-                >
-                    <Alert severity="success" onClose={handleClose}><span className="my-alert">{alert.success}</span></Alert>
-                </Snackbar>
+                {/* ---------------------- alert ---------------------- */}
+                <AlertPopUp
+                    alert={alert}
+                    setAlert={setAlert}
+                />
+                {/* --------------------------------------------------- */}
                 <div className='w-100 mt-2'>
                     <div>
                         <Button variant={data.type === "admin" ? "contained" : "outlined"} className="login-type-btn" onClick={() => setData({ ...data, type: "admin" })}>
