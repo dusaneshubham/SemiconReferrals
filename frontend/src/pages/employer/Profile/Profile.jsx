@@ -19,11 +19,14 @@ import AlertPopUp from "../../../components/AlertPopUp/AlertPopUp";
 const Profile = () => {
     const navigate = useNavigate();
     const param = useParams();
+    const [candidateId, setCandidateId] = useState("");
+    const [isFollow, setIsFollow] = useState(false);
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const id = param.id;
+        const token = localStorage.getItem("token");
         const getData = async () => {
             await axios
                 .post("http://localhost:5000/recruiter/getRecruiterDetailsById", { id })
@@ -41,6 +44,20 @@ const Profile = () => {
                     console.log(err);
                     navigate("/");
                 });
+
+            if (token) {
+                axios.post("http://localhost:5000/verify-token", { token })
+                    .then((res) => res.data)
+                    .then((res) => {
+                        console.log(res);
+                        if (res.success && res.tokenData.type === "candidate") {
+                            setCandidateId(res.tokenData._id);
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                        window.history.go(-1);
+                    })
+            }
         };
 
         getData();
@@ -59,6 +76,34 @@ const Profile = () => {
             newDate.getFullYear()
         );
     };
+
+    const followRecruiter = () => {
+        axios.post("http://localhost:5000/candidate/followRecruiter", { candidateId, recruiterId: param.id })
+            .then((res) => res.data)
+            .then((res) => {
+                if (res.success) {
+                    setIsFollow(true);
+                } else {
+                    setAlert({ error: res.message });
+                }
+            }).catch((err) => {
+                setAlert({ message: "Something went wrong with server!!" });
+            });
+    }
+
+    const unFollowRecruiter = () => {
+        axios.post("http://localhost:5000/candidate/unFollowRecruiter", { candidateId, recruiterId: param.id })
+            .then((res) => res.data)
+            .then((res) => {
+                if (res.success) {
+                    setIsFollow(false);
+                } else {
+                    setAlert({ error: res.message });
+                }
+            }).catch((err) => {
+                setAlert({ message: "Something went wrong with server!!" });
+            });
+    }
 
     if (loading) {
         return (
@@ -91,7 +136,7 @@ const Profile = () => {
                     </Button>
                 </div>
                 <div className="container px-0 py-3 profile">
-                    <div className="w-75 m-auto section">
+                    <div className="m-auto section">
                         <div className="d-inline-block">
                             <h3 className="text-orange">{data.name}</h3>
                             <p className="text-smaller">{data.companyName}</p>
@@ -103,6 +148,19 @@ const Profile = () => {
                                 </a>
                             </div>
                         )}
+                        {candidateId !== "" && <>
+                            <hr />
+                            <div className="d-flex justify-content-center">
+                                {/* --------------------- Save Candidate --------------------- */}
+                                {isFollow ?
+                                    <Button className="w-25" variant="contained" color="error" onClick={unFollowRecruiter}>UnFollow</Button>
+                                    :
+                                    <Button className="w-25" variant="contained" color="success" onClick={followRecruiter}>Follow</Button>
+                                }
+                                {/* ---------------------------------------------------------- */}
+                            </div>
+                        </>
+                        }
                     </div>
                     <div className="row">
                         <div className="col-md-7 mx-3 employer-profile">
