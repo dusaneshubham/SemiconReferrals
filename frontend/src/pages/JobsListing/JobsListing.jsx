@@ -15,109 +15,85 @@ import WorkOutlineOutlinedIcon from "@mui/icons-material/WorkOutlineOutlined";
 import JobList from "../../components/JobList/JobList";
 
 function JobsListing() {
+
+  const qualificationOptions = ["Bachelor", "Master", "PHD"];
+
   return (
     <>
       {/* <Navbar /> */}
 
       <div style={{ backgroundColor: "var(--bg-gray" }}>
-        <div className="container">
-          <div id="filters-div">
-            <div>
-              <h6>Search by Keywords</h6>
-              <div className="filter-input-div">
-                <SearchIcon />
-                <input type="text" placeholder="Job title, keywords..." />
-              </div>
-            </div>
+        <div className="container" style={{ padding: "70px 0" }}>
 
-            <div>
-              <h6>Location</h6>
-              <div className="filter-input-div">
-                <LocationOnOutlinedIcon />
-                <input type="text" placeholder="City" />
-              </div>
-            </div>
+          <div className="row">
 
-            <div>
-              <h6>Category</h6>
-              <div className="filter-input-div">
-                <BusinessCenterOutlinedIcon />
-                <select name="" id="">
-                  <option value="" selected disabled>
-                    Select category
-                  </option>
-                  <option value="">Frontend</option>
-                  <option value="">Backend</option>
-                  <option value="">Semiconductor</option>
+            <div id="filters-div" className="col-md-3">
+              <h4>Filters</h4>
+              {/* ------------------ Keywords --------------------- */}
+              <div className="my-4">
+                <label htmlFor="keywords" className="form-label">Search by Keywords</label>
+                <input type="text" className="form-control" id="keywords" placeholder="Search" />
+              </div>
+
+              {/* ------------------ Location --------------------- */}
+              <div className="my-4">
+                <label htmlFor="location" className="form-label">Location</label>
+                <input type="text" className="form-control" id="location" />
+              </div>
+
+              {/* ------------------ Qualification --------------------- */}
+              <div className="my-4">
+                <label htmlFor="qualification" className="form-label">Qualification</label>
+                <select className="form-select">
+                  <option selected disabled>-- Select --</option>
+                  <option value="Bachelor">Bachelor</option>
+                  <option value="Master">Master</option>
+                  <option value="PHD">PHD</option>
                 </select>
               </div>
-            </div>
 
-            <div>
-              <h6>Job Type</h6>
-              <div className="filter-input-div">
-                <WorkOutlineOutlinedIcon />
-                <select name="" id="">
-                  <option value="" selected disabled>
-                    Select Job Type
-                  </option>
-                  <option value="">Full Time</option>
-                  <option value="">Part Time</option>
-                  <option value="">Internship</option>
+              {/* ------------------ Experience --------------------- */}
+              <div className="my-4">
+                <label htmlFor="experience" className="form-label">Experience</label>
+                <select className="form-select">
+                  <option selected disabled>-- Select --</option>
+                  <option value="Fresher">Fresher</option>
+                  <option value="Trained Professional (0-1 year)">Trained Professional (0-1 year)</option>
+                  <option value="1-3 years">1-3 years</option>
+                  <option value="3-5 years">3-5 years</option>
+                  <option value="6-10 years">6-10 years</option>
+                  <option value="10+ years">10+ years</option>
                 </select>
               </div>
+
+              {/* ------------------ Job Type --------------------- */}
+              <div className="my-4">
+                <label htmlFor="job-type" className="form-label">Job Type</label>
+                <select className="form-select">
+                  <option selected disabled>-- Select --</option>
+                  <option value="Full Time">Full Time</option>
+                  <option value="Part Time">Part Time</option>
+                  <option value="Internship">Internship</option>
+                  <option value="Contract">Contract</option>
+                </select>
+              </div>
+
             </div>
 
-            <div>
-              <h6>Date Posted</h6>
-              <div className="filter-radio-div">
-                <input type="radio" name="" id="" /> <span>Last Hour</span>
+            <div id="joblists-div" className="col-md-9">
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <span>Showing 1-10 of 100 results</span>
               </div>
-              <div className="filter-radio-div">
-                <input type="radio" name="" id="" /> <span>Last 24 hours</span>
-              </div>
-              <div className="filter-radio-div">
-                <input type="radio" name="" id="" /> <span>Last 7 days</span>
-              </div>
-              <div className="filter-radio-div">
-                <input type="radio" name="" id="" /> <span>Last 14 days</span>
-              </div>
-              <div className="filter-radio-div">
-                <input type="radio" name="" id="" /> <span>Last 30 days</span>
+
+              <div className="job-list">
+                <JobList />
+                <JobList />
+                <JobList />
               </div>
             </div>
 
-            <div>
-              <h6>Experience level</h6>
-              <div className="filter-radio-div">
-                <input type="radio" name="" id="" /> <span>Fresher</span>
-              </div>
-              <div className="filter-radio-div">
-                <input type="radio" name="" id="" /> <span>1-3 years</span>
-              </div>
-              <div className="filter-radio-div">
-                <input type="radio" name="" id="" /> <span>4-7 years</span>
-              </div>
-              <div className="filter-radio-div">
-                <input type="radio" name="" id="" /> <span>8-10 years</span>
-              </div>
-              <div className="filter-radio-div">
-                <input type="radio" name="" id="" /> <span>10+ years</span>
-              </div>
-            </div>
           </div>
 
-          <div id="joblists-div">
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <span>Showing 1-10 of 100 results</span>
-            </div>
-
-            <div className="job-list">
-              <JobList />
-              <JobList />
-              <JobList />
-            </div>
-          </div>
         </div>
       </div>
 

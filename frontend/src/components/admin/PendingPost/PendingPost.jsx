@@ -17,7 +17,6 @@ import {
   Slide,
 } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
-import { Link } from "react-router-dom";
 import Draggable from "react-draggable";
 import axios from "axios";
 
@@ -176,58 +175,63 @@ const PendingPost = () => {
               <StyledTableCell>Company Name</StyledTableCell>
               <StyledTableCell>Employer Profile</StyledTableCell>
               <StyledTableCell>View Job Post</StyledTableCell>
-              <StyledTableCell></StyledTableCell>
+              <StyledTableCell>Actions</StyledTableCell>
             </TableRow>
           </TableHead>
-          
+
           {/* ---------------------- Table Body -------------------- */}
           <TableBody>
-            {pendingJobs
-              ? pendingJobs.map((data, index) => (
-                  <StyledTableRow key={index}>
-                    <StyledTableCell>
-                      {data.recruiterinfos[0].companyName}
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Link>{data.recruiterId}</Link>
-                    </StyledTableCell>
+            {pendingJobs.length > 0 &&
+              pendingJobs.map((data, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell>{data.companyName}</StyledTableCell>
 
-                    {/* --------------- View Job Details Button ----------------- */}
-                    <StyledTableCell>
-                      <Link to={{ pathname: `/jobdescription/${data._id}` }}>
-                        <Button variant="contained" color="primary">
-                          View
-                        </Button>
-                      </Link>
-                    </StyledTableCell>
+                  {/* ------------------- View Employer Profile Btn ------------------ */}
+                  <StyledTableCell>
+                    <Button variant="contained" href={`/employer/viewprofile/${data.recruiterId}`}>
+                      View
+                    </Button>
+                  </StyledTableCell>
 
-                    <StyledTableCell>
-                      {/* ----------------- Approve Button ------------------ */}
-                      <Button
-                        variant="contained"
-                        color="success"
-                        onClick={() => {
-                          // passing post id to dialog box
-                          handleClickOpenApproval(data._id);
-                        }}
-                        style={{ margin: "10px" }}
-                      >
-                        Approve
-                      </Button>
+                  {/* --------------- View Job Details Button ----------------- */}
+                  <StyledTableCell>
+                    <Button variant="contained" href={`/jobdescription/${data._id}`}>
+                      View
+                    </Button>
+                  </StyledTableCell>
 
-                      {/* ----------------- Reject Button ------------------ */}
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleClickOpenRejection(data._id)}
-                        style={{ margin: "10px" }}
-                      >
-                        Reject
-                      </Button>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))
-              : ""}
+                  <StyledTableCell>
+                    {/* ----------------- Approve Button ------------------ */}
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={() => {
+                        // passing post id to dialog box
+                        handleClickOpenApproval(data._id);
+                      }}
+                    >
+                      Approve
+                    </Button>
+
+                    {/* ----------------- Reject Button ------------------ */}
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleClickOpenRejection(data._id)}
+                      style={{ margin: "10px" }}
+                    >
+                      Reject
+                    </Button>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            {pendingJobs.length === 0 && (
+              <StyledTableRow>
+                <StyledTableCell colSpan="6" className="text-center text-secondary">
+                  No Applications found!
+                </StyledTableCell>
+              </StyledTableRow>
+            )}
           </TableBody>
         </Table>
       </TableContainer>

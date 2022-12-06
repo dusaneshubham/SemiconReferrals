@@ -34,6 +34,7 @@ const JobDescription = () => {
   const [tokenData, setTokenData] = useState({ _id: "", type: "" });
 
   const [isAppliedForTheJob, setIsAppliedForTheJob] = useState(false);
+  const [isSavedJob, setIsSavedJob] = useState(false);
 
   // Dialog
   const [openDialog, setOpenDialog] = useState(false);
@@ -140,23 +141,40 @@ const JobDescription = () => {
     getJobDetail();
   }, [navigate, postId]);
 
+  // check whether already applied to this job or not
+  const isAppliedToJob = () => {
+    const token = localStorage.getItem("token");
+    axios.post("http://localhost:5000/candidate/isAppliedToJob", { token, postId })
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setIsAppliedForTheJob(true);
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+  }
+
+  // check whether saved this job or not
+  const isSavedTheJob = () => {
+    const token = localStorage.getItem("token");
+    axios.post("http://localhost:5000/candidate/isSavedJob", { token, postId })
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setIsSavedJob(true);
+        }
+      }).catch((err) => {
+        console.log(err);
+        setIsSavedJob(false);
+      })
+  }
 
   // Check whether applied to the job or not
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const isAppliedToJob = () => {
-      axios.post("http://localhost:5000/candidate/isAppliedToJob", { token, postId })
-        .then((res) => res.data)
-        .then((res) => {
-          if (res.success) {
-            setIsAppliedForTheJob(true);
-          }
-        }).catch((err) => {
-          console.log(err);
-        })
-    }
     isAppliedToJob();
-  }, [isAppliedForTheJob]);
+    isSavedTheJob();
+  }, []);
 
 
   const applyToJob = () => {
@@ -169,6 +187,7 @@ const JobDescription = () => {
         .then((response) => response.data)
         .then((res) => {
           console.log(res.data);
+          isAppliedToJob();
           handleClose();
         })
         .catch((err) => {
@@ -179,12 +198,13 @@ const JobDescription = () => {
 
   const saveThisJob = () => {
     const token = localStorage.getItem("token");
-    axios.post("http://localhost:5000/candidate/saveTheJobPost", { token })
+    axios.post("http://localhost:5000/candidate/saveTheJobPost", { token, postId })
       .then((response) => response.data)
-      .then(() => {
-
-      }).
-      catch((err) => {
+      .then((res) => {
+        console.log(res.success);
+        isSavedTheJob();
+      })
+      .catch((err) => {
         console.log(err);
       })
   }
@@ -198,10 +218,7 @@ const JobDescription = () => {
         <h3 style={{ color: "var(--main-blue)" }}>{jobDetail.jobTitle}</h3>
 
         {/* --------- Company Name --------- */}
-        <h6 style={{ color: "var(--main-orange)" }}>
-          {/* {jobDetail.recruiterinfos[0].companyName} */}
-          Google Software Ltd.
-        </h6>
+        <h6 style={{ color: "var(--main-orange)" }}>{jobDetail.companyName}</h6>
 
         <div className="row my-5 flex-wrap-reverse">
           <div id="left" className="col-md-9">
@@ -289,21 +306,22 @@ const JobDescription = () => {
             )}
 
             {/* --------------------- Save This Job btn -------------------- */}
-            <div
-              style={{ margin: "20px 0", width: "100%" }}
-              className="d-flex justify-content-center"
-            >
-              <button
-                style={{
-                  width: "300px",
-                  backgroundColor: "var(--main-orange)",
-                }}
-                onClick={saveThisJob}
-                className="main-btn main-btn-link"
+            {!isSavedJob && (
+              <div
+                style={{ margin: "20px 0", width: "100%" }}
+                className="d-flex justify-content-center"
               >
-                Save This Job
-              </button>
-            </div>
+                <button
+                  style={{
+                    width: "300px",
+                    backgroundColor: "var(--main-orange)",
+                  }}
+                  onClick={saveThisJob}
+                  className="main-btn main-btn-link"
+                >
+                  Save This Job
+                </button>
+              </div>)}
           </div>
         )}
       </div>

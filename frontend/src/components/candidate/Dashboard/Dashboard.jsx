@@ -50,7 +50,7 @@ const Dashboard = () => {
         .then((res) => res.data)
         .then(async (res) => {
           if (res.success) {
-            await axios.post("http://localhost:5000/candidate/getAllApplication", { token })
+            await axios.post("http://localhost:5000/candidate/getAllJobApplications", { token })
               .then((res1) => res1.data)
               .then((res1) => {
                 if (res1.success) {

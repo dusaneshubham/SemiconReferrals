@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import {
@@ -14,8 +14,10 @@ import {
   DialogContent,
   DialogContentText,
 } from "@mui/material";
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Draggable from "react-draggable";
+import axios from "axios";
+import { useState } from "react";
 
 function PaperComponent(props) {
   return (
@@ -29,6 +31,31 @@ function PaperComponent(props) {
 }
 
 const PendingApplications = () => {
+
+  const [PendingApplications, setPendingApplications] = useState([]);
+
+  useEffect(() => {
+    // ------------------- fetch pending jobs -----------------------
+    const fetchPendingApplications = () => {
+      axios
+        .get("http://localhost:5000/jobs/getPendingApplications")
+        .then((res) => res.data)
+        .then((response) => {
+          if (response.success) {
+            console.log(response.data);
+            setPendingApplications(response.data);
+          } else {
+            console.log(response.message);
+          }
+        })
+        .catch((err) => {
+          // setAlert({ error: "Something went wrong with server!" });
+          console.log(err);
+        });
+    };
+    fetchPendingApplications();
+  }, []);
+
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme.palette.common.black,
@@ -48,26 +75,6 @@ const PendingApplications = () => {
       border: 0,
     },
   }));
-
-  function createData(
-    companyName,
-    employerName,
-    candidateName,
-    resume,
-    jobPost
-  ) {
-    return { companyName, employerName, candidateName, resume, jobPost };
-  }
-
-  const rows = [
-    createData(
-      "Google",
-      "Shubham Dusane",
-      "Denis Shingala",
-      "View",
-      "View"
-    ),
-  ];
 
   // For confirmation dialog box
   const [openApproval, setOpenApproval] = React.useState(false);
@@ -94,43 +101,67 @@ const PendingApplications = () => {
           <TableHead>
             <TableRow>
               <StyledTableCell>Company Name</StyledTableCell>
-              <StyledTableCell>Employer Name</StyledTableCell>
-              <StyledTableCell>Candidate Name</StyledTableCell>
+              <StyledTableCell>Candidate Profile</StyledTableCell>
               <StyledTableCell>View Resume</StyledTableCell>
               <StyledTableCell>View Job Post</StyledTableCell>
-              <StyledTableCell></StyledTableCell>
+              <StyledTableCell>Actions</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <StyledTableRow key={row.employerName}>
-                <StyledTableCell>{row.companyName}</StyledTableCell>
-                <StyledTableCell>{row.employerName}</StyledTableCell>
-                <StyledTableCell>{row.candidateName}</StyledTableCell>
-                <StyledTableCell>
-                  <Link> {row.resume} </Link>
+            {PendingApplications.length > 0 &&
+              PendingApplications.map((data, index) => (
+                <StyledTableRow key={index}>
+                  
+                  <StyledTableCell>{data.jobPostId.companyName}</StyledTableCell>
+
+                  {/* --------------- View Candidate Profile Btn ----------------- */}
+                  <StyledTableCell>
+                    <Button variant="contained" href={`/candidate/viewprofile/${data.candidateId}`}>
+                      View
+                    </Button>
+                  </StyledTableCell>
+                  
+                  {/* ------------------ View Resume Btn ---------------------- */}
+                  <StyledTableCell>
+                    <Button variant="contained">
+                      <a href={data.resume.url} rel="noreferrer" target="_blank" style={{ color: "#FFF", textDecoration: "none" }}>View</a>
+                    </Button>
+                  </StyledTableCell>
+
+                  {/* --------------- View Job Details Button ----------------- */}
+                  <StyledTableCell>
+                    <Button variant="contained" href={`/jobdescription/${data.jobPostId._id}`}>
+                      View
+                    </Button>
+                  </StyledTableCell>
+
+                  <StyledTableCell>
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={handleClickOpenApproval}
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleClickOpenRejection}
+                      style={{ margin: "10px" }}
+                    >
+                      Reject
+                    </Button>
+                  </StyledTableCell>
+                </StyledTableRow>
+              )
+              )}
+            {PendingApplications.length === 0 && (
+              <StyledTableRow>
+                <StyledTableCell colSpan="5" className="text-center text-secondary">
+                  No Applications found!
                 </StyledTableCell>
-                <StyledTableCell>
-                  <Link> {row.jobPost} </Link>
-                </StyledTableCell>
-                <Button
-                  variant="contained"
-                  color="success"
-                  onClick={handleClickOpenApproval}
-                  style={{ margin: "10px" }}
-                >
-                  Approve
-                </Button>
-                <Button
-                  variant="contained"
-                  color="error"
-                  onClick={handleClickOpenRejection}
-                  style={{ margin: "10px" }}
-                >
-                  Reject
-                </Button>
               </StyledTableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </TableContainer>

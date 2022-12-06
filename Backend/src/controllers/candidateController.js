@@ -365,21 +365,29 @@ const isAppliedToJob = asyncHandler(async(req, res) => {
     }
 })
 
+const isSavedJob = asyncHandler(async(req, res) => {
+    const candidate = req.user;
+    const { postId } = req.body;
+
+})
+
 const saveTheJobPost = asyncHandler(async(req, res) => {
     const candidate = req.user;
     const { postId } = req.body;
 
     const candidateInfo = await CandidateInfo.findOne({ candidateId: candidate._id });
-    let updated = (candidateInfo.savedJobPost).push(postId);
-    console.log(candidateInfo);
+    (candidateInfo.savedJobPost).push(postId);
 
-    // if (isApplied) {
-    //     res.json({ message: "Candidate has applied for the job", success: true });
-    // } else {
-    //     res.json({ message: "Candidate have not applied for the job", success: false });
-    // }
+    const isSaved = await CandidateInfo.findOneAndUpdate({ candidateId: candidate._id }, { savedJobPost: candidateInfo }, { new: true });
+
+    if (isSaved) {
+        res.json({ message: "Saved the job", success: true });
+    } else {
+        res.json({ message: "Error in saving the job", success: false });
+    }
 });
 
+// not used yet
 // withdraw application
 const withdrawApplication = asyncHandler(async(req, res) => {
     const { _id } = req.body;
@@ -393,6 +401,7 @@ const withdrawApplication = asyncHandler(async(req, res) => {
     }
 });
 
+// not used yet
 // get application status
 const getApplicationStatus = asyncHandler(async(req, res) => {
     const { _id } = req.body;
@@ -405,14 +414,14 @@ const getApplicationStatus = asyncHandler(async(req, res) => {
     }
 });
 
-// get all application jobApplication
-const getAllApplication = asyncHandler(async(req, res) => {
+// get all job applications
+const getAllJobApplications = asyncHandler(async(req, res) => {
     const user = req.user;
-    const result = await JobApplication.find({ candidateId: user._id });
+    const result = await JobApplication.find({ candidateId: user._id }).populate("jobPostId").sort({ createdAt: 1 });
     if (result) {
-        res.json({ message: "All job application", data: result, success: true });
+        res.json({ message: "All job applications", data: result, success: true });
     } else {
-        res.json({ message: "Error occure during find job application", success: false });
+        res.json({ message: "Error occured during finding job applications", success: false });
     }
 });
 
@@ -556,11 +565,12 @@ module.exports = {
     applyForJob,
     withdrawApplication,
     getApplicationStatus,
-    getAllApplication,
+    getAllJobApplications,
     uploadMyResume,
     makeDefaultResume,
     deleteResume,
     getAllMyResumes,
     isAppliedToJob,
-    saveTheJobPost
+    saveTheJobPost,
+    isSavedJob
 };
