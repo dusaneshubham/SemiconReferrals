@@ -323,7 +323,7 @@ const Profile = () => {
                 <div className="section bg-light">
                   {tokenData.type === "recruiter" &&
                     (isSaved ?
-                      <Button variant="contained" className="w-100 text-white my-1" color="success" disabled><Favorite />Saved</Button>
+                      <Button variant="contained" className="w-100 text-white my-1 disabled" color="success"><Favorite />Saved</Button>
                       :
                       <Button variant="contained" onClick={saveResume} className="bg-orange w-100 text-white my-1"><Favorite />Save Profile</Button>)
                   }
@@ -337,7 +337,7 @@ const Profile = () => {
 
             </div>
 
-            <div className="col-md-4 mx-3 section bg-light">
+            <div className="col-md-4 mx-3 section bg-light h-25">
               Contact {data.name}
               <hr />
               <div className="form">
