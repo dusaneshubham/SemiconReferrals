@@ -7,7 +7,6 @@ import {
     KeyboardArrowLeft,
     LinkedIn,
     PeopleOutline,
-    PhoneIphone,
     Public,
 } from "@mui/icons-material";
 import "./Profile.css";
@@ -181,7 +180,6 @@ const Profile = () => {
                                     <div className="body-section1">
                                         <p className="text-black mb-3"><span className='text-orange mx-1'><CardMembership /></span> <strong>Member Since: </strong><span className="text-secondary">{getDate(data.createDate)}</span></p>
                                         <p className="text-black my-3"><span className='text-orange mx-1'><Email /></span> <strong>Email: </strong><span className="text-secondary">{data.email}</span></p>
-                                        <p className="text-black my-3"><span className='text-orange mx-1'><PhoneIphone /></span> <strong>Phone (This will be shown on public profile) </strong></p>
                                     </div>
                                     <div className="body-section2">
                                         <p className="text-black mb-3"><span className='text-orange mx-1'><PeopleOutline /></span> <strong>Employees: </strong><span className="text-secondary">{data.teamSize}</span></p>
