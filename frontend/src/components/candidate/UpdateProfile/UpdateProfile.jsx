@@ -7,21 +7,15 @@ import {
   OutlinedInput,
   InputAdornment,
   FormControl,
-  Button,
-  Snackbar,
-  Slide,
+  Button
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import ReactLoading from "react-loading";
-import MuiAlert from "@mui/material/Alert";
 import JobExperience from "./JobExperience";
 import EducationDetails from "./EducationDetails";
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import AlertPopUp from "../../AlertPopUp/AlertPopUp";
 
 const UpdateProfile = () => {
   // password
@@ -81,18 +75,6 @@ const UpdateProfile = () => {
       setAlert({ error: "Unauthorized user!" });
     }
   }, []);
-
-  // alert functions
-  const Transition = (props) => {
-    return <Slide {...props} direction="down" />;
-  };
-
-  const handleClose = (_, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setAlert({});
-  };
 
   let token = localStorage.getItem("token");
 
@@ -166,28 +148,13 @@ const UpdateProfile = () => {
     return (
       <>
         <div className="row">
-          <Snackbar
-            autoHideDuration={2000}
-            open={alert.error ? true : false}
-            TransitionComponent={Transition}
-            onClose={handleClose}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          >
-            <Alert severity="error" onClose={handleClose}>
-              <span className="my-alert">{alert.error}</span>
-            </Alert>
-          </Snackbar>
-          <Snackbar
-            autoHideDuration={2000}
-            open={alert.success ? true : false}
-            TransitionComponent={Transition}
-            onClose={handleClose}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
-          >
-            <Alert severity="success" onClose={handleClose}>
-              <span className="my-alert">{alert.success}</span>
-            </Alert>
-          </Snackbar>
+          {/* ---------------------- alert ---------------------- */}
+          <AlertPopUp
+            alert={alert}
+            setAlert={setAlert}
+          />
+          {/* --------------------------------------------------- */}
+
           {/*--------------------- Personal Details *---------------------*/}
           <div className="col-md-8 p-4 bg-white">
             <div style={{ margin: "10px 0" }}>

@@ -12,14 +12,9 @@ import {
 } from "@mui/icons-material";
 import "./Profile.css";
 import { Button, FormControl, OutlinedInput } from "@mui/material";
-import { Snackbar, Slide } from "@mui/material";
-import MuiAlert from "@mui/material/Alert";
 import Footer from "../../../components/Footer/Footer";
 import axios from "axios";
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import AlertPopUp from "../../../components/AlertPopUp/AlertPopUp";
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -54,16 +49,6 @@ const Profile = () => {
     // alert
     const [alert, setAlert] = useState({});
 
-    const Transition = (props) => {
-        return <Slide {...props} direction="down" />;
-    };
-
-    const handleClose = (_, reason) => {
-        if (reason === "clickaway") {
-            return;
-        }
-        setAlert({});
-    };
     const getDate = (date) => {
         const newDate = new Date(date);
         return (
@@ -95,28 +80,10 @@ const Profile = () => {
         return (
             <>
                 {/* ---------------------- alert ---------------------- */}
-                <Snackbar
-                    autoHideDuration={2000}
-                    open={alert.error ? true : false}
-                    TransitionComponent={Transition}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                >
-                    <Alert severity="error" onClose={handleClose}>
-                        <span className="my-alert">{alert.error}</span>
-                    </Alert>
-                </Snackbar>
-                <Snackbar
-                    autoHideDuration={2000}
-                    open={alert.success ? true : false}
-                    TransitionComponent={Transition}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical: "top", horizontal: "center" }}
-                >
-                    <Alert severity="success" onClose={handleClose}>
-                        <span className="my-alert">{alert.success}</span>
-                    </Alert>
-                </Snackbar>
+                <AlertPopUp
+                    alert={alert}
+                    setAlert={setAlert}
+                />
                 {/* --------------------------------------------------- */}
                 <div className="back-btn py-2 px-3">
                     <Button onClick={() => window.history.go(-1)}>
@@ -192,7 +159,7 @@ const Profile = () => {
                             {/* ---------------------------------------------------- */}
                         </div>
 
-                        <div className="col-md-4 mx-3 section bg-light">
+                        <div className="col-md-4 mx-3 section bg-light h-25">
                             Contact {data.name}
                             <hr />
                             <div className="form">

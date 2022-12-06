@@ -13,17 +13,11 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  Snackbar,
-  Slide,
 } from "@mui/material";
-import MuiAlert from "@mui/material/Alert";
 import { Link } from "react-router-dom";
 import Draggable from "react-draggable";
 import axios from "axios";
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import AlertPopUp from "../../AlertPopUp/AlertPopUp";
 
 function PaperComponent(props) {
   return (
@@ -43,20 +37,6 @@ const PendingPost = () => {
   const [pendingJobs, setPendingJobs] = useState([]);
   const [postId, setPostId] = useState("");
   const [alert, setAlert] = useState({});
-
-  // ------------------- alert functions ------------------- //
-  const Transition = (props) => {
-    return <Slide {...props} direction="down" />;
-  };
-
-  // close alert
-  const handleClose = (_, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setAlert({});
-  };
-  // ------------------------------------------------------- //
 
   useEffect(() => {
     // ------------------- fetch pending jobs -----------------------
@@ -147,28 +127,13 @@ const PendingPost = () => {
 
   return (
     <>
-      <Snackbar
-        autoHideDuration={2000}
-        open={alert.error ? true : false}
-        TransitionComponent={Transition}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" onClose={handleClose}>
-          <span className="my-alert">{alert.error}</span>
-        </Alert>
-      </Snackbar>
-      <Snackbar
-        autoHideDuration={2000}
-        open={alert.success ? true : false}
-        TransitionComponent={Transition}
-        onClose={handleClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="success" onClose={handleClose}>
-          <span className="my-alert">{alert.success}</span>
-        </Alert>
-      </Snackbar>
+      {/* ---------------------- alert ---------------------- */}
+      <AlertPopUp
+        alert={alert}
+        setAlert={setAlert}
+      />
+      {/* --------------------------------------------------- */}
+
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
@@ -179,54 +144,54 @@ const PendingPost = () => {
               <StyledTableCell></StyledTableCell>
             </TableRow>
           </TableHead>
-          
+
           {/* ---------------------- Table Body -------------------- */}
           <TableBody>
             {pendingJobs
               ? pendingJobs.map((data, index) => (
-                  <StyledTableRow key={index}>
-                    <StyledTableCell>
-                      {data.recruiterinfos[0].companyName}
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Link>{data.recruiterId}</Link>
-                    </StyledTableCell>
+                <StyledTableRow key={index}>
+                  <StyledTableCell>
+                    {data.recruiterinfos[0].companyName}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Link>{data.recruiterId}</Link>
+                  </StyledTableCell>
 
-                    {/* --------------- View Job Details Button ----------------- */}
-                    <StyledTableCell>
-                      <Link to={{ pathname: `/jobdescription/${data._id}` }}>
-                        <Button variant="contained" color="primary">
-                          View
-                        </Button>
-                      </Link>
-                    </StyledTableCell>
-
-                    <StyledTableCell>
-                      {/* ----------------- Approve Button ------------------ */}
-                      <Button
-                        variant="contained"
-                        color="success"
-                        onClick={() => {
-                          // passing post id to dialog box
-                          handleClickOpenApproval(data._id);
-                        }}
-                        style={{ margin: "10px" }}
-                      >
-                        Approve
+                  {/* --------------- View Job Details Button ----------------- */}
+                  <StyledTableCell>
+                    <Link to={{ pathname: `/jobdescription/${data._id}` }}>
+                      <Button variant="contained" color="primary">
+                        View
                       </Button>
+                    </Link>
+                  </StyledTableCell>
 
-                      {/* ----------------- Reject Button ------------------ */}
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleClickOpenRejection(data._id)}
-                        style={{ margin: "10px" }}
-                      >
-                        Reject
-                      </Button>
-                    </StyledTableCell>
-                  </StyledTableRow>
-                ))
+                  <StyledTableCell>
+                    {/* ----------------- Approve Button ------------------ */}
+                    <Button
+                      variant="contained"
+                      color="success"
+                      onClick={() => {
+                        // passing post id to dialog box
+                        handleClickOpenApproval(data._id);
+                      }}
+                      style={{ margin: "10px" }}
+                    >
+                      Approve
+                    </Button>
+
+                    {/* ----------------- Reject Button ------------------ */}
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={() => handleClickOpenRejection(data._id)}
+                      style={{ margin: "10px" }}
+                    >
+                      Reject
+                    </Button>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))
               : ""}
           </TableBody>
         </Table>

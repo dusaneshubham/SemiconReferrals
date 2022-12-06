@@ -4,16 +4,11 @@ import { image4 } from '../images/images';
 import './css/email-verification.css';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MuiAlert from '@mui/material/Alert';
-import { Snackbar, Slide } from '@mui/material';
 import { IconButton, OutlinedInput, InputAdornment, FormControl } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import axios from 'axios';
 import { isEmail } from 'validator';
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import AlertPopUp from '../components/AlertPopUp/AlertPopUp';
 
 function ForgetPassword() {
 
@@ -135,37 +130,14 @@ function ForgetPassword() {
         setLoading(false);
     }
 
-    const Transition = (props) => {
-        return <Slide {...props} direction="down" />;
-    }
-
-    const handleClose = (_, reason) => {
-        if (reason === 'clickaway') {
-            return;
-        }
-        setAlert({});
-    }
-
     return (
         <>
-            <Snackbar
-                autoHideDuration={2000}
-                open={alert.error ? true : false}
-                TransitionComponent={Transition}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            >
-                <Alert severity="error" onClose={handleClose}><span className="my-alert">{alert.error}</span></Alert>
-            </Snackbar>
-            <Snackbar
-                autoHideDuration={2000}
-                open={alert.success ? true : false}
-                TransitionComponent={Transition}
-                onClose={handleClose}
-                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            >
-                <Alert severity="success" onClose={handleClose}><span className="my-alert">{alert.success}</span></Alert>
-            </Snackbar>
+            {/* ---------------------- alert ---------------------- */}
+            <AlertPopUp
+                alert={alert}
+                setAlert={setAlert}
+            />
+            {/* --------------------------------------------------- */}
             <div className="w-100 h-100 d-flex justify-content-center align-content-around">
                 <div className="container-fluid bg-light w-50 mt-5 p-3">
                     <img src={image4} alt="company logo" className="img-fluid" height="300" width="300" /><hr />
