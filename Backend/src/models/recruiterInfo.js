@@ -12,6 +12,10 @@ const recruiterInfoSchema = new mongoose.Schema({
         type: String,
     },
 
+    companyLogo: {
+        type: String
+    },
+
     companyWebsite: {
         type: String
     },

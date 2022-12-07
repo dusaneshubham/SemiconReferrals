@@ -19,7 +19,7 @@ const candidateInfoSchema = new mongoose.Schema({
 
     profileImage: {
         type: String
-            // TODO : put default image
+        // TODO : put default image
     },
 
     about: {
@@ -97,8 +97,18 @@ const candidateInfoSchema = new mongoose.Schema({
     }],
 
     followings: [{
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: "Recruiter"
+        recruiter: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: "Recruiter"
+        },
+        companyName: {
+            type: String,
+            default: ""
+        },
+        companyLogo: {
+            type: String,
+            default: 'http://localhost:5000/images/logo-icon-semiconreferrals.png'
+        }
     }],
 
     defaultResumeId: {

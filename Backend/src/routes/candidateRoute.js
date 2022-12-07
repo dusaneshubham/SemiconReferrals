@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerCandidate, loginCandidate, applyForJob, withdrawApplication, getApplicationStatus, updateProfile, updatePassword, uploadMyResume, deleteResume, getAllMyResumes, getCandidateDetails, getCandidateDetailsById, updateWorkingExperience, updateEducationDetails, changePassword, getAllJobApplications, makeDefaultResume, isAppliedToJob, saveTheJobPost, followRecruiter, unFollowRecruiter, isSavedJob } = require('../controllers/candidateController');
+const { registerCandidate, loginCandidate, applyForJob, withdrawApplication, getApplicationStatus, updateProfile, updatePassword, uploadMyResume, deleteResume, getAllMyResumes, getCandidateDetails, getCandidateDetailsById, updateWorkingExperience, updateEducationDetails, changePassword, getAllJobApplications, makeDefaultResume, isAppliedToJob, saveTheJobPost, followRecruiter, getFollowings, unFollowRecruiter, isSavedJob } = require('../controllers/candidateController');
 // const uploadProfileImage = require('../middleware/profileImageUpload');
 const uploadResume = require('../middleware/resumeUpload');
 const verifyToken = require('../middleware/verifyToken');
@@ -26,7 +26,8 @@ router.post("/getCandidateDetails", verifyToken, getCandidateDetails);
 router.post("/getCandidateDetailsById", getCandidateDetailsById);
 router.post("/getapplicationstatus", getApplicationStatus);
 router.post("/getAllJobApplications", verifyToken, getAllJobApplications);
-router.post("/followRecruiter", followRecruiter);
-router.post("/unFollowRecruiter", unFollowRecruiter);
+router.post("/getFollowings", verifyToken, getFollowings);
+router.post("/followRecruiter", verifyToken, followRecruiter);
+router.post("/unFollowRecruiter", verifyToken, unFollowRecruiter);
 
 module.exports = router;
