@@ -49,6 +49,7 @@ const JobDescription = () => {
   const [coverLetter, setCoverLetter] = useState("");
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const token = localStorage.getItem("token");
 
   const handleClickOpen = () => {
     const token = localStorage.getItem("token");
@@ -62,11 +63,11 @@ const JobDescription = () => {
           console.log(response.resumes);
         } else {
           console.log("No resumes");
-          // TODO: redirect path
         }
       })
       .catch((err) => {
         console.log(err);
+        setAlert({ error: "Something went wrong with server!" });
       });
     setOpenDialog(true);
   };
@@ -153,7 +154,6 @@ const JobDescription = () => {
 
   // check whether already applied to this job or not
   const isAppliedToJob = () => {
-    const token = localStorage.getItem("token");
     axios.post("http://localhost:5000/candidate/isAppliedToJob", { token, postId })
       .then((res) => res.data)
       .then((res) => {
