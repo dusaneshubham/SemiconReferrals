@@ -366,10 +366,17 @@ const isAppliedToJob = asyncHandler(async (req, res) => {
     }
 })
 
+// check whether candidate has already saved the job or not
 const isSavedJob = asyncHandler(async (req, res) => {
-    const candidate = req.user;
+    const user = req.user;
     const { postId } = req.body;
-
+    const candidateInfo = await CandidateInfo.findOne({ candidateId: user._id });
+    const isSaved = candidateInfo.savedJobPost.includes(postId);
+    if (isSaved) {
+        res.json({ success: true, message: "Candidate already saved the job post" });
+    } else {
+        res.json({ success: false, message: "Not saved the job post" });
+    }
 })
 
 const saveTheJobPost = asyncHandler(async (req, res) => {
@@ -377,15 +384,30 @@ const saveTheJobPost = asyncHandler(async (req, res) => {
     const { postId } = req.body;
 
     const candidateInfo = await CandidateInfo.findOne({ candidateId: candidate._id });
-    (candidateInfo.savedJobPost).push(postId);
 
-    const isSaved = await CandidateInfo.findOneAndUpdate({ candidateId: candidate._id }, { savedJobPost: candidateInfo }, { new: true });
+    if (candidateInfo) {
+        (candidateInfo.savedJobPost).push(postId);
+        const isSaved = await CandidateInfo.findOneAndUpdate({ candidateId: candidate._id }, { savedJobPost: candidateInfo.savedJobPost }, { new: true });
 
-    if (isSaved) {
-        res.json({ message: "Saved the job", success: true });
+        if (isSaved) {
+            res.json({ message: "Saved the job", success: true });
+        } else {
+            res.json({ message: "Error in saving the job", success: false });
+        }
     } else {
-        res.json({ message: "Error in saving the job", success: false });
+        const newCandidateInfo = new CandidateInfo({
+            candidateId: candidate._id,
+            savedJobPost: [postId]
+        })
+        newCandidateInfo.save()
+            .then(() => {
+                res.json({ message: "Saved the post", success: true });
+            })
+            .catch(() => {
+                res.json({ message: "Something went wrong during saving the post", success: false });
+            })
     }
+
 });
 
 // not used yet

@@ -12,9 +12,15 @@ import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const JobDescription = () => {
+
   const param = useParams();
   const postId = param.id;
   const navigate = useNavigate();
+
+  // to check whether deadline has gone
+  // let today = new Date().toJSON().slice(0, 10);
+  // let today = new Date();
+  // console.log(today);
 
   const [jobDetail, setJobDetail] = useState({
     recruiterId: "",
@@ -70,8 +76,6 @@ const JobDescription = () => {
     setOpenDialog(false);
   };
   // Dialog over
-
-
 
 
   // --------------------------- get Job Detail ------------------------
@@ -165,9 +169,11 @@ const JobDescription = () => {
         if (res.success) {
           setIsSavedJob(true);
         }
+        else {
+          setIsSavedJob(false);
+        }
       }).catch((err) => {
         console.log(err);
-        setIsSavedJob(false);
       })
   }
 
@@ -278,6 +284,8 @@ const JobDescription = () => {
           </div>
         </div>
 
+        {/* {jobDetail.applicationDeadline < today ? "gone" : "not"} */}
+
         {/* ------------------- Apply Now Button ------------------ */}
         {tokenData.type === "candidate" && (
           <div>
@@ -324,7 +332,8 @@ const JobDescription = () => {
                 >
                   Save This Job
                 </button>
-              </div>)}
+              </div>
+            )}
           </div>
         )}
       </div>
