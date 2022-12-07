@@ -420,6 +420,17 @@ const saveTheJobPost = asyncHandler(async (req, res) => {
 
 });
 
+const getSaveTheJobPost = asyncHandler(async (req, res) => {
+    const user = req.user;
+
+    const result = await CandidateInfo.findOne({ candidateId: user._id }).populate("savedJobPost");
+    if (result) {
+        res.json({ message: "Save the job post", data: result.savedJobPost, success: true });
+    } else {
+        res.json({ message: "Save the job post", data: [], success: true });
+    }
+});
+
 // not used yet
 // withdraw application
 const withdrawApplication = asyncHandler(async (req, res) => {
@@ -687,6 +698,7 @@ module.exports = {
     getAllMyResumes,
     isAppliedToJob,
     saveTheJobPost,
+    getSaveTheJobPost,
     isSavedJob,
     getFollowings,
     followRecruiter,

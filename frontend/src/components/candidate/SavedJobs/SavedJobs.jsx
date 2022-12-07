@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import {
@@ -7,14 +7,43 @@ import {
   TableHead,
   Table,
   TableBody,
-  TableContainer
+  TableContainer,
+  Button
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import Loading from "../../Loading/Loading";
+import AlertPopUp from "../../AlertPopUp/AlertPopUp";
+import axios from 'axios';
 
 const SavedJobs = () => {
   const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState({});
+  const [job, setJob] = useState([]);
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    const getJob = () => {
+      axios.post("http://localhost:5000/candidate/getSaveTheJobPost", { token })
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.success) {
+            setJob(res.data);
+            setLoading(false);
+          } else {
+            setAlert({ error: res.message });
+            window.history.go(-1);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setAlert({ error: "Something went wrong with server!" });
+          window.history.go(-1);
+        })
+    }
+
+    getJob();
+  }, [token])
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -26,6 +55,13 @@ const SavedJobs = () => {
     },
   }));
 
+  const getDate = (date) => {
+    if (date === "NaN")
+      return "NaN";
+    const newDate = new Date(date);
+    return newDate.getDate() + " " + newDate.toLocaleString('default', { month: 'long' }) + " " + newDate.getFullYear();
+  }
+
   const StyledTableRow = styled(TableRow)(({ theme }) => ({
     "&:nth-of-type(odd)": {
       backgroundColor: theme.palette.action.hover,
@@ -36,20 +72,6 @@ const SavedJobs = () => {
     },
   }));
 
-  function createData(
-    companyName,
-    title,
-    viewJobPost,
-    employerProfile,
-    deadline
-  ) {
-    return { companyName, title, viewJobPost, employerProfile, deadline };
-  }
-
-  const rows = [
-    createData("Adobe Inc.", "Software Developer", "View", "View", "Dec 10, 2022")
-  ];
-
   if (loading) {
     return (
       <>
@@ -59,6 +81,10 @@ const SavedJobs = () => {
   } else {
     return (
       <>
+        <AlertPopUp
+          alert={alert}
+          setAlert={setAlert}
+        />
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
@@ -71,17 +97,21 @@ const SavedJobs = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow key={row.employerName}>
-                  <StyledTableCell>{row.companyName}</StyledTableCell>
-                  <StyledTableCell>{row.title}</StyledTableCell>
+              {job.map((element, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell>{element.companyName}</StyledTableCell>
+                  <StyledTableCell>{element.jobTitle}</StyledTableCell>
                   <StyledTableCell>
-                    <Link>{row.viewJobPost}</Link>
+                    <Link to={"/jobDescription/" + element._id}>
+                      <Button variant="contained">View Job</Button>
+                    </Link>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <Link>{row.employerProfile}</Link>
+                    <Link to={"/employer/viewprofile/" + element.recruiterId}>
+                      <Button variant="contained">View Employer Profile</Button>
+                    </Link>
                   </StyledTableCell>
-                  <StyledTableCell>{row.deadline}</StyledTableCell>
+                  <StyledTableCell>{getDate(element.applicationDeadline)}</StyledTableCell>
                 </StyledTableRow>
               ))}
             </TableBody>

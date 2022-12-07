@@ -143,6 +143,7 @@ const JobDescription = () => {
             setAlert({ error: "Something went wrong with server!" });
           });
       }
+
     };
 
     getJobDetail();
@@ -159,8 +160,6 @@ const JobDescription = () => {
       .then((res) => {
         if (res.success) {
           setIsAppliedForTheJob(true);
-        } else {
-          setAlert({ error: res.message });
         }
       }).catch((err) => {
         console.log(err);
@@ -180,6 +179,7 @@ const JobDescription = () => {
         else {
           setIsSavedJob(false);
         }
+        setLoading(false);
       }).catch((err) => {
         console.log(err);
         setAlert({ error: "Something went wrong with server!" });
@@ -197,8 +197,6 @@ const JobDescription = () => {
         .then((res) => {
           if (res.success) {
             isAppliedToJob();
-          } else {
-            setAlert({ error: res.message })
           }
           handleClose();
         })
@@ -214,7 +212,6 @@ const JobDescription = () => {
     axios.post("http://localhost:5000/candidate/saveTheJobPost", { token, postId })
       .then((response) => response.data)
       .then((res) => {
-        console.log(res.success);
         isSavedTheJob();
       })
       .catch((err) => {
@@ -279,7 +276,7 @@ const JobDescription = () => {
                   <h5>Skills Required</h5>
                   <div className="d-flex flex-wrap">
                     {jobDetail.skillsRequired.map((skill, index) => (
-                      <div className="skills-section">{skill}</div>
+                      <div className="skills-section" key={index}>{skill}</div>
                     ))}
                   </div>
                 </div>
@@ -372,7 +369,7 @@ const JobDescription = () => {
             {
               resumeData.map((data, index) => {
                 return (
-                  <div className="form-check d-flex justify-content-between w-100 my-4">
+                  <div className="form-check d-flex justify-content-between w-100 my-4" key={index}>
                     <div>
                       <input
                         className="form-check-input"
