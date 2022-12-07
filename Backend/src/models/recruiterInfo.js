@@ -52,10 +52,9 @@ const recruiterInfoSchema = new mongoose.Schema({
         type: String
     },
 
-    saveProfile: [{
+    saveCandidateProfile: [{
         type: mongoose.SchemaTypes.ObjectId,
-        ref: 'Candidate',
-        unique: true
+        ref: 'Candidate'
     }]
 
 }, { timestamps: true });

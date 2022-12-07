@@ -42,7 +42,6 @@ const Profile = () => {
             setLoading(false);
           } else {
             setLoading(false);
-            navigate('/');
           }
         })
         .catch((err) => {
@@ -55,11 +54,13 @@ const Profile = () => {
           .then((res) => res.data)
           .then((res) => {
             if (res.success) {
-              res.saveProfile.forEach(element => {
-                if (element === id) {
-                  setIsSaved(true);
-                }
-              });
+              if (res.saveCandidateProfile) {
+                res.saveCandidateProfile.forEach(element => {
+                  if (element === id) {
+                    setIsSaved(true);
+                  }
+                });
+              }
               setTokenData(res.tokenData);
             }
           });
@@ -75,11 +76,11 @@ const Profile = () => {
   const [alert, setAlert] = useState({});
 
   const saveResume = async () => {
-    await axios.post("http://localhost:5000/recruiter/saveProfile", { token: token, id: param.id })
+    await axios.post("http://localhost:5000/recruiter/saveCandidateProfile", { token: token, id: param.id })
       .then((res) => res.data)
       .then((res) => {
         if (res.success) {
-          res.saveProfile.forEach(element => {
+          res.saveCandidateProfile.forEach(element => {
             if (element === param.id) {
               setIsSaved(true);
             }
@@ -89,7 +90,7 @@ const Profile = () => {
           setAlert({ error: res.message });
         }
       }).catch((err) => {
-        console.lof(err);
+        console.log(err);
         setAlert({ error: "Something went wrong with server!" });
       });
   }

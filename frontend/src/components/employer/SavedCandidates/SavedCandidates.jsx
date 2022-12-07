@@ -70,7 +70,7 @@ const SavedCandidates = () => {
           .then((res) => res.data)
           .then((res) => {
             if (res.success) {
-              setCandidates(res.data.saveProfile);
+              setCandidates(res.data.saveCandidateProfile);
             } else {
               // setAlert({ error: res.message });
             }
@@ -91,7 +91,7 @@ const SavedCandidates = () => {
       .then((res) => res.data)
       .then((res) => {
         if (res.success) {
-          setCandidates(res.data.saveProfile);
+          setCandidates(res.data.saveCandidateProfile);
         } else {
           console.log(res.message);
         }
