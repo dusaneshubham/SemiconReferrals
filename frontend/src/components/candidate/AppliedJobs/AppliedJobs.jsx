@@ -13,11 +13,13 @@ import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Loading from "../../Loading/Loading";
+import AlertPopUp from "../../AlertPopUp/AlertPopUp";
 
 const AppliedJobs = () => {
 
   const [jobApplications, setJobApplications] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState({});
 
   // getting all the job applications
   useEffect(() => {
@@ -79,6 +81,10 @@ const AppliedJobs = () => {
   } else {
     return (
       <>
+        <AlertPopUp
+          alert={alert}
+          setAlert={setAlert}
+        />
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>

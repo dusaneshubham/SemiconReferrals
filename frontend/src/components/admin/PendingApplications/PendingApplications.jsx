@@ -14,10 +14,11 @@ import {
   DialogContent,
   DialogContentText,
 } from "@mui/material";
-import { Link } from 'react-router-dom';
 import Draggable from "react-draggable";
 import axios from "axios";
 import { useState } from "react";
+import AlertPopUp from "../../AlertPopUp/AlertPopUp";
+import Loading from "../../Loading/Loading";
 
 function PaperComponent(props) {
   return (
@@ -32,6 +33,8 @@ function PaperComponent(props) {
 
 const PendingApplications = () => {
 
+  const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState({});
   const [PendingApplications, setPendingApplications] = useState([]);
 
   useEffect(() => {
@@ -47,9 +50,11 @@ const PendingApplications = () => {
           } else {
             console.log(response.message);
           }
+          setLoading(false);
         })
         .catch((err) => {
-          // setAlert({ error: "Something went wrong with server!" });
+          setLoading(false);
+          setAlert({ error: "Something went wrong with server!" });
           console.log(err);
         });
     };
@@ -94,117 +99,129 @@ const PendingApplications = () => {
     setOpenRejection(false);
   };
 
-  return (
-    <>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Company Name</StyledTableCell>
-              <StyledTableCell>Candidate Profile</StyledTableCell>
-              <StyledTableCell>View Resume</StyledTableCell>
-              <StyledTableCell>View Job Post</StyledTableCell>
-              <StyledTableCell>Actions</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {PendingApplications.length > 0 &&
-              PendingApplications.map((data, index) => (
-                <StyledTableRow key={index}>
-                  
-                  <StyledTableCell>{data.jobPostId.companyName}</StyledTableCell>
+  if (loading) {
+    return (
+      <>
+        <Loading />
+      </>
+    )
+  } else {
+    return (
+      <>
+        <AlertPopUp
+          alert={alert}
+          setAlert={setAlert}
+        />
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Company Name</StyledTableCell>
+                <StyledTableCell>Candidate Profile</StyledTableCell>
+                <StyledTableCell>View Resume</StyledTableCell>
+                <StyledTableCell>View Job Post</StyledTableCell>
+                <StyledTableCell>Actions</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {PendingApplications.length > 0 &&
+                PendingApplications.map((data, index) => (
+                  <StyledTableRow key={index}>
 
-                  {/* --------------- View Candidate Profile Btn ----------------- */}
-                  <StyledTableCell>
-                    <Button variant="contained" href={`/candidate/viewprofile/${data.candidateId}`}>
-                      View
-                    </Button>
-                  </StyledTableCell>
-                  
-                  {/* ------------------ View Resume Btn ---------------------- */}
-                  <StyledTableCell>
-                    <Button variant="contained">
-                      <a href={data.resume.url} rel="noreferrer" target="_blank" style={{ color: "#FFF", textDecoration: "none" }}>View</a>
-                    </Button>
-                  </StyledTableCell>
+                    <StyledTableCell>{data.jobPostId.companyName}</StyledTableCell>
 
-                  {/* --------------- View Job Details Button ----------------- */}
-                  <StyledTableCell>
-                    <Button variant="contained" href={`/jobdescription/${data.jobPostId._id}`}>
-                      View
-                    </Button>
-                  </StyledTableCell>
+                    {/* --------------- View Candidate Profile Btn ----------------- */}
+                    <StyledTableCell>
+                      <Button variant="contained" href={`/candidate/viewprofile/${data.candidateId}`}>
+                        View
+                      </Button>
+                    </StyledTableCell>
 
-                  <StyledTableCell>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={handleClickOpenApproval}
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={handleClickOpenRejection}
-                      style={{ margin: "10px" }}
-                    >
-                      Reject
-                    </Button>
+                    {/* ------------------ View Resume Btn ---------------------- */}
+                    <StyledTableCell>
+                      <Button variant="contained">
+                        <a href={data.resume.url} rel="noreferrer" target="_blank" style={{ color: "#FFF", textDecoration: "none" }}>View</a>
+                      </Button>
+                    </StyledTableCell>
+
+                    {/* --------------- View Job Details Button ----------------- */}
+                    <StyledTableCell>
+                      <Button variant="contained" href={`/jobdescription/${data.jobPostId._id}`}>
+                        View
+                      </Button>
+                    </StyledTableCell>
+
+                    <StyledTableCell>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={handleClickOpenApproval}
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={handleClickOpenRejection}
+                        style={{ margin: "10px" }}
+                      >
+                        Reject
+                      </Button>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                )
+                )}
+              {PendingApplications.length === 0 && (
+                <StyledTableRow>
+                  <StyledTableCell colSpan="5" className="text-center text-secondary">
+                    No Applications found!
                   </StyledTableCell>
                 </StyledTableRow>
-              )
               )}
-            {PendingApplications.length === 0 && (
-              <StyledTableRow>
-                <StyledTableCell colSpan="5" className="text-center text-secondary">
-                  No Applications found!
-                </StyledTableCell>
-              </StyledTableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      <Dialog
-        open={openApproval}
-        onClose={handleCloseApproval}
-        PaperComponent={PaperComponent}
-        aria-labelledby="draggable-dialog-title"
-      >
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to <b>Approve</b> this job application?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleCloseApproval}>
-            Yes
-          </Button>
-          <Button onClick={handleCloseApproval}>No</Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog
+          open={openApproval}
+          onClose={handleCloseApproval}
+          PaperComponent={PaperComponent}
+          aria-labelledby="draggable-dialog-title"
+        >
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to <b>Approve</b> this job application?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleCloseApproval}>
+              Yes
+            </Button>
+            <Button onClick={handleCloseApproval}>No</Button>
+          </DialogActions>
+        </Dialog>
 
-      <Dialog
-        open={openRejection}
-        onClose={handleCloseRejection}
-        PaperComponent={PaperComponent}
-        aria-labelledby="draggable-dialog-title"
-      >
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to <b>Reject</b> this job application?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleCloseRejection}>
-            Yes
-          </Button>
-          <Button onClick={handleCloseRejection}>No</Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  );
+        <Dialog
+          open={openRejection}
+          onClose={handleCloseRejection}
+          PaperComponent={PaperComponent}
+          aria-labelledby="draggable-dialog-title"
+        >
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to <b>Reject</b> this job application?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleCloseRejection}>
+              Yes
+            </Button>
+            <Button onClick={handleCloseRejection}>No</Button>
+          </DialogActions>
+        </Dialog>
+      </>
+    );
+  }
 };
 
 export default PendingApplications;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import ReactLoading from "react-loading";
 import { CalendarMonth, CardMembership, Download, Email, Favorite, Female, KeyboardArrowLeft, LinkedIn, Male, School, Transgender, Visibility } from '@mui/icons-material';
 import { Timeline, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
@@ -10,6 +9,7 @@ import { Button, FormControl, OutlinedInput } from "@mui/material";
 import saveAs from 'file-saver';
 import Footer from "../../../components/Footer/Footer";
 import AlertPopUp from "../../../components/AlertPopUp/AlertPopUp";
+import Loading from "../../../components/Loading/Loading";
 
 const Profile = () => {
 
@@ -107,17 +107,7 @@ const Profile = () => {
   if (loading) {
     return (
       <>
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "70vh" }}
-        >
-          <ReactLoading
-            type="bubbles"
-            color="#1976d2"
-            height={100}
-            width={100}
-          />
-        </div>
+        <Loading />
       </>
     );
   } else {

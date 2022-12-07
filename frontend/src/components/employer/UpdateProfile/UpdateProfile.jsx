@@ -6,8 +6,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Button } from "@mui/material";
-import ReactLoading from "react-loading";
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
+import Loading from "../../Loading/Loading";
 
 const UpdateProfile = () => {
   // alert
@@ -85,17 +85,7 @@ const UpdateProfile = () => {
   if (loading) {
     return (
       <>
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "70vh" }}
-        >
-          <ReactLoading
-            type="bubbles"
-            color="#1976d2"
-            height={100}
-            width={100}
-          />
-        </div>
+        <Loading />
       </>
     );
   } else {

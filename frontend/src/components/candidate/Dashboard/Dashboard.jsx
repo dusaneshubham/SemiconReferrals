@@ -3,11 +3,11 @@ import StatisticsCard from "../../StatisticsCard/StatisticsCard";
 import { image8, image9 } from "../../../images/images";
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import ReactLoading from "react-loading";
 import { Timeline, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import './Dashboard.css';
 import AlertPopUp from '../../AlertPopUp/AlertPopUp';
+import Loading from '../../Loading/Loading';
 
 const Dashboard = () => {
 
@@ -74,17 +74,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <>
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "70vh" }}
-        >
-          <ReactLoading
-            type="bubbles"
-            color="#1976d2"
-            height={100}
-            width={100}
-          />
-        </div>
+        <Loading />
       </>
     );
   } else {

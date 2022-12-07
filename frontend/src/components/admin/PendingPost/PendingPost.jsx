@@ -17,6 +17,7 @@ import {
 import Draggable from "react-draggable";
 import axios from "axios";
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
+import Loading from "../../Loading/Loading";
 
 function PaperComponent(props) {
   return (
@@ -30,13 +31,14 @@ function PaperComponent(props) {
 }
 
 const PendingPost = () => {
-  
+
   // For confirmation dialog box
   const [openApproval, setOpenApproval] = useState(false);
   const [openRejection, setOpenRejection] = useState(false);
   const [pendingJobs, setPendingJobs] = useState([]);
   const [postId, setPostId] = useState("");
   const [alert, setAlert] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // ------------------- fetch pending jobs -----------------------
@@ -50,8 +52,10 @@ const PendingPost = () => {
           } else {
             console.log(response.message);
           }
+          setLoading(false);
         })
         .catch((err) => {
+          setLoading(false);
           setAlert({ error: "Something went wrong with server!" });
         });
     };
@@ -125,134 +129,142 @@ const PendingPost = () => {
     setPostId("");
   };
 
-  return (
-    <>
-      {/* ---------------------- alert ---------------------- */}
-      <AlertPopUp
-        alert={alert}
-        setAlert={setAlert}
-      />
-      {/* --------------------------------------------------- */}
+  if (loading) {
+    return (
+      <>
+        <Loading />
+      </>
+    )
+  } else {
+    return (
+      <>
+        {/* ---------------------- alert ---------------------- */}
+        <AlertPopUp
+          alert={alert}
+          setAlert={setAlert}
+        />
+        {/* --------------------------------------------------- */}
 
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Company Name</StyledTableCell>
-              <StyledTableCell>Employer Profile</StyledTableCell>
-              <StyledTableCell>View Job Post</StyledTableCell>
-              <StyledTableCell>Actions</StyledTableCell>
-            </TableRow>
-          </TableHead>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Company Name</StyledTableCell>
+                <StyledTableCell>Employer Profile</StyledTableCell>
+                <StyledTableCell>View Job Post</StyledTableCell>
+                <StyledTableCell>Actions</StyledTableCell>
+              </TableRow>
+            </TableHead>
 
-          {/* ---------------------- Table Body -------------------- */}
-          <TableBody>
-            {pendingJobs.length > 0 &&
-              pendingJobs.map((data, index) => (
-                <StyledTableRow key={index}>
-                  <StyledTableCell>{data.companyName}</StyledTableCell>
+            {/* ---------------------- Table Body -------------------- */}
+            <TableBody>
+              {pendingJobs.length > 0 &&
+                pendingJobs.map((data, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell>{data.companyName}</StyledTableCell>
 
-                  {/* ------------------- View Employer Profile Btn ------------------ */}
-                  <StyledTableCell>
-                    <Button variant="contained" href={`/employer/viewprofile/${data.recruiterId}`}>
-                      View
-                    </Button>
-                  </StyledTableCell>
+                    {/* ------------------- View Employer Profile Btn ------------------ */}
+                    <StyledTableCell>
+                      <Button variant="contained" href={`/employer/viewprofile/${data.recruiterId}`}>
+                        View
+                      </Button>
+                    </StyledTableCell>
 
-                  {/* --------------- View Job Details Button ----------------- */}
-                  <StyledTableCell>
-                    <Button variant="contained" href={`/jobdescription/${data._id}`}>
-                      View
-                    </Button>
-                  </StyledTableCell>
+                    {/* --------------- View Job Details Button ----------------- */}
+                    <StyledTableCell>
+                      <Button variant="contained" href={`/jobdescription/${data._id}`}>
+                        View
+                      </Button>
+                    </StyledTableCell>
 
-                  <StyledTableCell>
-                    {/* ----------------- Approve Button ------------------ */}
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={() => {
-                        // passing post id to dialog box
-                        handleClickOpenApproval(data._id);
-                      }}
-                    >
-                      Approve
-                    </Button>
+                    <StyledTableCell>
+                      {/* ----------------- Approve Button ------------------ */}
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => {
+                          // passing post id to dialog box
+                          handleClickOpenApproval(data._id);
+                        }}
+                      >
+                        Approve
+                      </Button>
 
-                    {/* ----------------- Reject Button ------------------ */}
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => handleClickOpenRejection(data._id)}
-                      style={{ margin: "10px" }}
-                    >
-                      Reject
-                    </Button>
+                      {/* ----------------- Reject Button ------------------ */}
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleClickOpenRejection(data._id)}
+                        style={{ margin: "10px" }}
+                      >
+                        Reject
+                      </Button>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))}
+              {pendingJobs.length === 0 && (
+                <StyledTableRow>
+                  <StyledTableCell colSpan="6" className="text-center text-secondary">
+                    No Applications found!
                   </StyledTableCell>
                 </StyledTableRow>
-              ))}
-            {pendingJobs.length === 0 && (
-              <StyledTableRow>
-                <StyledTableCell colSpan="6" className="text-center text-secondary">
-                  No Applications found!
-                </StyledTableCell>
-              </StyledTableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      <Dialog
-        open={openApproval}
-        onClose={handleCloseApproval}
-        PaperComponent={PaperComponent}
-        aria-labelledby="draggable-dialog-title"
-      >
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to <b>Approve</b> this job post?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            autoFocus
-            onClick={() => {
-              handleCloseApproval();
-              approvePost();
-            }}
-          >
-            Yes
-          </Button>
-          <Button onClick={handleCloseApproval}>No</Button>
-        </DialogActions>
-      </Dialog>
+        <Dialog
+          open={openApproval}
+          onClose={handleCloseApproval}
+          PaperComponent={PaperComponent}
+          aria-labelledby="draggable-dialog-title"
+        >
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to <b>Approve</b> this job post?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              autoFocus
+              onClick={() => {
+                handleCloseApproval();
+                approvePost();
+              }}
+            >
+              Yes
+            </Button>
+            <Button onClick={handleCloseApproval}>No</Button>
+          </DialogActions>
+        </Dialog>
 
-      <Dialog
-        open={openRejection}
-        onClose={handleCloseRejection}
-        PaperComponent={PaperComponent}
-        aria-labelledby="draggable-dialog-title"
-      >
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to <b>Reject</b> this job post?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            autoFocus
-            onClick={() => {
-              handleCloseRejection();
-              rejectPost();
-            }}
-          >
-            Yes
-          </Button>
-          <Button onClick={handleCloseRejection}>No</Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  );
+        <Dialog
+          open={openRejection}
+          onClose={handleCloseRejection}
+          PaperComponent={PaperComponent}
+          aria-labelledby="draggable-dialog-title"
+        >
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to <b>Reject</b> this job post?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              autoFocus
+              onClick={() => {
+                handleCloseRejection();
+                rejectPost();
+              }}
+            >
+              Yes
+            </Button>
+            <Button onClick={handleCloseRejection}>No</Button>
+          </DialogActions>
+        </Dialog>
+      </>
+    );
+  }
 };
 
 export default PendingPost;
