@@ -121,7 +121,6 @@ const JobPost = () => {
         {/*--------------------- Job Post ---------------------*/}
         <div className="col-md-8 p-4 bg-white">
           <div style={{ margin: "10px 0" }}>
-            {/* <form action=""> */}
             <div className="row g-3 p-4 bg-light">
               {/*------------------- Job Title ------------------*/}
               <div className="col-md-12">
@@ -422,7 +421,6 @@ const JobPost = () => {
                 </Button>
               </div>
             </div>
-            {/* </form>. */}
           </div>
         </div>
       </div>
