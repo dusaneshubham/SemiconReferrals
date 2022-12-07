@@ -53,8 +53,10 @@ const recruiterInfoSchema = new mongoose.Schema({
     },
 
     saveCandidateProfile: [{
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'Candidate'
+        candidate: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'Candidate'
+        }
     }]
 
 }, { timestamps: true });

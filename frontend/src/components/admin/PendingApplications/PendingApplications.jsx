@@ -19,6 +19,7 @@ import axios from "axios";
 import { useState } from "react";
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
 import Loading from "../../Loading/Loading";
+import { Link } from 'react-router-dom';
 
 function PaperComponent(props) {
   return (
@@ -132,23 +133,29 @@ const PendingApplications = () => {
 
                     {/* --------------- View Candidate Profile Btn ----------------- */}
                     <StyledTableCell>
-                      <Button variant="contained" href={`/candidate/viewprofile/${data.candidateId}`}>
-                        View
-                      </Button>
+                      <Link to={`/candidate/viewprofile/${data.candidateId}`} className="text-decoration-none">
+                        <Button variant="contained" >
+                          View
+                        </Button>
+                      </Link>
                     </StyledTableCell>
 
                     {/* ------------------ View Resume Btn ---------------------- */}
                     <StyledTableCell>
-                      <Button variant="contained">
-                        <a href={data.resume.url} rel="noreferrer" target="_blank" style={{ color: "#FFF", textDecoration: "none" }}>View</a>
-                      </Button>
+                      <a href={data.resume.url} rel="noreferrer" target="_blank" style={{ color: "#FFF", textDecoration: "none" }}>
+                        <Button variant="contained">
+                          View
+                        </Button>
+                      </a>
                     </StyledTableCell>
 
                     {/* --------------- View Job Details Button ----------------- */}
                     <StyledTableCell>
-                      <Button variant="contained" href={`/jobdescription/${data.jobPostId._id}`}>
-                        View
-                      </Button>
+                      <Link to={`/jobdescription/${data.jobPostId._id}`} className="text-decoration-none">
+                        <Button variant="contained">
+                          View
+                        </Button>
+                      </Link>
                     </StyledTableCell>
 
                     <StyledTableCell>

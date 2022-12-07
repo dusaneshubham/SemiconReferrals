@@ -18,7 +18,27 @@ const Profile = () => {
   const [defaultResume, setDefaultResume] = useState({});
   const [isSaved, setIsSaved] = useState(false);
   const param = useParams();
-  const [data, setData] = useState({});
+  const [data, setData] = useState({
+    name: "NaN",
+    email: "NaN",
+    contactNumber: "NaN",
+    skills: "NaN",
+    savedJobPost: "NaN",
+    followings: "NaN",
+    resumes: "NaN",
+    education: [],
+    workingExperience: [],
+    DOB: "NaN",
+    gender: "NaN",
+    experience: "NaN",
+    qualification: "NaN",
+    about: "NaN",
+    currentJobLocation: "NaN",
+    desiredCitiesToWork: "NaN",
+    isOpenToWork: "NaN",
+    noticePeriod: "NaN",
+    linkedIn: "NaN",
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,7 +48,7 @@ const Profile = () => {
       await axios.post('http://localhost:5000/candidate/getCandidateDetailsById', { id })
         .then((res) => res.data)
         .then((res) => {
-          if (res.success) {
+          if (res.success && res.data.candidateId) {
             if (res.data.defaultResumeId === null && res.data.resumes.length !== 0) {
               setDefaultResume(res.data.resumes[0].url);
             } else if (res.data.defaultResumeId !== null) {
@@ -39,14 +59,17 @@ const Profile = () => {
               });
             }
             setData(res.data);
-            setLoading(false);
           } else {
-            setLoading(false);
+            setData((data) => {
+              res = res.data;
+              return { ...data, ...res }
+            });
           }
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err);
-          navigate('/');
+          window.history.go(-1);
         });
 
       if (token) {
@@ -56,7 +79,7 @@ const Profile = () => {
             if (res.success) {
               if (res.saveCandidateProfile) {
                 res.saveCandidateProfile.forEach(element => {
-                  if (element === id) {
+                  if (element.candidate === id) {
                     setIsSaved(true);
                   }
                 });
@@ -80,11 +103,7 @@ const Profile = () => {
       .then((res) => res.data)
       .then((res) => {
         if (res.success) {
-          res.saveCandidateProfile.forEach(element => {
-            if (element === param.id) {
-              setIsSaved(true);
-            }
-          });
+          setIsSaved(true);
           setAlert({ success: res.message });
         } else {
           setAlert({ error: res.message });
@@ -96,6 +115,8 @@ const Profile = () => {
   }
 
   const getDate = (date) => {
+    if (date === "NaN")
+      return "NaN";
     const newDate = new Date(date);
     return newDate.getDate() + " " + newDate.toLocaleString('default', { month: 'long' }) + " " + newDate.getFullYear();
   }

@@ -32,34 +32,34 @@ const Dashboard = () => {
       const token = localStorage.getItem("token");
       await axios.post("http://localhost:5000/candidate/getCandidateDetails", { token })
         .then((res) => res.data)
-        .then(async (res) => {
-          if (res.success) {
-            await axios.post("http://localhost:5000/candidate/getAllJobApplications", { token })
-              .then((res1) => res1.data)
-              .then((res1) => {
-                if (res1.success) {
-                  setUser({
-                    about: res.about,
-                    noOfFollowings: res.followings.length,
-                    noOfJobApplication: res1.data.length,
-                    education: res.education,
-                    workingExperience: res.workingExperience
-                  });
-                  setLoading(false);
-                } else {
-                  setAlert({ error: res1.message });
-                  setLoading(false);
-                }
-              })
-              .catch((err) => {
-                setLoading(false);
-                console.log(err);
-                setAlert({ error: "Something went wrong with server!" });
-              });
-          } else {
-            setLoading(false);
-            setAlert({ error: res.message });
+        .then((res) => {
+          if (res.success && res.infoId) {
+            setUser((data) => {
+              return {
+                ...data, about: res.about,
+                noOfFollowings: res.followings.length,
+                education: res.education,
+                workingExperience: res.workingExperience
+              }
+            });
           }
+        }).then(async () => {
+          await axios.post("http://localhost:5000/candidate/getAllJobApplications", { token })
+            .then((res) => res.data)
+            .then((res) => {
+              if (res.success) {
+                setUser((data) => { return { ...data, noOfJobApplication: res.data.length } });
+                setLoading(false);
+              } else {
+                setAlert({ error: res.message });
+                setLoading(false);
+              }
+            })
+            .catch((err) => {
+              setLoading(false);
+              console.log(err);
+              setAlert({ error: "Something went wrong with server!" });
+            });
         })
         .catch((err) => {
           console.log(err);

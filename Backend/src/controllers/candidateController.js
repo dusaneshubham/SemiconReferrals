@@ -216,6 +216,7 @@ const getCandidateDetails = asyncHandler(async (req, res) => {
                 email: candidateData.email,
                 name: candidateData.name,
                 contactNumber: candidateData.contactNumber,
+                infoId: candidateInfo._id,
                 DOB: candidateInfo.DOB,
                 gender: candidateInfo.gender,
                 experience: candidateInfo.experience,
@@ -239,7 +240,6 @@ const getCandidateDetails = asyncHandler(async (req, res) => {
                 email: candidateData.email,
                 name: candidateData.name,
                 contactNumber: candidateData.contactNumber,
-                DOB: candidateInfo.DOB,
                 success: true
             });
         }
@@ -255,30 +255,40 @@ const getCandidateDetailsById = asyncHandler(async (req, res) => {
     if (id) {
         const result = await Candidate.findOne({ candidateId: id }).select({ email: 1, contactNumber: 1, name: 1 });
         const info = await CandidateInfo.findOne({ candidateId: id });
-        if (info && result) {
-            const data = {
-                name: result.name,
-                email: result.email,
-                contactNumber: result.contactNumber,
-                skills: info.skills,
-                savedJobPost: info.savedJobPost,
-                followings: info.followings,
-                resumes: info.resumes,
-                education: info.education,
-                workingExperience: info.workingExperience,
-                DOB: info.DOB,
-                gender: info.gender,
-                experience: info.experience,
-                qualification: info.qualification,
-                about: info.about,
-                currentJobLocation: info.currentJobLocation,
-                desiredCitiesToWork: info.desiredCitiesToWork,
-                isOpenToWork: info.isOpenToWork,
-                noticePeriod: info.noticePeriod,
-                linkedIn: info.linkedIn,
-                defaultResumeId: info.defaultResumeId,
-            };
-            res.json({ message: "Candidate information", data: data, success: true });
+        if (result) {
+            if (info) {
+                const data = {
+                    name: result.name,
+                    email: result.email,
+                    contactNumber: result.contactNumber,
+                    candidateId: info.candidateId,
+                    skills: info.skills,
+                    savedJobPost: info.savedJobPost,
+                    followings: info.followings,
+                    resumes: info.resumes,
+                    education: info.education,
+                    workingExperience: info.workingExperience,
+                    DOB: info.DOB,
+                    gender: info.gender,
+                    experience: info.experience,
+                    qualification: info.qualification,
+                    about: info.about,
+                    currentJobLocation: info.currentJobLocation,
+                    desiredCitiesToWork: info.desiredCitiesToWork,
+                    isOpenToWork: info.isOpenToWork,
+                    noticePeriod: info.noticePeriod,
+                    linkedIn: info.linkedIn,
+                    defaultResumeId: info.defaultResumeId
+                };
+                res.json({ message: "Candidate information", data: data, success: true });
+            } else {
+                const data = {
+                    name: result.name,
+                    email: result.email,
+                    contactNumber: result.contactNumber,
+                }
+                res.json({ message: "Candidate information", data: data, success: true });
+            }
         } else {
             res.json({ message: "User not found!", success: false });
         }

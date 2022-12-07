@@ -20,7 +20,22 @@ const Profile = () => {
     const param = useParams();
     const [candidateId, setCandidateId] = useState("");
     const [isFollow, setIsFollow] = useState(false);
-    const [data, setData] = useState({});
+    const [data, setData] = useState({
+        name: "NaN",
+        email: "NaN",
+        contactNumber: "NaN",
+        companyName: "NaN",
+        companyWebsite: "NaN",
+        totalExperience: "NaN",
+        linkedin: "NaN",
+        teamName: "NaN",
+        teamSize: "NaN",
+        location: "NaN",
+        designation: "NaN",
+        experienceInCurrentOrganization: "NaN",
+        teamWorkDescription: "NaN",
+        createDate: "NaN",
+    });
     const [loading, setLoading] = useState(true);
     const token = localStorage.getItem("token");
 
@@ -51,17 +66,20 @@ const Profile = () => {
                 .post("http://localhost:5000/recruiter/getRecruiterDetailsById", { id })
                 .then((res) => res.data)
                 .then((res) => {
-                    if (res.success) {
+                    if (res.success && res.data.companyName) {
                         setData(res.data);
                         setLoading(false);
                     } else {
                         setLoading(false);
-                        navigate("/");
+                        setData((data) => {
+                            res = res.data;
+                            return { ...data, ...res }
+                        });
                     }
                 })
                 .catch((err) => {
                     console.log(err);
-                    navigate("/");
+                    window.history.go(-1);
                 });
         };
 
@@ -72,6 +90,9 @@ const Profile = () => {
     const [alert, setAlert] = useState({});
 
     const getDate = (date) => {
+        if (date === "NaN")
+            return "NaN";
+
         const newDate = new Date(date);
         return (
             newDate.getDate() +
@@ -137,7 +158,7 @@ const Profile = () => {
                             <h3 className="text-orange">{data.name}</h3>
                             <p className="text-smaller">{data.companyName}</p>
                         </div>
-                        {data.linkedin !== "" && (
+                        {(data.linkedin !== "" && data.linkedin !== "NaN") && (
                             <div className="float-end">
                                 <a href={data.linkedin} target="_blank" rel="noreferrer">
                                     <LinkedIn fontSize="large" />

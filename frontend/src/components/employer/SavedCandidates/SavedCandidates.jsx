@@ -74,7 +74,7 @@ const SavedCandidates = () => {
           .then((res) => res.data)
           .then((res) => {
             if (res.success) {
-              setCandidates(res.data.saveCandidateProfile);
+              setCandidates(res.data);
             } else {
               setAlert({ error: res.message });
             }
@@ -97,12 +97,13 @@ const SavedCandidates = () => {
       .then((res) => res.data)
       .then((res) => {
         if (res.success) {
-          setCandidates(res.data.saveCandidateProfile);
+          setCandidates(candidates.filter((element) => element.candidate._id !== deleteId));
         } else {
-          console.log(res.message);
+          setAlert({ error: res.message });
         }
       }).catch((err) => {
         console.log(err);
+        setAlert({ error: "Something went wrong with server!" });
       });
     setOpen(false);
   }
@@ -139,12 +140,12 @@ const SavedCandidates = () => {
                         <img src={image2} width="50" height="50" alt="" />
                       </div>
                       <div>
-                        <div className="text-orange">{element.name}</div>
+                        <div className="text-orange">{element.candidate.name}</div>
                       </div>
                     </div>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <Link to={"/candidate/viewprofile/" + element._id} className="nav-link">
+                    <Link to={"/candidate/viewprofile/" + element.candidate._id} className="text-decoration-none">
                       <Button
                         variant="contained"
                         color="primary"
@@ -158,7 +159,7 @@ const SavedCandidates = () => {
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={() => handleClickOpen(element._id)}
+                      onClick={() => handleClickOpen(element.candidate._id)}
                       startIcon={<DeleteIcon />}
                     >
                       Remove

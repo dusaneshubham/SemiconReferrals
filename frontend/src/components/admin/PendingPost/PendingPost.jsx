@@ -18,6 +18,7 @@ import Draggable from "react-draggable";
 import axios from "axios";
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
 import Loading from "../../Loading/Loading";
+import { Link } from "react-router-dom";
 
 function PaperComponent(props) {
   return (
@@ -165,16 +166,20 @@ const PendingPost = () => {
 
                     {/* ------------------- View Employer Profile Btn ------------------ */}
                     <StyledTableCell>
-                      <Button variant="contained" href={`/employer/viewprofile/${data.recruiterId}`}>
-                        View
-                      </Button>
+                      <Link className="text-decoration-none" to={`/employer/viewprofile/${data.recruiterId}`}>
+                        <Button variant="contained">
+                          View
+                        </Button>
+                      </Link>
                     </StyledTableCell>
 
                     {/* --------------- View Job Details Button ----------------- */}
                     <StyledTableCell>
-                      <Button variant="contained" href={`/jobdescription/${data._id}`}>
-                        View
-                      </Button>
+                      <Link className="text-decoration-none" to={`/jobdescription/${data._id}`}>
+                        <Button variant="contained">
+                          View
+                        </Button>
+                      </Link>
                     </StyledTableCell>
 
                     <StyledTableCell>
