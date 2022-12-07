@@ -151,7 +151,7 @@ const SavedCandidates = () => {
             ))}
             {candidates.length === 0 && <StyledTableRow>
               <StyledTableCell colSpan="3" className="text-center text-secondary">
-                No data found!
+                No Profile Found!
               </StyledTableCell>
             </StyledTableRow>}
           </TableBody>

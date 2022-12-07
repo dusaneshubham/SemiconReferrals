@@ -12,6 +12,10 @@ const recruiterInfoSchema = new mongoose.Schema({
         type: String,
     },
 
+    companyLogo: {
+        type: String
+    },
+
     companyWebsite: {
         type: String
     },
@@ -48,11 +52,11 @@ const recruiterInfoSchema = new mongoose.Schema({
         type: String
     },
 
-    saveProfile: {
-        type: [mongoose.Schema.Types.ObjectId],
+    saveProfile: [{
+        type: mongoose.SchemaTypes.ObjectId,
         ref: 'Candidate',
         unique: true
-    }
+    }]
 
 }, { timestamps: true });
 

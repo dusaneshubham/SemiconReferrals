@@ -4,15 +4,10 @@ import { image8, image9 } from "../../../images/images";
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import ReactLoading from "react-loading";
-import { Snackbar, Slide } from "@mui/material";
-import MuiAlert from "@mui/material/Alert";
 import { Timeline, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import './Dashboard.css';
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import AlertPopUp from '../../AlertPopUp/AlertPopUp';
 
 const Dashboard = () => {
 
@@ -28,17 +23,6 @@ const Dashboard = () => {
   // alert
   const [alert, setAlert] = useState({});
 
-  const Transition = (props) => {
-    return <Slide {...props} direction="down" />;
-  };
-
-  const handleClose = (_, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setAlert({});
-  };
-
   // loading
   const [loading, setLoading] = useState(true);
 
@@ -50,7 +34,7 @@ const Dashboard = () => {
         .then((res) => res.data)
         .then(async (res) => {
           if (res.success) {
-            await axios.post("http://localhost:5000/candidate/getAllApplication", { token })
+            await axios.post("http://localhost:5000/candidate/getAllJobApplications", { token })
               .then((res1) => res1.data)
               .then((res1) => {
                 if (res1.success) {
@@ -107,28 +91,10 @@ const Dashboard = () => {
     return (
       <>
         {/* ---------------------- alert ---------------------- */}
-        <Snackbar
-          autoHideDuration={2000}
-          open={alert.error ? true : false}
-          TransitionComponent={Transition}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert severity="error" onClose={handleClose}>
-            <span className="my-alert">{alert.error}</span>
-          </Alert>
-        </Snackbar>
-        <Snackbar
-          autoHideDuration={2000}
-          open={alert.success ? true : false}
-          TransitionComponent={Transition}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert severity="success" onClose={handleClose}>
-            <span className="my-alert">{alert.success}</span>
-          </Alert>
-        </Snackbar>
+        <AlertPopUp
+          alert={alert}
+          setAlert={setAlert}
+        />
         {/* --------------------------------------------------- */}
 
         <div className="bg-white py-3 px-4 dashboard">

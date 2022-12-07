@@ -6,14 +6,21 @@ import { useNavigate, useParams } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 import JobOverview from "../../components/JobDescription/JobOverview";
 import { useTheme } from "@mui/material/styles";
+import { KeyboardArrowLeft } from '@mui/icons-material';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, useMediaQuery } from "@mui/material";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const JobDescription = () => {
+
   const param = useParams();
   const postId = param.id;
   const navigate = useNavigate();
+
+  // to check whether deadline has gone
+  // let today = new Date().toJSON().slice(0, 10);
+  // let today = new Date();
+  // console.log(today);
 
   const [jobDetail, setJobDetail] = useState({
     recruiterId: "",
@@ -34,6 +41,7 @@ const JobDescription = () => {
   const [tokenData, setTokenData] = useState({ _id: "", type: "" });
 
   const [isAppliedForTheJob, setIsAppliedForTheJob] = useState(false);
+  const [isSavedJob, setIsSavedJob] = useState(false);
 
   // Dialog
   const [openDialog, setOpenDialog] = useState(false);
@@ -68,8 +76,6 @@ const JobDescription = () => {
     setOpenDialog(false);
   };
   // Dialog over
-
-
 
 
   // --------------------------- get Job Detail ------------------------
@@ -140,23 +146,42 @@ const JobDescription = () => {
     getJobDetail();
   }, [navigate, postId]);
 
+  // check whether already applied to this job or not
+  const isAppliedToJob = () => {
+    const token = localStorage.getItem("token");
+    axios.post("http://localhost:5000/candidate/isAppliedToJob", { token, postId })
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setIsAppliedForTheJob(true);
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+  }
+
+  // check whether saved this job or not
+  const isSavedTheJob = () => {
+    const token = localStorage.getItem("token");
+    axios.post("http://localhost:5000/candidate/isSavedJob", { token, postId })
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setIsSavedJob(true);
+        }
+        else {
+          setIsSavedJob(false);
+        }
+      }).catch((err) => {
+        console.log(err);
+      })
+  }
 
   // Check whether applied to the job or not
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const isAppliedToJob = () => {
-      axios.post("http://localhost:5000/candidate/isAppliedToJob", { token, postId })
-        .then((res) => res.data)
-        .then((res) => {
-          if (res.success) {
-            setIsAppliedForTheJob(true);
-          }
-        }).catch((err) => {
-          console.log(err);
-        })
-    }
     isAppliedToJob();
-  }, [isAppliedForTheJob]);
+    isSavedTheJob();
+  }, []);
 
 
   const applyToJob = () => {
@@ -169,6 +194,7 @@ const JobDescription = () => {
         .then((response) => response.data)
         .then((res) => {
           console.log(res.data);
+          isAppliedToJob();
           handleClose();
         })
         .catch((err) => {
@@ -179,12 +205,13 @@ const JobDescription = () => {
 
   const saveThisJob = () => {
     const token = localStorage.getItem("token");
-    axios.post("http://localhost:5000/candidate/saveTheJobPost", { token })
+    axios.post("http://localhost:5000/candidate/saveTheJobPost", { token, postId })
       .then((response) => response.data)
-      .then(() => {
-
-      }).
-      catch((err) => {
+      .then((res) => {
+        console.log(res.success);
+        isSavedTheJob();
+      })
+      .catch((err) => {
         console.log(err);
       })
   }
@@ -192,16 +219,15 @@ const JobDescription = () => {
   return (
     <>
       {/* <Navbar /> */}
-
+      <div className="back-btn py-2 px-3">
+        <Button onClick={() => window.history.go(-1)}><KeyboardArrowLeft /> Back</Button>
+      </div>
       <div className="container" id="job-description-container">
         {/* -------- Title -------- */}
         <h3 style={{ color: "var(--main-blue)" }}>{jobDetail.jobTitle}</h3>
 
         {/* --------- Company Name --------- */}
-        <h6 style={{ color: "var(--main-orange)" }}>
-          {/* {jobDetail.recruiterinfos[0].companyName} */}
-          Google Software Ltd.
-        </h6>
+        <h6 style={{ color: "var(--main-orange)" }}>{jobDetail.companyName}</h6>
 
         <div className="row my-5 flex-wrap-reverse">
           <div id="left" className="col-md-9">
@@ -258,6 +284,8 @@ const JobDescription = () => {
           </div>
         </div>
 
+        {/* {jobDetail.applicationDeadline < today ? "gone" : "not"} */}
+
         {/* ------------------- Apply Now Button ------------------ */}
         {tokenData.type === "candidate" && (
           <div>
@@ -289,21 +317,23 @@ const JobDescription = () => {
             )}
 
             {/* --------------------- Save This Job btn -------------------- */}
-            <div
-              style={{ margin: "20px 0", width: "100%" }}
-              className="d-flex justify-content-center"
-            >
-              <button
-                style={{
-                  width: "300px",
-                  backgroundColor: "var(--main-orange)",
-                }}
-                onClick={saveThisJob}
-                className="main-btn main-btn-link"
+            {!isSavedJob && (
+              <div
+                style={{ margin: "20px 0", width: "100%" }}
+                className="d-flex justify-content-center"
               >
-                Save This Job
-              </button>
-            </div>
+                <button
+                  style={{
+                    width: "300px",
+                    backgroundColor: "var(--main-orange)",
+                  }}
+                  onClick={saveThisJob}
+                  className="main-btn main-btn-link"
+                >
+                  Save This Job
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

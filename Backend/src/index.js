@@ -25,6 +25,7 @@ app.use(cors());
 
 // resumes path
 app.use("/resumes", express.static(path.join(__dirname, '/resumes/')));
+app.use("/images", express.static(path.join(__dirname, '/images/')));
 
 // Defining Routes
 app.use("/verify-token", verifyToken, getTokenData);

@@ -8,13 +8,8 @@ import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import './Profile.css';
 import { Button, FormControl, OutlinedInput } from "@mui/material";
 import saveAs from 'file-saver';
-import { Snackbar, Slide } from "@mui/material";
-import MuiAlert from "@mui/material/Alert";
 import Footer from "../../../components/Footer/Footer";
-
-const Alert = React.forwardRef(function Alert(props, ref) {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+import AlertPopUp from "../../../components/AlertPopUp/AlertPopUp";
 
 const Profile = () => {
 
@@ -79,17 +74,6 @@ const Profile = () => {
   // alert
   const [alert, setAlert] = useState({});
 
-  const Transition = (props) => {
-    return <Slide {...props} direction="down" />;
-  };
-
-  const handleClose = (_, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setAlert({});
-  };
-
   const saveResume = async () => {
     await axios.post("http://localhost:5000/recruiter/saveProfile", { token: token, id: param.id })
       .then((res) => res.data)
@@ -139,29 +123,12 @@ const Profile = () => {
     return (
       <>
         {/* ---------------------- alert ---------------------- */}
-        <Snackbar
-          autoHideDuration={2000}
-          open={alert.error ? true : false}
-          TransitionComponent={Transition}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert severity="error" onClose={handleClose}>
-            <span className="my-alert">{alert.error}</span>
-          </Alert>
-        </Snackbar>
-        <Snackbar
-          autoHideDuration={2000}
-          open={alert.success ? true : false}
-          TransitionComponent={Transition}
-          onClose={handleClose}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        >
-          <Alert severity="success" onClose={handleClose}>
-            <span className="my-alert">{alert.success}</span>
-          </Alert>
-        </Snackbar>
+        <AlertPopUp
+          alert={alert}
+          setAlert={setAlert}
+        />
         {/* --------------------------------------------------- */}
+
         <div className="back-btn py-2 px-3">
           <Button onClick={() => window.history.go(-1)}><KeyboardArrowLeft /> Back</Button>
         </div>
@@ -323,7 +290,7 @@ const Profile = () => {
                 <div className="section bg-light">
                   {tokenData.type === "recruiter" &&
                     (isSaved ?
-                      <Button variant="contained" className="w-100 text-white my-1" color="success" disabled><Favorite />Saved</Button>
+                      <Button variant="contained" className="w-100 text-white my-1 disabled" color="success"><Favorite />Saved</Button>
                       :
                       <Button variant="contained" onClick={saveResume} className="bg-orange w-100 text-white my-1"><Favorite />Save Profile</Button>)
                   }
@@ -337,7 +304,7 @@ const Profile = () => {
 
             </div>
 
-            <div className="col-md-4 mx-3 section bg-light">
+            <div className="col-md-4 mx-3 section bg-light h-25">
               Contact {data.name}
               <hr />
               <div className="form">

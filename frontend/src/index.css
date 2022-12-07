@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
-
 :root {
     --light-pink: #FE93A0;
     --light-yellow: #F9F2D8;
@@ -11,6 +10,11 @@
 
 * {
     font-family: 'Roboto', sans-serif;
+}
+
+::-webkit-scrollbar {
+    /* width: 5px */
+    display: none;
 }
 
 .main-btn {
@@ -32,4 +36,8 @@
 
 .active-link .MuiButtonBase-root {
     background-color: rgb(228, 228, 228) !important;
+}
+
+.ck-editor__editable {
+    height: 120px !important;
 }

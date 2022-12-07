@@ -12,7 +12,7 @@ const generateToken = (user) => {
 }
 
 // register api
-const registerRecruiter = asyncHandler(async (req, res) => {
+const registerRecruiter = asyncHandler(async(req, res) => {
     const { name, email, contactNumber, password } = req.body;
 
     // Validations
@@ -39,7 +39,7 @@ const registerRecruiter = asyncHandler(async (req, res) => {
         password: hashPassword
     });
 
-    newRecruiter.save(async (err, data) => {
+    newRecruiter.save(async(err, data) => {
         if (err) {
             console.log(err);
             return res.json({ message: "Error in registering the recruiter", success: false });
@@ -53,7 +53,7 @@ const registerRecruiter = asyncHandler(async (req, res) => {
 });
 
 // login recruiter
-const loginRecruiter = asyncHandler(async (req, res) => {
+const loginRecruiter = asyncHandler(async(req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -78,7 +78,7 @@ const loginRecruiter = asyncHandler(async (req, res) => {
 });
 
 // update password
-const updatePassword = asyncHandler(async (req, res) => {
+const updatePassword = asyncHandler(async(req, res) => {
     const { email, password, confirmPassword } = req.body;
 
     if (!email || !password || !confirmPassword) {
@@ -99,7 +99,7 @@ const updatePassword = asyncHandler(async (req, res) => {
     }
 });
 
-const getRecruiterDetails = asyncHandler(async (req, res) => {
+const getRecruiterDetails = asyncHandler(async(req, res) => {
     let user = req.user;
     let recruiterData = await Recruiter.findOne({ _id: user._id });
 
@@ -139,10 +139,10 @@ const getRecruiterDetails = asyncHandler(async (req, res) => {
     }
 });
 
-const getRecruiterDetailsById = asyncHandler(async (req, res) => {
+const getRecruiterDetailsById = asyncHandler(async(req, res) => {
     const { id } = req.body;
     if (id) {
-        const result = await Recruiter.findOne({ recruiterId: id }).select({ email: 1, contactNumber: 1, name: 1, createdAt: 1 });
+        const result = await Recruiter.findOne({ _id: id }).select({ email: 1, contactNumber: 1, name: 1, createdAt: 1 });
         const info = await RecruiterInfo.findOne({ recruiterId: id });
         if (info && result) {
             const data = {
@@ -170,7 +170,7 @@ const getRecruiterDetailsById = asyncHandler(async (req, res) => {
     }
 });
 
-const updateProfile = asyncHandler(async (req, res) => {
+const updateProfile = asyncHandler(async(req, res) => {
     // recruiter information details
     const {
         name,
@@ -211,7 +211,7 @@ const updateProfile = asyncHandler(async (req, res) => {
         teamWorkDescription: teamWorkDescription,
     }
 
-    console.log(recruiterUpdatedData, recruiterInfoUpdatedData);
+    // console.log(recruiterUpdatedData, recruiterInfoUpdatedData);
 
     const result = await Recruiter.findOneAndUpdate({ _id: user._id }, recruiterUpdatedData, { new: true });
 
@@ -221,7 +221,7 @@ const updateProfile = asyncHandler(async (req, res) => {
             // for old user
             const result1 = await RecruiterInfo.updateOne({ recruiterId: user._id }, recruiterInfoUpdatedData, { new: true });
             if (result1) {
-                res.json({ message: "Successfully update profile", success: true, data: { ...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
+                res.json({ message: "Successfully update profile", success: true, data: {...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
             } else {
                 res.json({ message: "Somthing went wrong during update the profile", success: false });
             }
@@ -231,7 +231,7 @@ const updateProfile = asyncHandler(async (req, res) => {
             await newInfo.save()
                 .then((data, err) => {
                     if (data) {
-                        res.json({ message: "Successfully update profile", success: true, data: { ...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
+                        res.json({ message: "Successfully update profile", success: true, data: {...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
                     } else {
                         console.log(err);
                         res.json({ message: "Somthing went wrong during update the profile", success: false });
@@ -245,11 +245,15 @@ const updateProfile = asyncHandler(async (req, res) => {
     }
 });
 
-const jobPost = asyncHandler(async (req, res) => {
+const jobPost = asyncHandler(async(req, res) => {
     let user = req.user;
-    console.log("id: " + user._id);
+
+    // TO store companyName
+    const recruiterInfo = await RecruiterInfo.findOne({ recruiterId: user._id });
+
     const jobDetails = new JobPost({
         recruiterId: user._id,
+        companyName: recruiterInfo.companyName,
         jobTitle: req.body.jobTitle,
         jobCategory: req.body.jobCategory,
         jobDescription: req.body.jobDescription,
@@ -276,13 +280,13 @@ const jobPost = asyncHandler(async (req, res) => {
     })
 });
 
-const saveProfile = asyncHandler(async (req, res) => {
+const saveProfile = asyncHandler(async(req, res) => {
     const { id } = req.body;
     const user = req.user;
 
     if (id) {
         const result = await RecruiterInfo.findOne({ recruiterId: user._id });
-        console.log(result);
+        // console.log(result);
         if (!result) {
             let saveProfile = [];
             saveProfile.push(id);
@@ -318,7 +322,7 @@ const saveProfile = asyncHandler(async (req, res) => {
 });
 
 // get saved recruiter
-const getSavedRecruiter = asyncHandler(async (req, res) => {
+const getSavedRecruiter = asyncHandler(async(req, res) => {
     const user = req.user;
 
     if (user._id) {
@@ -334,7 +338,7 @@ const getSavedRecruiter = asyncHandler(async (req, res) => {
 });
 
 // remove saved recruiter
-const removeSavedRecruiter = asyncHandler(async (req, res) => {
+const removeSavedRecruiter = asyncHandler(async(req, res) => {
     const user = req.user;
     const { id } = req.body;
 
