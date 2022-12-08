@@ -83,7 +83,7 @@ const updatePassword = asyncHandler(async(req, res) => {
     }
 });
 
-
+// not used yet
 const approveRecruiter = asyncHandler(async(req, res) => {
     const { _id } = req.body;
 
@@ -105,7 +105,7 @@ const approvePost = asyncHandler(async(req, res) => {
 
     const isExistJobPost = await JobPost.findOne({ _id: postId });
     if (isExistJobPost) {
-        const updatedData = await JobPost.findOneAndUpdate({ _id: postId }, { status: "Approved" }, { new: true });
+        const updatedData = await JobPost.findOneAndUpdate({ _id: postId }, { status: "Approved", isActive: true }, { new: true });
         if (updatedData) {
             JobPost.aggregate([{
                         $match: {

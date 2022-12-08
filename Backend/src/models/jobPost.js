@@ -104,6 +104,11 @@ const jobPostSchema = new mongoose.Schema({
         default: "Pending",
     },
 
+    isActive: {
+        type: Boolean,
+        default: false
+    },
+
     remarks: {
         type: String
     }

@@ -3,11 +3,11 @@ import StatisticsCard from "../../StatisticsCard/StatisticsCard";
 import { image8, image9 } from "../../../images/images";
 import axios from 'axios';
 import { useState, useEffect } from 'react';
-import ReactLoading from "react-loading";
 import { Timeline, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
 import './Dashboard.css';
 import AlertPopUp from '../../AlertPopUp/AlertPopUp';
+import Loading from '../../Loading/Loading';
 
 const Dashboard = () => {
 
@@ -32,34 +32,34 @@ const Dashboard = () => {
       const token = localStorage.getItem("token");
       await axios.post("http://localhost:5000/candidate/getCandidateDetails", { token })
         .then((res) => res.data)
-        .then(async (res) => {
-          if (res.success) {
-            await axios.post("http://localhost:5000/candidate/getAllJobApplications", { token })
-              .then((res1) => res1.data)
-              .then((res1) => {
-                if (res1.success) {
-                  setUser({
-                    about: res.about,
-                    noOfFollowings: res.followings.length,
-                    noOfJobApplication: res1.data.length,
-                    education: res.education,
-                    workingExperience: res.workingExperience
-                  });
-                  setLoading(false);
-                } else {
-                  setAlert({ error: res1.message });
-                  setLoading(false);
-                }
-              })
-              .catch((err) => {
-                setLoading(false);
-                console.log(err);
-                setAlert({ error: "Something went wrong with server!" });
-              });
-          } else {
-            setLoading(false);
-            setAlert({ error: res.message });
+        .then((res) => {
+          if (res.success && res.infoId) {
+            setUser((data) => {
+              return {
+                ...data, about: res.about,
+                noOfFollowings: res.followings.length,
+                education: res.education,
+                workingExperience: res.workingExperience
+              }
+            });
           }
+        }).then(async () => {
+          await axios.post("http://localhost:5000/candidate/getAllJobApplications", { token })
+            .then((res) => res.data)
+            .then((res) => {
+              if (res.success) {
+                setUser((data) => { return { ...data, noOfJobApplication: res.data.length } });
+                setLoading(false);
+              } else {
+                setAlert({ error: res.message });
+                setLoading(false);
+              }
+            })
+            .catch((err) => {
+              setLoading(false);
+              console.log(err);
+              setAlert({ error: "Something went wrong with server!" });
+            });
         })
         .catch((err) => {
           console.log(err);
@@ -74,17 +74,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <>
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "70vh" }}
-        >
-          <ReactLoading
-            type="bubbles"
-            color="#1976d2"
-            height={100}
-            width={100}
-          />
-        </div>
+        <Loading />
       </>
     );
   } else {

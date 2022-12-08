@@ -5,6 +5,9 @@ const RecruiterInfo = require('../models/recruiterInfo');
 const JobPost = require('../models/jobPost');
 const bcrypt = require('bcrypt');
 const { isEmail } = require('validator');
+const fs = require("fs");
+const path = require("path");
+const candidateInfo = require('../models/candidateInfo');
 
 // Generate the token
 const generateToken = (user) => {
@@ -12,7 +15,7 @@ const generateToken = (user) => {
 }
 
 // register api
-const registerRecruiter = asyncHandler(async(req, res) => {
+const registerRecruiter = asyncHandler(async (req, res) => {
     const { name, email, contactNumber, password } = req.body;
 
     // Validations
@@ -39,7 +42,7 @@ const registerRecruiter = asyncHandler(async(req, res) => {
         password: hashPassword
     });
 
-    newRecruiter.save(async(err, data) => {
+    newRecruiter.save(async (err, data) => {
         if (err) {
             console.log(err);
             return res.json({ message: "Error in registering the recruiter", success: false });
@@ -53,7 +56,7 @@ const registerRecruiter = asyncHandler(async(req, res) => {
 });
 
 // login recruiter
-const loginRecruiter = asyncHandler(async(req, res) => {
+const loginRecruiter = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -78,7 +81,7 @@ const loginRecruiter = asyncHandler(async(req, res) => {
 });
 
 // update password
-const updatePassword = asyncHandler(async(req, res) => {
+const updatePassword = asyncHandler(async (req, res) => {
     const { email, password, confirmPassword } = req.body;
 
     if (!email || !password || !confirmPassword) {
@@ -99,7 +102,7 @@ const updatePassword = asyncHandler(async(req, res) => {
     }
 });
 
-const getRecruiterDetails = asyncHandler(async(req, res) => {
+const getRecruiterDetails = asyncHandler(async (req, res) => {
     let user = req.user;
     let recruiterData = await Recruiter.findOne({ _id: user._id });
 
@@ -111,6 +114,7 @@ const getRecruiterDetails = asyncHandler(async(req, res) => {
                 companyName: recruiterInfo.companyName,
                 email: recruiterData.email,
                 contactNumber: recruiterData.contactNumber,
+                companyLogo: recruiterInfo.companyLogo,
                 companyWebsite: recruiterInfo.companyWebsite,
                 linkedin: recruiterInfo.linkedin,
                 totalExperience: recruiterInfo.totalExperience,
@@ -120,7 +124,7 @@ const getRecruiterDetails = asyncHandler(async(req, res) => {
                 designation: recruiterInfo.designation,
                 currentExperience: recruiterInfo.experienceInCurrentOrganization,
                 teamWorkDescription: recruiterInfo.teamWorkDescription,
-                saveProfile: recruiterInfo.saveProfile,
+                saveCandidateProfile: recruiterInfo.saveCandidateProfile,
                 tokenData: req.tokenData,
                 success: true
             });
@@ -130,7 +134,7 @@ const getRecruiterDetails = asyncHandler(async(req, res) => {
                 email: recruiterData.email,
                 name: recruiterData.name,
                 contactNumber: recruiterData.contactNumber,
-                tokenDataData: req.token,
+                tokenData: req.tokenData,
                 success: true
             });
         }
@@ -139,29 +143,39 @@ const getRecruiterDetails = asyncHandler(async(req, res) => {
     }
 });
 
-const getRecruiterDetailsById = asyncHandler(async(req, res) => {
+const getRecruiterDetailsById = asyncHandler(async (req, res) => {
     const { id } = req.body;
     if (id) {
         const result = await Recruiter.findOne({ _id: id }).select({ email: 1, contactNumber: 1, name: 1, createdAt: 1 });
-        const info = await RecruiterInfo.findOne({ recruiterId: id });
-        if (info && result) {
-            const data = {
-                name: result.name,
-                email: result.email,
-                contactNumber: result.contactNumber,
-                companyName: info.companyName,
-                companyWebsite: info.companyWebsite,
-                totalExperience: info.totalExperience,
-                linkedin: info.linkedin,
-                teamName: info.teamName,
-                teamSize: info.teamSize,
-                location: info.location,
-                designation: info.designation,
-                experienceInCurrentOrganization: info.experienceInCurrentOrganization,
-                teamWorkDescription: info.teamWorkDescription,
-                createDate: result.createdAt,
-            };
-            res.json({ message: "Recruiter information", data: data, success: true });
+        if (result) {
+            const info = await RecruiterInfo.findOne({ recruiterId: id });
+            if (info) {
+                const data = {
+                    name: result.name,
+                    email: result.email,
+                    contactNumber: result.contactNumber,
+                    companyName: info.companyName,
+                    companyWebsite: info.companyWebsite,
+                    companyLogo: info.companyLogo,
+                    totalExperience: info.totalExperience,
+                    linkedin: info.linkedin,
+                    teamName: info.teamName,
+                    teamSize: info.teamSize,
+                    location: info.location,
+                    designation: info.designation,
+                    experienceInCurrentOrganization: info.experienceInCurrentOrganization,
+                    teamWorkDescription: info.teamWorkDescription,
+                    createDate: result.createdAt,
+                };
+                res.json({ message: "Recruiter information", data: data, success: true });
+            } else {
+                const data = {
+                    name: result.name,
+                    email: result.email,
+                    contactNumber: result.contactNumber,
+                }
+                res.json({ message: "Recruiter information", data: data, success: true });
+            }
         } else {
             res.json({ message: "User not found!", success: false });
         }
@@ -170,7 +184,7 @@ const getRecruiterDetailsById = asyncHandler(async(req, res) => {
     }
 });
 
-const updateProfile = asyncHandler(async(req, res) => {
+const updateProfile = asyncHandler(async (req, res) => {
     // recruiter information details
     const {
         name,
@@ -221,7 +235,7 @@ const updateProfile = asyncHandler(async(req, res) => {
             // for old user
             const result1 = await RecruiterInfo.updateOne({ recruiterId: user._id }, recruiterInfoUpdatedData, { new: true });
             if (result1) {
-                res.json({ message: "Successfully update profile", success: true, data: {...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
+                res.json({ message: "Successfully update profile", success: true, data: { ...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
             } else {
                 res.json({ message: "Somthing went wrong during update the profile", success: false });
             }
@@ -231,7 +245,7 @@ const updateProfile = asyncHandler(async(req, res) => {
             await newInfo.save()
                 .then((data, err) => {
                     if (data) {
-                        res.json({ message: "Successfully update profile", success: true, data: {...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
+                        res.json({ message: "Successfully update profile", success: true, data: { ...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
                     } else {
                         console.log(err);
                         res.json({ message: "Somthing went wrong during update the profile", success: false });
@@ -245,7 +259,47 @@ const updateProfile = asyncHandler(async(req, res) => {
     }
 });
 
-const jobPost = asyncHandler(async(req, res) => {
+// update profile image
+const updateProfileImage = asyncHandler(async (req, res) => {
+    let user = req.user;
+    let companyLogo = req.file.filename;
+
+    const result = await RecruiterInfo.findOne({ recruiterId: user._id });
+    if (result) {
+        if (result.companyLogo && result.companyLogo !== "defaultImage.png") {
+            fs.unlink(path.join(__dirname, `../images/companyLogo/${result.companyLogo}`), (err) => {
+                if (err) {
+                    console.log(err);
+                    res.json({ message: "Something went wrong during update the profile image!!", success: false });
+                }
+            });
+        }
+        result.companyLogo = companyLogo;
+        result.save()
+            .then(() => {
+                res.json({ message: "Successfully, Profile Image Uploaded!!", companyLogo: companyLogo, success: true });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Something went wrong during update the profile image!!", success: false });
+            });
+    } else {
+        const newRecruiterInfo = new RecruiterInfo({
+            recruiterId: user._id,
+            companyName: "",
+            companyLogo: companyLogo
+        });
+
+        newRecruiterInfo.save()
+            .then(() => {
+                res.json({ message: "Successfully, Profile Image Uploaded!!", companyLogo: companyLogo, success: true });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Something went wrong during update the profile image!!", success: false });
+            });
+    }
+});
+
+const jobPost = asyncHandler(async (req, res) => {
     let user = req.user;
 
     // TO store companyName
@@ -280,55 +334,48 @@ const jobPost = asyncHandler(async(req, res) => {
     })
 });
 
-const saveProfile = asyncHandler(async(req, res) => {
+const saveCandidateProfile = asyncHandler(async (req, res) => {
     const { id } = req.body;
     const user = req.user;
 
     if (id) {
         const result = await RecruiterInfo.findOne({ recruiterId: user._id });
         // console.log(result);
-        if (!result) {
-            let saveProfile = [];
-            saveProfile.push(id);
+        if (result) {
+            (result.saveCandidateProfile).push({ candidate: id });
+            const data = await RecruiterInfo.findOneAndUpdate({ recruiterId: user._id }, { saveCandidateProfile: result.saveCandidateProfile }, { new: true });
+            if (data) {
+                res.json({ message: "Profile has been saved!!", success: true });
+            } else {
+                res.json({ message: "Somthing went wrong during update the profile", success: false });
+            }
+        } else {
+            const arr = [{ candidate: id }];
             const newInfo = new RecruiterInfo({
                 companyName: "",
                 recruiterId: user._id,
-                saveProfile: saveProfile
+                saveCandidateProfile: arr
             });
-
-            newInfo.save().then((data) => {
-                if (data) {
-                    res.json({ message: "Profile has been saved!!", saveProfile: saveProfile, success: true });
-                }
+            newInfo.save().then(() => {
+                res.json({ message: "Profile has been saved!!", success: true });
             }).catch((err) => {
                 console.log(err);
                 res.json({ message: "Somthing went wrong during update the profile", success: false });
             });
-        } else {
-            result.saveProfile.push(id);
-            await RecruiterInfo.findOneAndUpdate({ recruiterId: user._id }, { saveProfile: result.saveProfile }, { new: true })
-                .then((data) => {
-                    if (data) {
-                        res.json({ message: "Profile has been saved!!", saveProfile: data.saveProfile, success: true });
-                    }
-                }).catch((err) => {
-                    console.log(err);
-                    res.json({ message: "Somthing went wrong during update the profile", success: false });
-                });
         }
     } else {
         res.json({ message: "Invalid request", success: false })
     }
 });
 
-// get saved recruiter
-const getSavedRecruiter = asyncHandler(async(req, res) => {
+// get saved candidate
+const getSavedCandidate = asyncHandler(async (req, res) => {
     const user = req.user;
 
     if (user._id) {
-        const result = await RecruiterInfo.findOne({ recruiterId: user._id }).populate("saveProfile");
+        const result = await RecruiterInfo.findOne({ recruiterId: user._id }).populate("saveCandidateProfile.candidate");
         if (result) {
-            res.json({ message: "Saved candidate profile", data: result, success: true });
+            res.json({ message: "Saved candidate profile", data: result.saveCandidateProfile, success: true });
         } else {
             res.json({ message: "User not found!!", success: false });
         }
@@ -337,18 +384,18 @@ const getSavedRecruiter = asyncHandler(async(req, res) => {
     }
 });
 
-// remove saved recruiter
-const removeSavedRecruiter = asyncHandler(async(req, res) => {
+// remove saved Candidate
+const removeSavedCandidate = asyncHandler(async (req, res) => {
     const user = req.user;
     const { id } = req.body;
 
     if (user && id) {
         await RecruiterInfo.findOne({ recruiterId: user._id })
             .then((result) => {
-                result.saveProfile.pull({ _id: id });
+                result.saveCandidateProfile.pull({ candidate: id });
                 result.save()
-                    .then((data) => {
-                        res.json({ message: "Saved candidate profile", data: data, success: true });
+                    .then(() => {
+                        res.json({ message: "Saved candidate profile", success: true });
                     })
                     .catch((err) => {
                         res.json({ message: "Something went wrong during remove profile!!", success: false });
@@ -362,6 +409,46 @@ const removeSavedRecruiter = asyncHandler(async(req, res) => {
     }
 });
 
+// get follower
+const getFollowers = asyncHandler(async (req, res) => {
+    const user = req.user;
+
+    const result = await RecruiterInfo.findOne({ recruiterId: user._id }).populate("followers.candidate followers.candidateInfo");
+    if (result) {
+        res.json({ message: "Followers", data: result.followers, success: true });
+    } else {
+        res.json({ message: "User not found", success: false });
+    }
+});
+
+// remove follower
+const removeFollower = asyncHandler(async (req, res) => {
+    const { candidateId } = req.body;
+    const recruiterId = req.user._id;
+
+    if (candidateId && recruiterId) {
+        const result1 = await candidateInfo.findOne({ candidateId: candidateId });
+        const result2 = await RecruiterInfo.findOne({ recruiterId: recruiterId });
+        if (result1 && result2) {
+            result1.followings.pull({ recruiter: recruiterId });
+            const res1 = await result1.save();
+
+            result2.followers.pull({ candidate: candidateId });
+            const res2 = await result2.save();
+
+            if (res1 && res2) {
+                res.json({ message: "Now, Candidate are unfollowing you!!", success: true });
+            } else {
+                res.json({ message: "Something went wrong during unfollowing!!", success: false });
+            }
+        } else {
+            res.json({ message: "User not found!!", success: false });
+        }
+    } else {
+        res.json({ message: "Invalid request!!", succes: false });
+    }
+});
+
 module.exports = {
     registerRecruiter,
     loginRecruiter,
@@ -369,8 +456,11 @@ module.exports = {
     getRecruiterDetails,
     getRecruiterDetailsById,
     updateProfile,
+    updateProfileImage,
     jobPost,
-    saveProfile,
-    getSavedRecruiter,
-    removeSavedRecruiter
+    saveCandidateProfile,
+    getSavedCandidate,
+    removeSavedCandidate,
+    getFollowers,
+    removeFollower
 }

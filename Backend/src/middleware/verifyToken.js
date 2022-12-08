@@ -4,7 +4,7 @@ const admin = require('../models/admin');
 const candidate = require('../models/candidate');
 const recruiter = require('../models/recruiter');
 
-const verifyToken = expressAsyncHandler(async(req, res, next) => {
+const verifyToken = expressAsyncHandler(async (req, res, next) => {
     const { token } = req.body;
 
     if (token) {

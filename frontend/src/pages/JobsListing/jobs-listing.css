@@ -32,3 +32,9 @@ select {
 #joblists-div {
     padding: 10px 25px 25px 25px;
 }
+
+@media only screen and (max-width: 768px) {
+    #filter-outer-div {
+        display: none;
+    }
+}

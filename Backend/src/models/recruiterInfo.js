@@ -13,7 +13,8 @@ const recruiterInfoSchema = new mongoose.Schema({
     },
 
     companyLogo: {
-        type: String
+        type: String,
+        default: "defaultImage.png"
     },
 
     companyWebsite: {
@@ -52,10 +53,26 @@ const recruiterInfoSchema = new mongoose.Schema({
         type: String
     },
 
-    saveProfile: [{
-        type: mongoose.SchemaTypes.ObjectId,
-        ref: 'Candidate',
-        unique: true
+    saveCandidateProfile: [{
+        candidate: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'Candidate'
+        }
+    }],
+
+    followers: [{
+        candidate: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'Candidate'
+        },
+        candidateInfo: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'CandidateInfo'
+        },
+        followedOn: {
+            type: Date,
+            require: true
+        }
     }]
 
 }, { timestamps: true });

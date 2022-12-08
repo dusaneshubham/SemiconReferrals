@@ -6,8 +6,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useEffect } from "react";
 import { Button } from "@mui/material";
-import ReactLoading from "react-loading";
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
+import Loading from "../../Loading/Loading";
 
 const UpdateProfile = () => {
   // alert
@@ -23,6 +23,7 @@ const UpdateProfile = () => {
     email: "",
     contactNumber: "",
     companyWebsite: "",
+    companyLogo: "",
     linkedin: "",
     totalExperience: "",
     teamName: "",
@@ -33,9 +34,14 @@ const UpdateProfile = () => {
     teamWorkDescription: ""
   });
 
+  // companyLogo
+  const [companyLogo, setCompanyLogo] = useState();
+  
+  // token
+  let token = localStorage.getItem("token");
+  
   useEffect(() => {
     // Getting user details from backend
-    let token = localStorage.getItem("token");
     if (token) {
       axios
         .post("http://localhost:5000/recruiter/getRecruiterDetails", { token })
@@ -49,12 +55,11 @@ const UpdateProfile = () => {
         .catch((err) => {
           console.log(err);
           setLoading(false);
-          // TODO: logout
         });
     } else {
       setAlert({ error: "Unauthorized user!" });
     }
-  }, []);
+  }, [token]);
 
   // update data
   const updateEmployerProfile = () => {
@@ -82,20 +87,36 @@ const UpdateProfile = () => {
     }
   };
 
+  // update company logo
+  const updateCompanyLogo = async () => {
+    if (companyLogo) {
+      const formData = new FormData();
+      formData.append("token", token);
+      formData.append("companyLogo", companyLogo);
+      axios.post("http://localhost:5000/recruiter/updateProfileImage", formData)
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.success) {
+            setUserDetails({ ...userDetails, companyLogo: res.companyLogo });
+            setAlert({ success: res.message });
+            document.getElementById('company-logo').value = "";
+          } else {
+            setAlert({ error: res.message });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setAlert({ error: "Something went wrong with server!!" });
+        })
+    } else {
+      setAlert({ error: "Please! select profile image!!" });
+    }
+  }
+
   if (loading) {
     return (
       <>
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "70vh" }}
-        >
-          <ReactLoading
-            type="bubbles"
-            color="#1976d2"
-            height={100}
-            width={100}
-          />
-        </div>
+        <Loading />
       </>
     );
   } else {
@@ -108,6 +129,43 @@ const UpdateProfile = () => {
             setAlert={setAlert}
           />
           {/* --------------------------------------------------- */}
+
+          {/*--------------------- Profile image ---------------------*/}
+          <div className="col-md-8 p-4 bg-white">
+            <div style={{ margin: "10px 0" }}>
+              <h4>Company Logo</h4>
+              <div className="row g-3 p-4 bg-light">
+                <div className="col-md-12">
+                  {userDetails.companyLogo && userDetails.companyLogo !== "" &&
+                    <div className="d-flex justify-content-center w-100">
+                      <img src={"http://localhost:5000/companyImage/" + userDetails.companyLogo} alt="companyLogo" className="img-fluid" height="100" width="100" />
+                    </div>
+                  }
+                  <label htmlFor="company-logo" className="form-label">
+                    Company Logo
+                  </label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    id="company-logo"
+                    onChange={(e) => setCompanyLogo(e.target.files[0])}
+                  />
+                  {/*--------------------- Submit Button ---------------------*/}
+                  <div className="col-12">
+                    <Button
+                      variant="contained"
+                      type="submit"
+                      className="start-hiring-btn"
+                      style={{ float: "right", margin: "15px 0" }}
+                      onClick={updateCompanyLogo}
+                    >
+                      Save Company Logo
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/*--------------------- Personal Details *---------------------*/}
           <div className="col-md-8 p-4 bg-white">

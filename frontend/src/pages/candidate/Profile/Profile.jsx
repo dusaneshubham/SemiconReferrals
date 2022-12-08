@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate, useParams } from 'react-router-dom';
-import ReactLoading from "react-loading";
 import { CalendarMonth, CardMembership, Download, Email, Favorite, Female, KeyboardArrowLeft, LinkedIn, Male, School, Transgender, Visibility } from '@mui/icons-material';
 import { Timeline, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 import TimelineItem, { timelineItemClasses } from '@mui/lab/TimelineItem';
@@ -10,6 +9,7 @@ import { Button, FormControl, OutlinedInput } from "@mui/material";
 import saveAs from 'file-saver';
 import Footer from "../../../components/Footer/Footer";
 import AlertPopUp from "../../../components/AlertPopUp/AlertPopUp";
+import Loading from "../../../components/Loading/Loading";
 
 const Profile = () => {
 
@@ -18,7 +18,27 @@ const Profile = () => {
   const [defaultResume, setDefaultResume] = useState({});
   const [isSaved, setIsSaved] = useState(false);
   const param = useParams();
-  const [data, setData] = useState({});
+  const [data, setData] = useState({
+    name: "NaN",
+    email: "NaN",
+    contactNumber: "NaN",
+    skills: "NaN",
+    savedJobPost: "NaN",
+    followings: "NaN",
+    resumes: "NaN",
+    education: [],
+    workingExperience: [],
+    DOB: "NaN",
+    gender: "NaN",
+    experience: "NaN",
+    qualification: "NaN",
+    about: "NaN",
+    currentJobLocation: "NaN",
+    desiredCitiesToWork: "NaN",
+    isOpenToWork: "NaN",
+    noticePeriod: "NaN",
+    linkedIn: "NaN",
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,7 +48,7 @@ const Profile = () => {
       await axios.post('http://localhost:5000/candidate/getCandidateDetailsById', { id })
         .then((res) => res.data)
         .then((res) => {
-          if (res.success) {
+          if (res.success && res.data.candidateId) {
             if (res.data.defaultResumeId === null && res.data.resumes.length !== 0) {
               setDefaultResume(res.data.resumes[0].url);
             } else if (res.data.defaultResumeId !== null) {
@@ -39,15 +59,17 @@ const Profile = () => {
               });
             }
             setData(res.data);
-            setLoading(false);
           } else {
-            setLoading(false);
-            navigate('/');
+            setData((data) => {
+              res = res.data;
+              return { ...data, ...res }
+            });
           }
+          setLoading(false);
         })
         .catch((err) => {
           console.log(err);
-          navigate('/');
+          window.history.go(-1);
         });
 
       if (token) {
@@ -55,11 +77,13 @@ const Profile = () => {
           .then((res) => res.data)
           .then((res) => {
             if (res.success) {
-              res.saveProfile.forEach(element => {
-                if (element === id) {
-                  setIsSaved(true);
-                }
-              });
+              if (res.saveCandidateProfile) {
+                res.saveCandidateProfile.forEach(element => {
+                  if (element.candidate === id) {
+                    setIsSaved(true);
+                  }
+                });
+              }
               setTokenData(res.tokenData);
             }
           });
@@ -75,26 +99,24 @@ const Profile = () => {
   const [alert, setAlert] = useState({});
 
   const saveResume = async () => {
-    await axios.post("http://localhost:5000/recruiter/saveProfile", { token: token, id: param.id })
+    await axios.post("http://localhost:5000/recruiter/saveCandidateProfile", { token: token, id: param.id })
       .then((res) => res.data)
       .then((res) => {
         if (res.success) {
-          res.saveProfile.forEach(element => {
-            if (element === param.id) {
-              setIsSaved(true);
-            }
-          });
+          setIsSaved(true);
           setAlert({ success: res.message });
         } else {
           setAlert({ error: res.message });
         }
       }).catch((err) => {
-        console.lof(err);
+        console.log(err);
         setAlert({ error: "Something went wrong with server!" });
       });
   }
 
   const getDate = (date) => {
+    if (date === "NaN")
+      return "NaN";
     const newDate = new Date(date);
     return newDate.getDate() + " " + newDate.toLocaleString('default', { month: 'long' }) + " " + newDate.getFullYear();
   }
@@ -106,17 +128,7 @@ const Profile = () => {
   if (loading) {
     return (
       <>
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "70vh" }}
-        >
-          <ReactLoading
-            type="bubbles"
-            color="#1976d2"
-            height={100}
-            width={100}
-          />
-        </div>
+        <Loading />
       </>
     );
   } else {
