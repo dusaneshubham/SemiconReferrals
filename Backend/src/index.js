@@ -26,14 +26,14 @@ app.use(cookieParser());
 app.use(cors());
 
 // updating status in jobpost after deadline surpasses
-const job = schedule.scheduleJob('01 00 00 * * *', async() => {
-    await JobPost.updateMany({
-        applicationDeadline: {
-            $lt: (new Date(new Date().setHours(00, 00, 00, 00))).toISOString()
-        },
-        status: "Approved"
-    }, { isActive: false }, { new: true });
-});
+// const job = schedule.scheduleJob('01 47 15 * * *', async() => {
+//     await JobPost.updateMany({
+//         applicationDeadline: {
+//             $lt: (new Date(new Date().setHours(00, 00, 00, 00))).toISOString()
+//         },
+//         status: "Approved"
+//     }, { isActive: false }, { new: true });
+// });
 
 // resumes path
 app.use("/resumes", express.static(path.join(__dirname, '/resumes/')));

@@ -139,12 +139,43 @@ const JobDescription = () => {
             }
           })
           .catch((err) => {
-            console.log(err);
             setAlert({ error: "Something went wrong with server!" });
           });
       }
 
     };
+
+    // check whether already applied to this job or not
+    const isAppliedToJob = () => {
+      axios.post("http://localhost:5000/candidate/isAppliedToJob", { token, postId })
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.success) {
+            setIsAppliedForTheJob(true);
+          }
+        }).catch((err) => {
+          setAlert({ error: "Something went wrong with server!" });
+        })
+    }
+
+    // check whether saved this job or not
+    const isSavedTheJob = () => {
+      const token = localStorage.getItem("token");
+      axios.post("http://localhost:5000/candidate/isSavedJob", { token, postId })
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.success) {
+            setIsSavedJob(true);
+          }
+          else {
+            setIsSavedJob(false);
+          }
+          setLoading(false);
+        }).catch((err) => {
+          console.log(err);
+          setAlert({ error: "Something went wrong with server!" });
+        })
+    }
 
     getJobDetail();
 
@@ -153,38 +184,7 @@ const JobDescription = () => {
     isSavedTheJob();
   }, [navigate, postId]);
 
-  // check whether already applied to this job or not
-  const isAppliedToJob = () => {
-    axios.post("http://localhost:5000/candidate/isAppliedToJob", { token, postId })
-      .then((res) => res.data)
-      .then((res) => {
-        if (res.success) {
-          setIsAppliedForTheJob(true);
-        }
-      }).catch((err) => {
-        console.log(err);
-        setAlert({ error: "Something went wrong with server!" });
-      })
-  }
 
-  // check whether saved this job or not
-  const isSavedTheJob = () => {
-    const token = localStorage.getItem("token");
-    axios.post("http://localhost:5000/candidate/isSavedJob", { token, postId })
-      .then((res) => res.data)
-      .then((res) => {
-        if (res.success) {
-          setIsSavedJob(true);
-        }
-        else {
-          setIsSavedJob(false);
-        }
-        setLoading(false);
-      }).catch((err) => {
-        console.log(err);
-        setAlert({ error: "Something went wrong with server!" });
-      })
-  }
 
   const applyToJob = () => {
     const token = localStorage.getItem("token");
@@ -196,12 +196,17 @@ const JobDescription = () => {
         .then((response) => response.data)
         .then((res) => {
           if (res.success) {
-            isAppliedToJob();
+            // isAppliedToJob();
+            if(res.success) {
+              setIsAppliedForTheJob(true);
+            }
+            else {
+              setAlert({ error: res.message });
+            }
           }
           handleClose();
         })
         .catch((err) => {
-          console.log(err);
           setAlert({ error: "Something went wrong with server!" });
         });
     }
@@ -212,10 +217,15 @@ const JobDescription = () => {
     axios.post("http://localhost:5000/candidate/saveTheJobPost", { token, postId })
       .then((response) => response.data)
       .then((res) => {
-        isSavedTheJob();
+        // isSavedTheJob();
+        if (res.success) {
+          setIsSavedJob(true);
+        }
+        else {
+          setAlert({ error: res.message });
+        }
       })
       .catch((err) => {
-        console.log(err);
         setAlert({ error: "Something went wrong with server!" });
       })
   }
