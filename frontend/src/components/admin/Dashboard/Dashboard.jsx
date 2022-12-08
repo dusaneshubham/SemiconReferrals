@@ -2,8 +2,8 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { image2 } from "../../../images/images";
 import StatisticsCard from "../../StatisticsCard/StatisticsCard";
-import ReactLoading from "react-loading";
 import axios from 'axios';
+import Loading from "../../Loading/Loading";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -26,17 +26,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <>
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: "70vh" }}
-        >
-          <ReactLoading
-            type="bubbles"
-            color="#1976d2"
-            height={100}
-            width={100}
-          />
-        </div>
+        <Loading />
       </>
     );
   } else {

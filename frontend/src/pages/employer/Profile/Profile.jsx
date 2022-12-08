@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import ReactLoading from "react-loading";
 import {
     CardMembership,
     Email,
@@ -14,58 +13,86 @@ import { Button, FormControl, OutlinedInput } from "@mui/material";
 import Footer from "../../../components/Footer/Footer";
 import axios from "axios";
 import AlertPopUp from "../../../components/AlertPopUp/AlertPopUp";
+import Loading from "../../../components/Loading/Loading";
 
 const Profile = () => {
     const navigate = useNavigate();
     const param = useParams();
     const [candidateId, setCandidateId] = useState("");
     const [isFollow, setIsFollow] = useState(false);
-    const [data, setData] = useState({});
+    const [data, setData] = useState({
+        name: "NaN",
+        email: "NaN",
+        contactNumber: "NaN",
+        companyName: "NaN",
+        companyWebsite: "NaN",
+        totalExperience: "NaN",
+        linkedin: "NaN",
+        teamName: "NaN",
+        teamSize: "NaN",
+        location: "NaN",
+        designation: "NaN",
+        experienceInCurrentOrganization: "NaN",
+        teamWorkDescription: "NaN",
+        createDate: "NaN",
+    });
     const [loading, setLoading] = useState(true);
+    const token = localStorage.getItem("token");
 
     useEffect(() => {
         const id = param.id;
-        const token = localStorage.getItem("token");
         const getData = async () => {
-            await axios
-                .post("http://localhost:5000/recruiter/getRecruiterDetailsById", { id })
-                .then((res) => res.data)
-                .then((res) => {
-                    if (res.success) {
-                        setData(res.data);
-                        setLoading(false);
-                    } else {
-                        setLoading(false);
-                        navigate("/");
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                    navigate("/");
-                });
 
             if (token) {
-                axios.post("http://localhost:5000/verify-token", { token })
+                axios.post("http://localhost:5000/candidate/getCandidateDetails", { token })
                     .then((res) => res.data)
                     .then((res) => {
-                        console.log(res);
-                        if (res.success && res.tokenData.type === "candidate") {
-                            setCandidateId(res.tokenData._id);
+                        if (res.success) {
+                            setCandidateId(res.candidateId);
+                            if (res.followings) {
+                                res.followings.forEach(element => {
+                                    if (element.recruiter === id)
+                                        setIsFollow(true);
+                                });
+                            }
                         }
                     }).catch((err) => {
                         console.log(err);
                         window.history.go(-1);
                     })
             }
+
+            await axios
+                .post("http://localhost:5000/recruiter/getRecruiterDetailsById", { id })
+                .then((res) => res.data)
+                .then((res) => {
+                    if (res.success && res.data.companyName) {
+                        setData(res.data);
+                        setLoading(false);
+                    } else {
+                        setLoading(false);
+                        setData((data) => {
+                            res = res.data;
+                            return { ...data, ...res }
+                        });
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                    window.history.go(-1);
+                });
         };
 
         getData();
-    }, [navigate, param]);
+    }, [navigate, param, token]);
 
     // alert
     const [alert, setAlert] = useState({});
 
     const getDate = (date) => {
+        if (date === "NaN")
+            return "NaN";
+
         const newDate = new Date(date);
         return (
             newDate.getDate() +
@@ -77,7 +104,7 @@ const Profile = () => {
     };
 
     const followRecruiter = () => {
-        axios.post("http://localhost:5000/candidate/followRecruiter", { candidateId, recruiterId: param.id })
+        axios.post("http://localhost:5000/candidate/followRecruiter", { token, recruiterId: param.id })
             .then((res) => res.data)
             .then((res) => {
                 if (res.success) {
@@ -86,12 +113,13 @@ const Profile = () => {
                     setAlert({ error: res.message });
                 }
             }).catch((err) => {
+                console.log(err);
                 setAlert({ message: "Something went wrong with server!!" });
             });
     }
 
     const unFollowRecruiter = () => {
-        axios.post("http://localhost:5000/candidate/unFollowRecruiter", { candidateId, recruiterId: param.id })
+        axios.post("http://localhost:5000/candidate/unFollowRecruiter", { token, recruiterId: param.id })
             .then((res) => res.data)
             .then((res) => {
                 if (res.success) {
@@ -107,17 +135,7 @@ const Profile = () => {
     if (loading) {
         return (
             <>
-                <div
-                    className="d-flex justify-content-center align-items-center"
-                    style={{ height: "70vh" }}
-                >
-                    <ReactLoading
-                        type="bubbles"
-                        color="#1976d2"
-                        height={100}
-                        width={100}
-                    />
-                </div>
+                <Loading />
             </>
         );
     } else {
@@ -140,7 +158,7 @@ const Profile = () => {
                             <h3 className="text-orange">{data.name}</h3>
                             <p className="text-smaller">{data.companyName}</p>
                         </div>
-                        {data.linkedin !== "" && (
+                        {(data.linkedin !== "" && data.linkedin !== "NaN") && (
                             <div className="float-end">
                                 <a href={data.linkedin} target="_blank" rel="noreferrer">
                                     <LinkedIn fontSize="large" />

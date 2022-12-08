@@ -20,6 +20,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import saveAs from "file-saver";
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
+import Loading from "../../Loading/Loading";
 
 const MyResumes = () => {
   const [alert, setAlert] = useState({});
@@ -28,6 +29,7 @@ const MyResumes = () => {
   const [resumeData, setResumeData] = useState([]);
   const [defaultResumeId, setDefaultResumeId] = useState("");
   const [deleteResume, setDeleteResume] = useState();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     //token
@@ -42,11 +44,12 @@ const MyResumes = () => {
           setDefaultResumeId(response.defaultResumeId);
         } else {
           setAlert({ error: response.message });
-          // TODO: redirect path
         }
+        setLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
         setAlert({ error: "Something went wrong with server!" });
       });
   }, []);
@@ -168,117 +171,125 @@ const MyResumes = () => {
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
   // ------------------------------------------------------------------------------------------ //
 
-  return (
-    <>
-      {/* ---------------------- alert ---------------------- */}
-      <AlertPopUp
-        alert={alert}
-        setAlert={setAlert}
-      />
-      {/* --------------------------------------------------- */}
-
-      <h4>Your Uploaded Resumes</h4>
-
-      {/* ------------------- Upload Resume -------------------- */}
-      <div style={{ margin: "40px 0" }}>
-        <h5 style={{ color: "var(--main-blue)" }}>Add Resume</h5>
-        <input
-          type="file"
-          onChange={(e) => setResume(e.target.files[0])}
-          name="resume"
-          id="resume"
+  if (loading) {
+    return (
+      <>
+        <Loading />
+      </>
+    )
+  } else {
+    return (
+      <>
+        {/* ---------------------- alert ---------------------- */}
+        <AlertPopUp
+          alert={alert}
+          setAlert={setAlert}
         />
-        <button onClick={uploadResume} className="main-btn">
-          Add
-        </button>
-      </div>
+        {/* --------------------------------------------------- */}
 
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Resume Name</StyledTableCell>
-              <StyledTableCell>Download</StyledTableCell>
-              <StyledTableCell>Delete</StyledTableCell>
-              <StyledTableCell>Set Default</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {resumeData.map((data, index) => {
-              return (
-                <StyledTableRow key={index}>
-                  <StyledTableCell>{data.fileName}</StyledTableCell>
-                  <StyledTableCell>
-                    <Button
-                      variant="contained"
-                      color="success"
-                      style={{ margin: "10px" }}
-                      startIcon={<DownloadIcon />}
-                      onClick={() => downloadResume(data.url)}
-                    >
-                      Download
-                    </Button>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Button
-                      variant="contained"
-                      color="error"
-                      onClick={() => handleClickOpen(data._id, data.fileName)}
-                      style={{ margin: "10px" }}
-                      startIcon={<DeleteIcon />}
-                    >
-                      Delete
-                    </Button>
-                  </StyledTableCell>
-                  {data._id === defaultResumeId ? (
+        <h4>Your Uploaded Resumes</h4>
+
+        {/* ------------------- Upload Resume -------------------- */}
+        <div style={{ margin: "40px 0" }}>
+          <h5 style={{ color: "var(--main-blue)" }}>Add Resume</h5>
+          <input
+            type="file"
+            onChange={(e) => setResume(e.target.files[0])}
+            name="resume"
+            id="resume"
+          />
+          <button onClick={uploadResume} className="main-btn">
+            Add
+          </button>
+        </div>
+
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Resume Name</StyledTableCell>
+                <StyledTableCell>Download</StyledTableCell>
+                <StyledTableCell>Delete</StyledTableCell>
+                <StyledTableCell>Set Default</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {resumeData.map((data, index) => {
+                return (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell>{data.fileName}</StyledTableCell>
                     <StyledTableCell>
                       <Button
                         variant="contained"
                         color="success"
                         style={{ margin: "10px" }}
+                        startIcon={<DownloadIcon />}
+                        onClick={() => downloadResume(data.url)}
                       >
-                        Default
+                        Download
                       </Button>
                     </StyledTableCell>
-                  ) : (
                     <StyledTableCell>
                       <Button
-                        variant="outlined"
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleClickOpen(data._id, data.fileName)}
                         style={{ margin: "10px" }}
-                        onClick={() => makeDefault(data._id)}
+                        startIcon={<DeleteIcon />}
                       >
-                        Set Default
+                        Delete
                       </Button>
                     </StyledTableCell>
-                  )}
-                </StyledTableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <Dialog
-        fullScreen={fullScreen}
-        open={open}
-        onClose={handleClickClose}
-        aria-labelledby="responsive-dialog-title"
-      >
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to Delete this Resume?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={handleDeleteResume}>
-            Yes
-          </Button>
-          <Button onClick={handleClickClose} autoFocus>
-            No
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  );
+                    {data._id === defaultResumeId ? (
+                      <StyledTableCell>
+                        <Button
+                          variant="contained"
+                          color="success"
+                          style={{ margin: "10px" }}
+                        >
+                          Default
+                        </Button>
+                      </StyledTableCell>
+                    ) : (
+                      <StyledTableCell>
+                        <Button
+                          variant="outlined"
+                          style={{ margin: "10px" }}
+                          onClick={() => makeDefault(data._id)}
+                        >
+                          Set Default
+                        </Button>
+                      </StyledTableCell>
+                    )}
+                  </StyledTableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Dialog
+          fullScreen={fullScreen}
+          open={open}
+          onClose={handleClickClose}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to Delete this Resume?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleDeleteResume}>
+              Yes
+            </Button>
+            <Button onClick={handleClickClose} autoFocus>
+              No
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </>
+    );
+  }
 };
 
 export default MyResumes;

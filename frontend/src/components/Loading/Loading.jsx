@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactLoading from "react-loading";
 
-const Laoding = () => {
+const Loading = () => {
     return (
         <>
             <div
@@ -19,4 +19,4 @@ const Laoding = () => {
     )
 }
 
-export default Laoding
+export default Loading

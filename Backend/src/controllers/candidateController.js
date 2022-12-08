@@ -7,6 +7,7 @@ const bcrypt = require('bcryptjs');
 const { isEmail } = require('validator');
 const fs = require('fs');
 const path = require('path');
+const recruiterInfo = require('../models/recruiterInfo');
 
 // Generate the token
 const generateToken = (user) => {
@@ -14,7 +15,7 @@ const generateToken = (user) => {
 }
 
 // Register Candidate
-const registerCandidate = asyncHandler(async(req, res) => {
+const registerCandidate = asyncHandler(async (req, res) => {
     const { name, email, password, contactNumber } = req.body;
 
     // Validations
@@ -42,7 +43,7 @@ const registerCandidate = asyncHandler(async(req, res) => {
         password: hashPassword
     });
 
-    newCandidate.save(async(err, data) => {
+    newCandidate.save(async (err, data) => {
         if (err) {
             console.log(err);
             return res.json({ message: "Error in registering the candidate", success: false });
@@ -56,7 +57,7 @@ const registerCandidate = asyncHandler(async(req, res) => {
 });
 
 // Login Candidate
-const loginCandidate = asyncHandler(async(req, res) => {
+const loginCandidate = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -80,7 +81,7 @@ const loginCandidate = asyncHandler(async(req, res) => {
 });
 
 // update password
-const updatePassword = asyncHandler(async(req, res) => {
+const updatePassword = asyncHandler(async (req, res) => {
     const { email, password, confirmPassword } = req.body;
 
     if (!email || !password || !confirmPassword) {
@@ -101,7 +102,7 @@ const updatePassword = asyncHandler(async(req, res) => {
 });
 
 // update profile
-const updateProfile = asyncHandler(async(req, res) => {
+const updateProfile = asyncHandler(async (req, res) => {
     // candidate information details
     const {
         name,
@@ -175,7 +176,7 @@ const updateProfile = asyncHandler(async(req, res) => {
 });
 
 // change password
-const changePassword = asyncHandler(async(req, res) => {
+const changePassword = asyncHandler(async (req, res) => {
     const { oldPassword, newPassword } = req.body;
     const user = req.user;
 
@@ -203,7 +204,7 @@ const changePassword = asyncHandler(async(req, res) => {
 });
 
 // get candidate details
-const getCandidateDetails = asyncHandler(async(req, res) => {
+const getCandidateDetails = asyncHandler(async (req, res) => {
     let user = req.user;
     let candidateData = await Candidate.findOne({ _id: user._id });
 
@@ -211,9 +212,11 @@ const getCandidateDetails = asyncHandler(async(req, res) => {
         let candidateInfo = await CandidateInfo.findOne({ candidateId: user._id });
         if (candidateInfo) {
             res.json({
+                candidateId: user._id,
                 email: candidateData.email,
                 name: candidateData.name,
                 contactNumber: candidateData.contactNumber,
+                infoId: candidateInfo._id,
                 DOB: candidateInfo.DOB,
                 gender: candidateInfo.gender,
                 experience: candidateInfo.experience,
@@ -233,10 +236,10 @@ const getCandidateDetails = asyncHandler(async(req, res) => {
         } else {
             // for new user
             res.json({
+                candidateId: user._id,
                 email: candidateData.email,
                 name: candidateData.name,
                 contactNumber: candidateData.contactNumber,
-                DOB: candidateInfo.DOB,
                 success: true
             });
         }
@@ -246,36 +249,46 @@ const getCandidateDetails = asyncHandler(async(req, res) => {
 });
 
 // get candidate details by id
-const getCandidateDetailsById = asyncHandler(async(req, res) => {
+const getCandidateDetailsById = asyncHandler(async (req, res) => {
     const { id } = req.body;
 
     if (id) {
         const result = await Candidate.findOne({ candidateId: id }).select({ email: 1, contactNumber: 1, name: 1 });
         const info = await CandidateInfo.findOne({ candidateId: id });
-        if (info && result) {
-            const data = {
-                name: result.name,
-                email: result.email,
-                contactNumber: result.contactNumber,
-                skills: info.skills,
-                savedJobPost: info.savedJobPost,
-                followings: info.followings,
-                resumes: info.resumes,
-                education: info.education,
-                workingExperience: info.workingExperience,
-                DOB: info.DOB,
-                gender: info.gender,
-                experience: info.experience,
-                qualification: info.qualification,
-                about: info.about,
-                currentJobLocation: info.currentJobLocation,
-                desiredCitiesToWork: info.desiredCitiesToWork,
-                isOpenToWork: info.isOpenToWork,
-                noticePeriod: info.noticePeriod,
-                linkedIn: info.linkedIn,
-                defaultResumeId: info.defaultResumeId,
-            };
-            res.json({ message: "Candidate information", data: data, success: true });
+        if (result) {
+            if (info) {
+                const data = {
+                    name: result.name,
+                    email: result.email,
+                    contactNumber: result.contactNumber,
+                    candidateId: info.candidateId,
+                    skills: info.skills,
+                    savedJobPost: info.savedJobPost,
+                    followings: info.followings,
+                    resumes: info.resumes,
+                    education: info.education,
+                    workingExperience: info.workingExperience,
+                    DOB: info.DOB,
+                    gender: info.gender,
+                    experience: info.experience,
+                    qualification: info.qualification,
+                    about: info.about,
+                    currentJobLocation: info.currentJobLocation,
+                    desiredCitiesToWork: info.desiredCitiesToWork,
+                    isOpenToWork: info.isOpenToWork,
+                    noticePeriod: info.noticePeriod,
+                    linkedIn: info.linkedIn,
+                    defaultResumeId: info.defaultResumeId
+                };
+                res.json({ message: "Candidate information", data: data, success: true });
+            } else {
+                const data = {
+                    name: result.name,
+                    email: result.email,
+                    contactNumber: result.contactNumber,
+                }
+                res.json({ message: "Candidate information", data: data, success: true });
+            }
         } else {
             res.json({ message: "User not found!", success: false });
         }
@@ -285,7 +298,7 @@ const getCandidateDetailsById = asyncHandler(async(req, res) => {
 });
 
 // update working experience
-const updateWorkingExperience = asyncHandler(async(req, res) => {
+const updateWorkingExperience = asyncHandler(async (req, res) => {
     const { currentWorkingExperience } = req.body;
     const user = req.user;
 
@@ -305,7 +318,7 @@ const updateWorkingExperience = asyncHandler(async(req, res) => {
 });
 
 // update education details
-const updateEducationDetails = asyncHandler(async(req, res) => {
+const updateEducationDetails = asyncHandler(async (req, res) => {
     const { educationDetails } = req.body;
     const user = req.user;
 
@@ -329,7 +342,7 @@ const updateEducationDetails = asyncHandler(async(req, res) => {
 });
 
 // apply for job
-const applyForJob = asyncHandler(async(req, res) => {
+const applyForJob = asyncHandler(async (req, res) => {
     const user = req.user;
     let data = req.body.data;
 
@@ -352,7 +365,7 @@ const applyForJob = asyncHandler(async(req, res) => {
 });
 
 // check whether candidate has applied to the particular job or not
-const isAppliedToJob = asyncHandler(async(req, res) => {
+const isAppliedToJob = asyncHandler(async (req, res) => {
     const candidate = req.user;
     const { postId } = req.body;
     const isApplied = await JobApplication.findOne({ candidateId: candidate._id, jobPostId: postId }).count();
@@ -364,7 +377,7 @@ const isAppliedToJob = asyncHandler(async(req, res) => {
 })
 
 // check whether candidate has already saved the job or not
-const isSavedJob = asyncHandler(async(req, res) => {
+const isSavedJob = asyncHandler(async (req, res) => {
     const user = req.user;
     const { postId } = req.body;
     const candidateInfo = await CandidateInfo.findOne({ candidateId: user._id });
@@ -376,7 +389,7 @@ const isSavedJob = asyncHandler(async(req, res) => {
     }
 })
 
-const saveTheJobPost = asyncHandler(async(req, res) => {
+const saveTheJobPost = asyncHandler(async (req, res) => {
     const candidate = req.user;
     const { postId } = req.body;
 
@@ -407,9 +420,20 @@ const saveTheJobPost = asyncHandler(async(req, res) => {
 
 });
 
+const getSaveTheJobPost = asyncHandler(async (req, res) => {
+    const user = req.user;
+
+    const result = await CandidateInfo.findOne({ candidateId: user._id }).populate("savedJobPost");
+    if (result) {
+        res.json({ message: "Save the job post", data: result.savedJobPost, success: true });
+    } else {
+        res.json({ message: "Save the job post", data: [], success: true });
+    }
+});
+
 // not used yet
 // withdraw application
-const withdrawApplication = asyncHandler(async(req, res) => {
+const withdrawApplication = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
     const result = await JobApplication.deleteOne({ _id });
@@ -423,7 +447,7 @@ const withdrawApplication = asyncHandler(async(req, res) => {
 
 // not used yet
 // get application status
-const getApplicationStatus = asyncHandler(async(req, res) => {
+const getApplicationStatus = asyncHandler(async (req, res) => {
     const { _id } = req.body;
     const result = await JobApplication.findOne({ _id });
 
@@ -435,7 +459,7 @@ const getApplicationStatus = asyncHandler(async(req, res) => {
 });
 
 // get all job applications
-const getAllJobApplications = asyncHandler(async(req, res) => {
+const getAllJobApplications = asyncHandler(async (req, res) => {
     const user = req.user;
     const result = await JobApplication.find({ candidateId: user._id }).populate("jobPostId").sort({ createdAt: 1 });
     if (result) {
@@ -446,7 +470,7 @@ const getAllJobApplications = asyncHandler(async(req, res) => {
 });
 
 // upload resume
-const uploadMyResume = asyncHandler(async(req, res) => {
+const uploadMyResume = asyncHandler(async (req, res) => {
     let user = req.user;
     let myResumes = await CandidateInfo.findOne({ candidateId: user._id }).select({ "resumes": 1 });
 
@@ -457,7 +481,7 @@ const uploadMyResume = asyncHandler(async(req, res) => {
             candidateId: user._id,
             resumes: resume
         });
-        await data.save().then(async(data) => {
+        await data.save().then(async (data) => {
             if (data) {
                 console.log(data);
                 await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { defaultResumeId: data.resume[0]._id }, { new: true })
@@ -482,7 +506,7 @@ const uploadMyResume = asyncHandler(async(req, res) => {
     } else {
         myResumes.resumes.push({ fileName: req.file.filename, url: 'http://localhost:5000/resumes/' + req.file.filename });
         await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: myResumes.resumes }, { new: true })
-            .then(async(data) => {
+            .then(async (data) => {
                 if (data) {
                     if (myResumes.resumes.length === 1) {
                         await CandidateInfo.updateOne({ candidateId: user._id }, { defaultResumeId: data.resumes[0]._id }, { new: true })
@@ -507,7 +531,7 @@ const uploadMyResume = asyncHandler(async(req, res) => {
 });
 
 // make default resume
-const makeDefaultResume = asyncHandler(async(req, res) => {
+const makeDefaultResume = asyncHandler(async (req, res) => {
     const user = req.user;
     const { id } = req.body;
 
@@ -530,7 +554,7 @@ const makeDefaultResume = asyncHandler(async(req, res) => {
 });
 
 // delete resume
-const deleteResume = asyncHandler(async(req, res) => {
+const deleteResume = asyncHandler(async (req, res) => {
     const { id, fileName } = req.body;
     const user = req.user;
     if (id) {
@@ -562,7 +586,7 @@ const deleteResume = asyncHandler(async(req, res) => {
 });
 
 // get all resume
-const getAllMyResumes = asyncHandler(async(req, res) => {
+const getAllMyResumes = asyncHandler(async (req, res) => {
     const user = req.user;
     let data = await CandidateInfo.findOne({ candidateId: user._id });
     if (data) {
@@ -572,14 +596,32 @@ const getAllMyResumes = asyncHandler(async(req, res) => {
     }
 });
 
+// get following
+const getFollowings = asyncHandler(async (req, res) => {
+    const user = req.user;
+    const result = await CandidateInfo.findOne({ candidateId: user._id }).populate("followings.recruiter");
+
+    if (result) {
+        res.json({ message: "Recruiter following details", data: result.followings, success: true });
+    } else {
+        res.json({ message: "Recruiter following details", data: [], success: true });
+    }
+});
+
 //follow recruiter
-const followRecruiter = asyncHandler(async(req, res) => {
-    const { candidateId, recruiterId } = req.body;
+const followRecruiter = asyncHandler(async (req, res) => {
+    const { recruiterId } = req.body;
+    const candidateId = req.user._id;
 
     if (candidateId && recruiterId) {
         const result = await CandidateInfo.findOne({ candidateId: candidateId });
+        const recruiter = await recruiterInfo.findOne({ recruiterId: recruiterId });
         if (result) {
-            result.followings.push(recruiterId);
+            if (recruiter) {
+                result.followings.push({ recruiter: recruiterId, companyName: recruiter.companyName, companyLogo: recruiter.companyLogo });
+            } else {
+                result.followings.push({ recruiter: recruiterId });
+            }
             CandidateInfo.findOneAndUpdate({ candidateId: candidateId }, { followings: result.followings }, { new: true })
                 .then(() => {
                     res.json({ message: "Now you are followings this recruiter!!", success: true });
@@ -588,7 +630,12 @@ const followRecruiter = asyncHandler(async(req, res) => {
                     res.json({ message: "Somthing went wrong during follow recruiter", success: false });
                 });
         } else {
-            let followings = [recruiterId];
+            let followings;
+            if (recruiter) {
+                followings = [{ recruiter: recruiterId, companyName: recruiter.companyName, companyLogo: recruiter.companyLogo }];
+            } else {
+                followings = [{ recruiter: recruiterId }];
+            }
             const newCandidate = new CandidateInfo({
                 candidateId: candidateId,
                 followings: followings
@@ -609,13 +656,14 @@ const followRecruiter = asyncHandler(async(req, res) => {
 });
 
 // unfollow recruiter
-const unFollowRecruiter = asyncHandler(async(req, res) => {
-    const { candidateId, recruiterId } = req.body;
+const unFollowRecruiter = asyncHandler(async (req, res) => {
+    const { recruiterId } = req.body;
+    const candidateId = req.user._id;
 
     if (candidateId && recruiterId) {
         const result = await CandidateInfo.findOne({ candidateId: candidateId });
         if (result) {
-            result.followings.pull(recruiterId);
+            result.followings.pull({ recruiter: recruiterId });
             result.save()
                 .then(() => {
                     res.json({ message: "Now you are unfollwing this recruiter", success: true });
@@ -650,7 +698,9 @@ module.exports = {
     getAllMyResumes,
     isAppliedToJob,
     saveTheJobPost,
+    getSaveTheJobPost,
     isSavedJob,
+    getFollowings,
     followRecruiter,
     unFollowRecruiter
 };

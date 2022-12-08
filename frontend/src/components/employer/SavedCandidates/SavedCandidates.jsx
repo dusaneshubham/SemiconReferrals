@@ -20,6 +20,8 @@ import { image2 } from "../../../images/images";
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import AlertPopUp from "../../AlertPopUp/AlertPopUp";
+import Loading from "../../Loading/Loading";
 
 const SavedCandidates = () => {
   const navigate = useNavigate();
@@ -27,6 +29,8 @@ const SavedCandidates = () => {
   const theme = useTheme();
   const [candidates, setCandidates] = useState([]);
   const [deleteId, setDeleteId] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [alert, setAlert] = useState({});
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const handleClickOpen = (id) => {
@@ -70,13 +74,15 @@ const SavedCandidates = () => {
           .then((res) => res.data)
           .then((res) => {
             if (res.success) {
-              setCandidates(res.data.saveProfile);
+              setCandidates(res.data);
             } else {
-              // setAlert({ error: res.message });
+              setAlert({ error: res.message });
             }
+            setLoading(false);
           }).catch((err) => {
             console.log(err);
-            // setAlert({ error: "Something went wrong with server!" });
+            setLoading(false);
+            setAlert({ error: "Something went wrong with server!" });
           })
       }
 
@@ -91,95 +97,108 @@ const SavedCandidates = () => {
       .then((res) => res.data)
       .then((res) => {
         if (res.success) {
-          setCandidates(res.data.saveProfile);
+          setCandidates(candidates.filter((element) => element.candidate._id !== deleteId));
         } else {
-          console.log(res.message);
+          setAlert({ error: res.message });
         }
       }).catch((err) => {
         console.log(err);
+        setAlert({ error: "Something went wrong with server!" });
       });
     setOpen(false);
   }
 
-  return (
-    <>
-      <h4>Your Saved Candidates</h4>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Candidate</StyledTableCell>
-              <StyledTableCell>Followed On</StyledTableCell>
-              <StyledTableCell>Profile</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {candidates.map((element, index) => (
-              <StyledTableRow key={index}>
-                <StyledTableCell>
-                  <div className="d-flex align-items-center">
-                    <div style={{ marginRight: "15px" }}>
-                      <img src={image2} width="50" height="50" alt="" />
+  if (loading) {
+    return (
+      <>
+        <Loading />
+      </>
+    )
+  } else {
+    return (
+      <>
+        <AlertPopUp
+          alert={alert}
+          setAlert={setAlert}
+        />
+        <h4>Your Saved Candidates</h4>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Candidate</StyledTableCell>
+                <StyledTableCell>Followed On</StyledTableCell>
+                <StyledTableCell>Profile</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {candidates.map((element, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell>
+                    <div className="d-flex align-items-center">
+                      <div style={{ marginRight: "15px" }}>
+                        <img src={image2} width="50" height="50" alt="" />
+                      </div>
+                      <div>
+                        <div className="text-orange">{element.candidate.name}</div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="text-orange">{element.name}</div>
-                    </div>
-                  </div>
-                </StyledTableCell>
-                <StyledTableCell>
-                  <Link to={"/candidate/viewprofile/" + element._id} className="nav-link">
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Link to={"/candidate/viewprofile/" + element.candidate._id} className="text-decoration-none">
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleClickOpen}
+                      >
+                        View Profile
+                      </Button>
+                    </Link>
+                  </StyledTableCell>
+                  <StyledTableCell>
                     <Button
                       variant="contained"
-                      color="primary"
-                      onClick={handleClickOpen}
+                      color="error"
+                      onClick={() => handleClickOpen(element.candidate._id)}
+                      startIcon={<DeleteIcon />}
                     >
-                      View Profile
+                      Remove
                     </Button>
-                  </Link>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+              {candidates.length === 0 && <StyledTableRow>
+                <StyledTableCell colSpan="3" className="text-center text-secondary">
+                  No Profile Found!
                 </StyledTableCell>
-                <StyledTableCell>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={() => handleClickOpen(element._id)}
-                    startIcon={<DeleteIcon />}
-                  >
-                    Remove
-                  </Button>
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
-            {candidates.length === 0 && <StyledTableRow>
-              <StyledTableCell colSpan="3" className="text-center text-secondary">
-                No Profile found!
-              </StyledTableCell>
-            </StyledTableRow>}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              </StyledTableRow>}
+            </TableBody>
+          </Table>
+        </TableContainer>
 
-      <Dialog
-        fullScreen={fullScreen}
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="responsive-dialog-title"
-      >
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to Remove this candidate from your followings?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button autoFocus onClick={removeProfile}>
-            Yes
-          </Button>
-          <Button onClick={handleClose} autoFocus>
-            No
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
-  );
+        <Dialog
+          fullScreen={fullScreen}
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to Remove this candidate from your followings?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={removeProfile}>
+              Yes
+            </Button>
+            <Button onClick={handleClose} autoFocus>
+              No
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </>
+    );
+  }
 };
 
 export default SavedCandidates;
