@@ -19,8 +19,8 @@ const JobDescription = () => {
 
   // to check whether deadline has gone
   // let today = new Date().toJSON().slice(0, 10);
-  // let today = new Date();
-  // console.log(today);
+  let today = new Date();
+  console.log("today: " + today.toString());
 
   const [jobDetail, setJobDetail] = useState({
     recruiterId: "",
@@ -283,8 +283,6 @@ const JobDescription = () => {
             />
           </div>
         </div>
-
-        {/* {jobDetail.applicationDeadline < today ? "gone" : "not"} */}
 
         {/* ------------------- Apply Now Button ------------------ */}
         {tokenData.type === "candidate" && (
