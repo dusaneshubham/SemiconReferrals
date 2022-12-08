@@ -101,13 +101,9 @@ const candidateInfoSchema = new mongoose.Schema({
             type: mongoose.SchemaTypes.ObjectId,
             ref: "Recruiter"
         },
-        companyName: {
-            type: String,
-            default: ""
-        },
-        companyLogo: {
-            type: String,
-            default: 'http://localhost:5000/images/logo-icon-semiconreferrals.png'
+        recruiterInfo: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: "RecruiterInfo"
         }
     }],
 

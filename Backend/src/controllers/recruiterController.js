@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const { isEmail } = require('validator');
 const fs = require("fs");
 const path = require("path");
+const candidateInfo = require('../models/candidateInfo');
 
 // Generate the token
 const generateToken = (user) => {
@@ -408,6 +409,46 @@ const removeSavedCandidate = asyncHandler(async (req, res) => {
     }
 });
 
+// get follower
+const getFollowers = asyncHandler(async (req, res) => {
+    const user = req.user;
+
+    const result = await RecruiterInfo.findOne({ recruiterId: user._id }).populate("followers.candidate followers.candidateInfo");
+    if (result) {
+        res.json({ message: "Followers", data: result.followers, success: true });
+    } else {
+        res.json({ message: "User not found", success: false });
+    }
+});
+
+// remove follower
+const removeFollower = asyncHandler(async (req, res) => {
+    const { candidateId } = req.body;
+    const recruiterId = req.user._id;
+
+    if (candidateId && recruiterId) {
+        const result1 = await candidateInfo.findOne({ candidateId: candidateId });
+        const result2 = await RecruiterInfo.findOne({ recruiterId: recruiterId });
+        if (result1 && result2) {
+            result1.followings.pull({ recruiter: recruiterId });
+            const res1 = await result1.save();
+
+            result2.followers.pull({ candidate: candidateId });
+            const res2 = await result2.save();
+
+            if (res1 && res2) {
+                res.json({ message: "Now, Candidate are unfollowing you!!", success: true });
+            } else {
+                res.json({ message: "Something went wrong during unfollowing!!", success: false });
+            }
+        } else {
+            res.json({ message: "User not found!!", success: false });
+        }
+    } else {
+        res.json({ message: "Invalid request!!", succes: false });
+    }
+});
+
 module.exports = {
     registerRecruiter,
     loginRecruiter,
@@ -419,5 +460,7 @@ module.exports = {
     jobPost,
     saveCandidateProfile,
     getSavedCandidate,
-    removeSavedCandidate
+    removeSavedCandidate,
+    getFollowers,
+    removeFollower
 }

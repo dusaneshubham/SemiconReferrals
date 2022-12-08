@@ -58,6 +58,21 @@ const recruiterInfoSchema = new mongoose.Schema({
             type: mongoose.SchemaTypes.ObjectId,
             ref: 'Candidate'
         }
+    }],
+
+    followers: [{
+        candidate: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'Candidate'
+        },
+        candidateInfo: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'CandidateInfo'
+        },
+        followedOn: {
+            type: Date,
+            require: true
+        }
     }]
 
 }, { timestamps: true });

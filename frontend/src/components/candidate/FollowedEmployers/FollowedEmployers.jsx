@@ -134,13 +134,19 @@ const FollowedEmployers = () => {
                   <StyledTableCell>
                     <div className="d-flex align-items-center">
                       <div style={{ marginRight: "15px" }}>
-                        <img src={element.companyLogo} width="50" height="50" alt="" />
+                        {element.recruiterInfo.companyLogo ?
+                          <img src={"http://localhost:5000/companyImage/" + element.recruiterInfo.companyLogo} width="50" height="50" alt="companyLogo" />
+                          :
+                          <img src="http://localhost:5000/companyImage/defaultImage.png" width="50" height="50" alt="companyLogo" />
+                        }
                       </div>
                       <div>
                         <div>{element.recruiter.name}</div>
-                        <div style={{ color: "var(--text)" }}>
-                          {element.companyName}
-                        </div>
+                        {element.recruiterInfo &&
+                          <div style={{ color: "var(--text)" }}>
+                            {element.recruiterInfo.companyName}
+                          </div>
+                        }
                       </div>
                     </div>
                   </StyledTableCell>
