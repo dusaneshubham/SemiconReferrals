@@ -4,8 +4,25 @@ const JobApplication = require('../models/jobApplication');
 
 // not used yet
 const getAllJobDetails = asyncHandler(async(req, res) => {
-    const data = await JobPost.find();
-    res.json({ message: "All job post data", data: data, success: true });
+    const data = await JobPost.find({ status: "Approved", isActive: true }).sort({ createdAt: -1 });
+    if (data) {
+        res.json({ message: "All job post data", data: data, success: true });
+    } else {
+        res.json({ message: "Jobs details not found", success: false });
+    }
+});
+
+const getAllJobDetailsFilters = asyncHandler(async(req, res) => {
+    const { filtersData } = req.body;
+    console.log(filtersData);
+    // filtersData.location = "/" + filtersData.location + "/";
+    const data = await JobPost.find({ location: filtersData.location }).sort({ createdAt: -1 });
+    console.log(data);
+    if (data) {
+        res.json({ message: "All job post data", data: data, success: true });
+    } else {
+        res.json({ message: "Jobs details not found", success: false });
+    }
 });
 
 const getJobDetails = asyncHandler(async(req, res) => {
@@ -38,6 +55,7 @@ const getPendingApplications = asyncHandler(async(req, res) => {
 
 module.exports = {
     getAllJobDetails,
+    getAllJobDetailsFilters,
     getJobDetails,
     getPendingJobs,
     getPendingApplications

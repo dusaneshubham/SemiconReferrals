@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import "./job-list.css";
 import { image2 } from "../../../images/images";
 import { Link } from 'react-router-dom';
@@ -6,62 +6,75 @@ import { Link } from 'react-router-dom';
 import { LocalAtm as LocalAtmIcon, HourglassTop as HourglassTopIcon, BusinessCenterOutlined as BusinessCenterOutlinedIcon, LocationOnOutlined as LocationOnOutlinedIcon } from "@mui/icons-material";
 
 
-function JobList() {
+const JobList = (props) => {
+
+  const formatDate = (anyDate) => {
+    let fullDate = new Date(anyDate);
+    const month = fullDate.toLocaleString("en-US", { month: "short" });
+    const date = fullDate.getDate();
+    const year = fullDate.getFullYear();
+    return `${month}. ${date}, ${year}`;
+  };
+
   return (
     <>
       <div className="job-info">
-
         <div style={{ display: "flex" }}>
           <div className="company-logo img-fluid">
-            <img src={image2} alt="logo" width="60" height="60" />
+            <img src={image2} alt="logo" width="50" height="50" />
           </div>
 
-          <div style={{ marginLeft: "20px" }}>
-            <Link to="" style={{textDecoration:"none"}}><h5 className="title">Junior Web Developer</h5></Link>
+          <div style={{ marginLeft: "10px" }}>
+            <Link to={`/jobdescription/${props.data._id}`} style={{ textDecoration: "none" }}><h5 className="title">{props.data.jobTitle}</h5></Link>
             <h6 className="company-name">Google</h6>
 
             <div className="details-div">
-              <div>
-                <BusinessCenterOutlinedIcon />
-                <span className="detail">
-                  ASIC Verification
-                </span>
-              </div>
-              <div>
-                <LocationOnOutlinedIcon />
-                <span className="detail">California</span>
-              </div>
-              <div>
-                <HourglassTopIcon />
-                <span className="detail">Dec. 13, 2000</span>
-              </div>
-              <div>
-                <LocalAtmIcon />
-                <span className="detail">Rs. 12 LPA</span>
-              </div>
+
+              {/* --------------------- Job Category -------------------- */}
+              {props.data.jobCategory && (
+                <div>
+                  <BusinessCenterOutlinedIcon />
+                  <span className="detail">{props.data.jobCategory}</span>
+                </div>
+              )}
+
+              {/* --------------------- Location -------------------- */}
+              {props.data.location && (
+                <div>
+                  <LocationOnOutlinedIcon />
+                  <span className="detail">{props.data.location}</span>
+                </div>
+              )}
+
+              {/* --------------------- Deadline -------------------- */}
+              {props.data.applicationDeadline && (
+                <div>
+                  <HourglassTopIcon />
+                  <span className="detail">{formatDate(props.data.applicationDeadline)}</span>
+                </div>
+              )}
+
+              {/* --------------------- Deadline -------------------- */}
+              {props.data.salary && (
+                <div>
+                  <LocalAtmIcon />
+                  <span className="detail">{props.data.salary}</span>
+                </div>
+              )}
+
+              {props.data.skillsRequired.length > 0 && (
+                <ul className="skills d-flex flex-wrap">
+                  {props.data.skillsRequired.map((skill, index)=>{
+                    return <li>{skill}</li>
+                  })}
+                </ul>
+               )}
+
             </div>
 
-            <ul className="skills d-flex flex-wrap">
-              <li>Frontend</li>
-              <li>Backend</li>
-              <li>Frontend</li>
-              <li>SQL</li>
-              <li>SQL</li>
-              <li>SQL</li>
-              <li>SQL</li>
-              <li>SQL</li>
-              <li>SQL</li>
-              <li>SQL</li>
-              <li>SQL</li>
-              <li>SQL</li>
-              <li>SQL</li>
-              <li>SQL</li>
-              <li>SQL</li>
-            </ul>
 
           </div>
         </div>
-
       </div>
     </>
   );

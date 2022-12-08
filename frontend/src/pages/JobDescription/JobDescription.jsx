@@ -49,7 +49,6 @@ const JobDescription = () => {
   const [coverLetter, setCoverLetter] = useState("");
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
-  const token = localStorage.getItem("token");
 
   const handleClickOpen = () => {
     const token = localStorage.getItem("token");
