@@ -40,6 +40,7 @@ const UpdateProfile = () => {
         contactNumber: "",
         DOB: "",
         gender: "",
+        profileImage: "",
         experience: "",
         qualification: "",
         about: "",
@@ -52,6 +53,9 @@ const UpdateProfile = () => {
         resumes: [],
         linkedIn: "",
     });
+
+    // profile image
+    const [profileImage, setProfilImage] = useState("");
 
     useEffect(() => {
         // Getting user details from backend
@@ -101,6 +105,32 @@ const UpdateProfile = () => {
             setAlert({ error: "Unauthorized user!!" });
         }
     };
+
+    // update profile image
+    const updateProfileImage = () => {
+        if (profileImage) {
+            const formData = new FormData();
+            formData.append("token", token);
+            formData.append("profileImage", profileImage);
+            axios.post("http://localhost:5000/candidate/updateProfileImage", formData)
+                .then((res) => res.data)
+                .then((res) => {
+                    if (res.success) {
+                        setUserDetails({ ...userDetails, profileImage: res.profileImage });
+                        setAlert({ success: res.message });
+                        document.getElementById('profile-image').value = "";
+                    } else {
+                        setAlert({ error: res.message });
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                    setAlert({ error: "Something went wrong with server!!" });
+                })
+        } else {
+            setAlert({ error: "Please! select profile image!!" });
+        }
+    }
 
     const changePassword = async () => {
         if (passwordData.oldPassword === "" || passwordData.newPassword === "") {
@@ -153,6 +183,43 @@ const UpdateProfile = () => {
                         setAlert={setAlert}
                     />
                     {/* --------------------------------------------------- */}
+
+                    {/*--------------------- Profile image ---------------------*/}
+                    <div className="col-md-8 p-4 bg-white">
+                        <div style={{ margin: "10px 0" }}>
+                            <h4>Profile Image</h4>
+                            <div className="row g-3 p-4 bg-light">
+                                <div className="col-md-12">
+                                    {userDetails.profileImage && userDetails.profileImage !== "" &&
+                                        <div className="d-flex justify-content-center w-100">
+                                            <img src={"http://localhost:5000/profileImage/" + userDetails.profileImage} alt="profileImage" className="img-fluid" height="100" width="100" />
+                                        </div>
+                                    }
+                                    <label htmlFor="profile-image" className="form-label">
+                                        Profile Image
+                                    </label>
+                                    <input
+                                        type="file"
+                                        className="form-control"
+                                        id="profile-image"
+                                        onChange={(e) => setProfilImage(e.target.files[0])}
+                                    />
+                                    {/*--------------------- Submit Button ---------------------*/}
+                                    <div className="col-12">
+                                        <Button
+                                            variant="contained"
+                                            type="submit"
+                                            className="start-hiring-btn"
+                                            style={{ float: "right", margin: "15px 0" }}
+                                            onClick={updateProfileImage}
+                                        >
+                                            Save Profile Image
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     {/*--------------------- Personal Details *---------------------*/}
                     <div className="col-md-8 p-4 bg-white">
@@ -225,18 +292,6 @@ const UpdateProfile = () => {
                                         }
                                         className="form-control"
                                         id="DOB"
-                                    />
-                                </div>
-
-                                {/*--------------------- Profile image ---------------------*/}
-                                <div className="col-md-6">
-                                    <label htmlFor="profile-image" className="form-label">
-                                        Profile Image
-                                    </label>
-                                    <input
-                                        type="file"
-                                        className="form-control"
-                                        id="profile-image"
                                     />
                                 </div>
 
