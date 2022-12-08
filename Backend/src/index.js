@@ -26,6 +26,8 @@ app.use(cors());
 // resumes path
 app.use("/resumes", express.static(path.join(__dirname, '/resumes/')));
 app.use("/images", express.static(path.join(__dirname, '/images/')));
+app.use("/profileImage", express.static(path.join(__dirname, '/images/profileImages/')));
+app.use("/companyImage", express.static(path.join(__dirname, '/images/companyLogo/')));
 
 // Defining Routes
 app.use("/verify-token", verifyToken, getTokenData);
@@ -38,9 +40,9 @@ app.use("/recruiter", recruiterRoute);
 app.use("/jobs", jobsRoute);
 
 mongoose.connect(process.env.MONGO_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
-    })
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+})
     .then(() => console.log("Connected to Database"))
     .catch((err) => {
         console.log(err);

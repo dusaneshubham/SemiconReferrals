@@ -121,9 +121,7 @@ const updateProfile = asyncHandler(async (req, res) => {
 
     // candidate main details
     let user = req.user;
-
-    // const profileImage = req.files;
-
+    
     const candidateUpdatedData = {
         name: name,
         contactNumber: contactNumber,
@@ -132,7 +130,6 @@ const updateProfile = asyncHandler(async (req, res) => {
     const candidateInfoUpdatedData = {
         gender: gender,
         DOB: DOB,
-        // profileImage: profileImage,
         experience: experience,
         qualification: qualification,
         about: about,
@@ -153,7 +150,7 @@ const updateProfile = asyncHandler(async (req, res) => {
             if (result1) {
                 res.json({ message: "Successfully update profile", success: true });
             } else {
-                res.json({ message: "Somthing went wrong during update the profile", success: false });
+                res.json({ message: "Something went wrong during update the profile", success: false });
             }
         } else {
             // for new user 
@@ -164,14 +161,53 @@ const updateProfile = asyncHandler(async (req, res) => {
                         res.json({ message: "Successfully update profile!!", success: true });
                     } else {
                         console.log(err);
-                        res.json({ message: "Somthing went wrong during update the profile", success: false });
+                        res.json({ message: "Something went wrong during update the profile", success: false });
                     }
                 }).catch((err) => {
-                    res.json({ message: "Somthing went wrong during update the profile", success: false });
+                    res.json({ message: "Something went wrong during update the profile", success: false });
                 });
         }
     } else {
-        res.json({ message: "Somthing went wrong during update the profile", success: false });
+        res.json({ message: "Something went wrong during update the profile", success: false });
+    }
+});
+
+// update profile image
+const updateProfileImage = asyncHandler(async (req, res) => {
+    let user = req.user;
+    let profileImage = req.file.filename;
+
+    const result = await CandidateInfo.findOne({ candidateId: user._id });
+    if (result) {
+        if (result.profileImage && result.profileImage !== "defaultImage.png") {
+            fs.unlink(path.join(__dirname, `../images/profileImages/${result.profileImage}`), (err) => {
+                if (err) {
+                    console.log(err);
+                    res.json({ message: "Something went wrong during update the profile image!!", success: false });
+                }
+            });
+        }
+        result.profileImage = profileImage;
+        result.save()
+            .then(() => {
+                res.json({ message: "Successfully, Profile Image Uploaded!!", profileImage: profileImage, success: true });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Something went wrong during update the profile image!!", success: false });
+            });
+    } else {
+        const newCandidateInfo = new CandidateInfo({
+            candidateId: user._id,
+            profileImage: profileImage
+        });
+
+        newCandidateInfo.save()
+            .then(() => {
+                res.json({ message: "Successfully, Profile Image Uploaded!!", profileImage: profileImage, success: true });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Something went wrong during update the profile image!!", success: false });
+            });
     }
 });
 
@@ -219,6 +255,7 @@ const getCandidateDetails = asyncHandler(async (req, res) => {
                 infoId: candidateInfo._id,
                 DOB: candidateInfo.DOB,
                 gender: candidateInfo.gender,
+                profileImage: candidateInfo.profileImage,
                 experience: candidateInfo.experience,
                 qualification: candidateInfo.qualification,
                 about: candidateInfo.about,
@@ -270,6 +307,7 @@ const getCandidateDetailsById = asyncHandler(async (req, res) => {
                     workingExperience: info.workingExperience,
                     DOB: info.DOB,
                     gender: info.gender,
+                    profileImage: info.profileImage,
                     experience: info.experience,
                     qualification: info.qualification,
                     about: info.about,
@@ -563,7 +601,7 @@ const deleteResume = asyncHandler(async (req, res) => {
                 fs.unlink(path.join(__dirname, `../resumes/${fileName}`), (err) => {
                     if (err) {
                         console.log(err);
-                        res.json({ message: "Somthing went wrong during delete resume!!", success: false });
+                        res.json({ message: "Something went wrong during delete resume!!", success: false });
                     } else {
                         data.resumes.pull({ _id: id });
                         if (data.defaultResumeId == id)
@@ -572,13 +610,13 @@ const deleteResume = asyncHandler(async (req, res) => {
                             res.json({ message: "Successfully delete resume!!", success: true, resumes: data.resumes });
                         }).catch((err) => {
                             console.log(err);
-                            res.json({ message: "Somthing went wrong during delete resume!!", success: false });
+                            res.json({ message: "Something went wrong during delete resume!!", success: false });
                         });
                     }
                 });
             }).catch((err) => {
                 console.log(err);
-                res.json({ message: "Somthing went wrong during delete resume!!", success: false });
+                res.json({ message: "Something went wrong during delete resume!!", success: false });
             });
     } else {
         res.json({ message: "Invalid request!", success: false });
@@ -627,7 +665,7 @@ const followRecruiter = asyncHandler(async (req, res) => {
                     res.json({ message: "Now you are followings this recruiter!!", success: true });
                 }).catch((err) => {
                     console.log(err);
-                    res.json({ message: "Somthing went wrong during follow recruiter", success: false });
+                    res.json({ message: "Something went wrong during follow recruiter", success: false });
                 });
         } else {
             let followings;
@@ -647,7 +685,7 @@ const followRecruiter = asyncHandler(async (req, res) => {
                 })
                 .catch((err) => {
                     console.log(err);
-                    res.json({ message: "Somthing went wrong during follow recruiter!!", success: false });
+                    res.json({ message: "Something went wrong during follow recruiter!!", success: false });
                 })
         }
     } else {
@@ -668,7 +706,7 @@ const unFollowRecruiter = asyncHandler(async (req, res) => {
                 .then(() => {
                     res.json({ message: "Now you are unfollwing this recruiter", success: true });
                 }).catch((err) => {
-                    res.json({ message: "Somthing went wrong during unfollowing!!", success: false });
+                    res.json({ message: "Something went wrong during unfollowing!!", success: false });
                 });
         } else {
             res.json({ message: "User not found!!", success: false });
@@ -683,6 +721,7 @@ module.exports = {
     loginCandidate,
     updatePassword,
     updateProfile,
+    updateProfileImage,
     changePassword,
     getCandidateDetails,
     getCandidateDetailsById,

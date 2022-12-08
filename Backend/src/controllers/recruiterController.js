@@ -5,6 +5,8 @@ const RecruiterInfo = require('../models/recruiterInfo');
 const JobPost = require('../models/jobPost');
 const bcrypt = require('bcrypt');
 const { isEmail } = require('validator');
+const fs = require("fs");
+const path = require("path");
 
 // Generate the token
 const generateToken = (user) => {
@@ -111,6 +113,7 @@ const getRecruiterDetails = asyncHandler(async (req, res) => {
                 companyName: recruiterInfo.companyName,
                 email: recruiterData.email,
                 contactNumber: recruiterData.contactNumber,
+                companyLogo: recruiterInfo.companyLogo,
                 companyWebsite: recruiterInfo.companyWebsite,
                 linkedin: recruiterInfo.linkedin,
                 totalExperience: recruiterInfo.totalExperience,
@@ -152,6 +155,7 @@ const getRecruiterDetailsById = asyncHandler(async (req, res) => {
                     contactNumber: result.contactNumber,
                     companyName: info.companyName,
                     companyWebsite: info.companyWebsite,
+                    companyLogo: info.companyLogo,
                     totalExperience: info.totalExperience,
                     linkedin: info.linkedin,
                     teamName: info.teamName,
@@ -251,6 +255,46 @@ const updateProfile = asyncHandler(async (req, res) => {
         }
     } else {
         res.json({ message: "Somthing went wrong during update the profile", success: false });
+    }
+});
+
+// update profile image
+const updateProfileImage = asyncHandler(async (req, res) => {
+    let user = req.user;
+    let companyLogo = req.file.filename;
+
+    const result = await RecruiterInfo.findOne({ recruiterId: user._id });
+    if (result) {
+        if (result.companyLogo && result.companyLogo !== "defaultImage.png") {
+            fs.unlink(path.join(__dirname, `../images/companyLogo/${result.companyLogo}`), (err) => {
+                if (err) {
+                    console.log(err);
+                    res.json({ message: "Something went wrong during update the profile image!!", success: false });
+                }
+            });
+        }
+        result.companyLogo = companyLogo;
+        result.save()
+            .then(() => {
+                res.json({ message: "Successfully, Profile Image Uploaded!!", companyLogo: companyLogo, success: true });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Something went wrong during update the profile image!!", success: false });
+            });
+    } else {
+        const newRecruiterInfo = new RecruiterInfo({
+            recruiterId: user._id,
+            companyName: "",
+            companyLogo: companyLogo
+        });
+
+        newRecruiterInfo.save()
+            .then(() => {
+                res.json({ message: "Successfully, Profile Image Uploaded!!", companyLogo: companyLogo, success: true });
+            }).catch((err) => {
+                console.log(err);
+                res.json({ message: "Something went wrong during update the profile image!!", success: false });
+            });
     }
 });
 
@@ -371,6 +415,7 @@ module.exports = {
     getRecruiterDetails,
     getRecruiterDetailsById,
     updateProfile,
+    updateProfileImage,
     jobPost,
     saveCandidateProfile,
     getSavedCandidate,

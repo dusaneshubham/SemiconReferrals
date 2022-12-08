@@ -13,7 +13,8 @@ const recruiterInfoSchema = new mongoose.Schema({
     },
 
     companyLogo: {
-        type: String
+        type: String,
+        default: "defaultImage.png"
     },
 
     companyWebsite: {
