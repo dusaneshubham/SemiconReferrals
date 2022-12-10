@@ -10,6 +10,7 @@ import JobList from "../../components/JobListing/JobList/JobList";
 import { Button, SwipeableDrawer } from "@mui/material";
 import Filters from "../../components/JobListing/Filters/Filters";
 import Loading from "../../components/Loading/Loading";
+// import NoDataFoundCard from "../../components/JobListing/JobList/NoDataFoundCard";
 
 function JobsListing() {
 
@@ -17,6 +18,7 @@ function JobsListing() {
   const [loading, setLoading] = useState(true);
 
   const [jobDetails, setJobDetails] = useState([]);
+  const [filterData, setFilterData] = useState([]);
 
   useEffect(() => {
     axios.get("http://localhost:5000/jobs/getAllJobDetails")
@@ -24,6 +26,7 @@ function JobsListing() {
       .then((res) => {
         if (res.success) {
           setJobDetails(res.data);
+          setFilterData(res.data);
           setLoading(false);
         }
         else {
@@ -62,7 +65,7 @@ function JobsListing() {
           onOpen={toggleDrawer(true)}
           className='box'
         >
-          <Filters setJobDetails={setJobDetails} />
+          <Filters setJobDetails={setJobDetails} jobDetails={jobDetails} setFilterData={setFilterData} filterData={filterData} />
         </SwipeableDrawer>
 
 
@@ -72,7 +75,7 @@ function JobsListing() {
             <div className="row">
 
               <div id="filter-outer-div" className="col-md-3">
-                <Filters setJobDetails={setJobDetails} />
+                <Filters setJobDetails={setJobDetails} jobDetails={jobDetails} setFilterData={setFilterData} filterData={filterData} />
               </div>
 
               <div id="joblists-div" className="col-md-9">
@@ -81,8 +84,8 @@ function JobsListing() {
                 </div>
 
                 <div className="job-list">
-                  {jobDetails.length > 0 && (
-                    jobDetails.map((data, index) => {
+                  {filterData.length > 0 && (
+                    filterData.map((data, index) => {
                       return <JobList data={data} key={index} />
                     })
                   )}

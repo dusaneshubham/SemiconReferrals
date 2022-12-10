@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./filters.css";
-import axios from "axios";
-import { useEffect } from 'react';
 
-const Filters = ({ setJobDetails }) => {
+const Filters = (props) => {
 
-    const [filtersData, setFiltersData] = useState({
+    const [filters, setFilters] = useState({
         keywords: "",
         location: "",
         qualification: "",
@@ -14,20 +12,49 @@ const Filters = ({ setJobDetails }) => {
     });
 
     useEffect(() => {
-        axios.post("http://localhost:5000/jobs/getAllJobDetailsFilters", { filtersData })
-            .then((response) => response.data)
-            .then((res) => {
-                if (res.success) {
-                    // setJobDetails(res.data);
-                }
-                else {
-                    console.log("Not found");
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    }, []);
+        const handleChange = () => {
+            var filterKeys = Object.keys(filters);
+            let temp = props.jobDetails.filter(function (eachObj) {
+                return filterKeys.every(function (eachKey) {
+                    if (!filters[eachKey].length) {
+                        return true;
+                    }
+                    return eachObj[eachKey]
+                        .toLowerCase()
+                        .includes(filters[eachKey].toLowerCase());
+                });
+            });
+            props.setFilterData(temp);
+        };
+
+        handleChange();
+    }, [filters, props.jobDetails]);
+
+    const getFilteredData = () => {
+        if (!filters.location && !filters.qualification) {
+            props.setFilterData(props.jobDetails);
+        }
+        if (filters.location) {
+            props.setFilterData(props.filterData.filter((job) => {
+                return job.location.toLowerCase().includes(filters.location.toLowerCase());
+            }))
+        }
+        if (filters.qualification) {
+            props.setFilterData(props.filterData.filter((job) => {
+                return job.qualification === filters.qualification;
+            }))
+        }
+        if (filters.experience) {
+            props.setFilterData(props.filterData.filter((job) => {
+                return job.experience === filters.experience;
+            }))
+        }
+        if (filters.jobType) {
+            props.setFilterJobDetails(props.filterJobDetails.filter((job) => {
+                return job.jobType === filters.jobType;
+            }))
+        }
+    }
 
     return (
         <>
@@ -36,20 +63,41 @@ const Filters = ({ setJobDetails }) => {
                 {/* ------------------ Keywords --------------------- */}
                 <div className="my-4">
                     <label htmlFor="keywords" className="form-label">Search by Keywords</label>
-                    <input type="text" value={filtersData.keywords} className="form-control" id="keywords" placeholder="Search" onChange={(e) => setFiltersData({ ...filtersData, keywords: e.target.value })} />
+                    <input type="text" value={filters.keywords} className="form-control" id="keywords" placeholder="Search" onChange={(e) => setFilters({ ...filters, keywords: e.target.value })} />
                 </div>
 
                 {/* ------------------ Location --------------------- */}
                 <div className="my-4">
                     <label htmlFor="location" className="form-label">Location</label>
-                    <input type="text" value={filtersData.location} className="form-control" id="location" onChange={(e) => { setFiltersData({ ...filtersData, location: e.target.value }); }} />
+                    <input type="text" value={filters.location} className="form-control" id="location" onChange={(e) => {
+                        setFilters({ ...filters, location: e.target.value });
+                        // if (e.target.value === "") {
+                        //     setFilterJobDetails(jobDetails);
+                        // } else {
+                        //     setFilterJobDetails(filterJobDetails.filter((job) => {
+                        //         return job.location.toLowerCase().includes(e.target.value.toLowerCase());
+                        //     }));
+                        // }
+                        getFilteredData();
+                    }} />
                 </div>
 
                 {/* ------------------ Qualification --------------------- */}
                 <div className="my-4">
                     <label htmlFor="qualification" className="form-label">Qualification</label>
-                    <select value={filtersData.qualification} className="form-select" onChange={(e) => setFiltersData({ ...filtersData, qualification: e.target.value })}>
-                        <option selected disabled>-- Select --</option>
+                    <select value={filters.qualification} className="form-select" onChange={(e) => {
+                        setFilters({ ...filters, qualification: e.target.value });
+                        getFilteredData();
+                        // if (e.target.value === "") {
+                        //     setFilterJobDetails(jobDetails);
+                        // } else {
+                        //     setFilterJobDetails(jobDetails.filter((job) => {
+                        //         console.log(job.qualification, e.target.value);
+                        //         return job.qualification === e.target.value;
+                        //     }));
+                        // }
+                    }}>
+                        <option selected value="">-- Select --</option>
                         <option value="Bachelor">Bachelor</option>
                         <option value="Master">Master</option>
                         <option value="PHD">PHD</option>
@@ -59,8 +107,11 @@ const Filters = ({ setJobDetails }) => {
                 {/* ------------------ Experience --------------------- */}
                 <div className="my-4">
                     <label htmlFor="experience" className="form-label">Experience</label>
-                    <select className="form-select" value={filtersData.experience} onChange={(e) => setFiltersData({ ...filtersData, experience: e.target.value })}>
-                        <option selected disabled>-- Select --</option>
+                    <select className="form-select" value={filters.experience} onChange={(e) => {
+                        setFilters({ ...filters, experience: e.target.value });
+                        getFilteredData();
+                    }}>
+                        <option selected value="">-- Select --</option>
                         <option value="Fresher">Fresher</option>
                         <option value="Trained Professional (0-1 year)">Trained Professional (0-1 year)</option>
                         <option value="1-3 years">1-3 years</option>
@@ -73,8 +124,11 @@ const Filters = ({ setJobDetails }) => {
                 {/* ------------------ Job Type --------------------- */}
                 <div className="my-4">
                     <label htmlFor="job-type" className="form-label">Job Type</label>
-                    <select className="form-select" value={filtersData.jobType} onChange={(e) => setFiltersData({ ...filtersData, jobType: e.target.value })}>
-                        <option selected disabled>-- Select --</option>
+                    <select className="form-select" value={filters.jobType} onChange={(e) => {
+                        setFilters({ ...filters, jobType: e.target.value });
+                        getFilteredData();
+                    }}>
+                        <option selected value="">-- Select --</option>
                         <option value="Full Time">Full Time</option>
                         <option value="Part Time">Part Time</option>
                         <option value="Internship">Internship</option>
