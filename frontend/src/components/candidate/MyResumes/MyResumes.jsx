@@ -42,8 +42,6 @@ const MyResumes = () => {
         if (response.success) {
           setResumeData(response.resumes);
           setDefaultResumeId(response.defaultResumeId);
-        } else {
-          setAlert({ error: response.message });
         }
         setLoading(false);
       })

@@ -174,7 +174,7 @@ const updateProfile = asyncHandler(async(req, res) => {
 });
 
 // update profile image
-const updateProfileImage = asyncHandler(async (req, res) => {
+const updateProfileImage = asyncHandler(async(req, res) => {
     let user = req.user;
     let profileImage = req.file.filename;
 
@@ -289,9 +289,8 @@ const getCandidateDetails = asyncHandler(async(req, res) => {
 // get candidate details by id
 const getCandidateDetailsById = asyncHandler(async(req, res) => {
     const { id } = req.body;
-
     if (id) {
-        const result = await Candidate.findOne({ candidateId: id }).select({ email: 1, contactNumber: 1, name: 1 });
+        const result = await Candidate.findOne({ _id: id }).select({ email: 1, contactNumber: 1, name: 1 });
         const info = await CandidateInfo.findOne({ candidateId: id });
         if (result) {
             if (info) {
@@ -527,7 +526,7 @@ const uploadMyResume = asyncHandler(async(req, res) => {
         await data.save().then(async(data) => {
             if (data) {
                 console.log(data);
-                await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { defaultResumeId: data.resume[0]._id }, { new: true })
+                await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { defaultResumeId: data.resumes[0]._id }, { new: true })
                     .then((data) => {
                         if (data) {
                             console.log(data);
