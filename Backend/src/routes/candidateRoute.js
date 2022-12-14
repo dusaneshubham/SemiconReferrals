@@ -1,12 +1,40 @@
 const express = require('express');
 const router = express.Router();
-const { registerCandidate, loginCandidate, applyForJob, withdrawApplication, getApplicationStatus, updateProfile, updateProfileImage, updatePassword, uploadMyResume, deleteResume, getAllMyResumes, getCandidateDetails, getCandidateDetailsById, updateWorkingExperience, updateEducationDetails, changePassword, getAllJobApplications, makeDefaultResume, isAppliedToJob, saveTheJobPost, getSaveTheJobPost, followRecruiter, getFollowings, unFollowRecruiter, isSavedJob, unDefaultResume } = require('../controllers/candidateController');
+const { registerCandidate,
+    loginCandidate,
+    updateEmailId,
+    applyForJob,
+    withdrawApplication,
+    getApplicationStatus,
+    updateProfile,
+    updateProfileImage,
+    updatePassword,
+    uploadMyResume,
+    deleteResume,
+    getAllMyResumes,
+    getCandidateDetails,
+    getCandidateDetailsById,
+    updateWorkingExperience,
+    updateEducationDetails,
+    changePassword,
+    getAllJobApplications,
+    makeDefaultResume,
+    isAppliedToJob,
+    saveTheJobPost,
+    getSaveTheJobPost,
+    followRecruiter,
+    getFollowings,
+    unFollowRecruiter,
+    isSavedJob,
+    unDefaultResume,
+    getMailForResetMail } = require('../controllers/candidateController');
 const uploadProfileImage = require('../middleware/profileImageUpload');
 const uploadResume = require('../middleware/resumeUpload');
 const verifyToken = require('../middleware/verifyToken');
 
 router.post("/register", registerCandidate);
 router.post("/login", loginCandidate);
+router.post("/updateEmailId", verifyToken, updateEmailId);
 router.post("/update-password", updatePassword);
 router.post("/applyforjob", verifyToken, applyForJob);
 router.post("/isAppliedToJob", verifyToken, isAppliedToJob);
@@ -31,5 +59,6 @@ router.post("/getAllJobApplications", verifyToken, getAllJobApplications);
 router.post("/getFollowings", verifyToken, getFollowings);
 router.post("/followRecruiter", verifyToken, followRecruiter);
 router.post("/unFollowRecruiter", verifyToken, unFollowRecruiter);
+router.post("/getMailForResetMail", verifyToken, getMailForResetMail);
 
 module.exports = router;

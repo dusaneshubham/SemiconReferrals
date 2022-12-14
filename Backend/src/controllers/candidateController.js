@@ -8,7 +8,7 @@ const { isEmail } = require('validator');
 const fs = require('fs');
 const path = require('path');
 const recruiterInfo = require('../models/recruiterInfo');
-const recruiter = require('../models/recruiter');
+const nodemailer = require('nodemailer');
 
 // Generate the token
 const generateToken = (user) => {
@@ -16,7 +16,7 @@ const generateToken = (user) => {
 }
 
 // Register Candidate
-const registerCandidate = asyncHandler(async(req, res) => {
+const registerCandidate = asyncHandler(async (req, res) => {
     const { name, email, password, contactNumber } = req.body;
 
     // Validations
@@ -44,7 +44,7 @@ const registerCandidate = asyncHandler(async(req, res) => {
         password: hashPassword
     });
 
-    newCandidate.save(async(err, data) => {
+    newCandidate.save(async (err, data) => {
         if (err) {
             console.log(err);
             return res.json({ message: "Error in registering the candidate", success: false });
@@ -58,7 +58,7 @@ const registerCandidate = asyncHandler(async(req, res) => {
 });
 
 // Login Candidate
-const loginCandidate = asyncHandler(async(req, res) => {
+const loginCandidate = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -81,8 +81,27 @@ const loginCandidate = asyncHandler(async(req, res) => {
     }
 });
 
+// update email
+const updateEmailId = asyncHandler(async (req, res) => {
+    const user = req.user;
+    const { email } = req.body;
+
+    if (email) {
+        await Candidate.findOneAndUpdate({ _id: user._id }, { email: email }, { new: true })
+            .then(() => {
+                res.json({ message: "Successfully update your business email", success: true });
+            })
+            .catch((err) => {
+                console.log(err);
+                res.json({ message: "Somthing went wrong during update the email", success: false });
+            })
+    } else {
+        res.json({ message: "Invalid Request!!", success: false });
+    }
+});
+
 // update password
-const updatePassword = asyncHandler(async(req, res) => {
+const updatePassword = asyncHandler(async (req, res) => {
     const { email, password, confirmPassword } = req.body;
 
     if (!email || !password || !confirmPassword) {
@@ -103,7 +122,7 @@ const updatePassword = asyncHandler(async(req, res) => {
 });
 
 // update profile
-const updateProfile = asyncHandler(async(req, res) => {
+const updateProfile = asyncHandler(async (req, res) => {
     // candidate information details
     const {
         name,
@@ -174,7 +193,7 @@ const updateProfile = asyncHandler(async(req, res) => {
 });
 
 // update profile image
-const updateProfileImage = asyncHandler(async(req, res) => {
+const updateProfileImage = asyncHandler(async (req, res) => {
     let user = req.user;
     let profileImage = req.file.filename;
 
@@ -213,7 +232,7 @@ const updateProfileImage = asyncHandler(async(req, res) => {
 });
 
 // change password
-const changePassword = asyncHandler(async(req, res) => {
+const changePassword = asyncHandler(async (req, res) => {
     const { oldPassword, newPassword } = req.body;
     const user = req.user;
 
@@ -241,7 +260,7 @@ const changePassword = asyncHandler(async(req, res) => {
 });
 
 // get candidate details
-const getCandidateDetails = asyncHandler(async(req, res) => {
+const getCandidateDetails = asyncHandler(async (req, res) => {
     let user = req.user;
     let candidateData = await Candidate.findOne({ _id: user._id });
 
@@ -287,7 +306,7 @@ const getCandidateDetails = asyncHandler(async(req, res) => {
 });
 
 // get candidate details by id
-const getCandidateDetailsById = asyncHandler(async(req, res) => {
+const getCandidateDetailsById = asyncHandler(async (req, res) => {
     const { id } = req.body;
     if (id) {
         const result = await Candidate.findOne({ _id: id }).select({ email: 1, contactNumber: 1, name: 1 });
@@ -336,7 +355,7 @@ const getCandidateDetailsById = asyncHandler(async(req, res) => {
 });
 
 // update working experience
-const updateWorkingExperience = asyncHandler(async(req, res) => {
+const updateWorkingExperience = asyncHandler(async (req, res) => {
     const { currentWorkingExperience } = req.body;
     const user = req.user;
 
@@ -356,7 +375,7 @@ const updateWorkingExperience = asyncHandler(async(req, res) => {
 });
 
 // update education details
-const updateEducationDetails = asyncHandler(async(req, res) => {
+const updateEducationDetails = asyncHandler(async (req, res) => {
     const { educationDetails } = req.body;
     const user = req.user;
 
@@ -380,7 +399,7 @@ const updateEducationDetails = asyncHandler(async(req, res) => {
 });
 
 // apply for job
-const applyForJob = asyncHandler(async(req, res) => {
+const applyForJob = asyncHandler(async (req, res) => {
     const user = req.user;
     let data = req.body.data;
 
@@ -403,7 +422,7 @@ const applyForJob = asyncHandler(async(req, res) => {
 });
 
 // check whether candidate has applied to the particular job or not
-const isAppliedToJob = asyncHandler(async(req, res) => {
+const isAppliedToJob = asyncHandler(async (req, res) => {
     const candidate = req.user;
     const { postId } = req.body;
     const isApplied = await JobApplication.findOne({ candidateId: candidate._id, jobPostId: postId }).count();
@@ -415,7 +434,7 @@ const isAppliedToJob = asyncHandler(async(req, res) => {
 })
 
 // check whether candidate has already saved the job or not
-const isSavedJob = asyncHandler(async(req, res) => {
+const isSavedJob = asyncHandler(async (req, res) => {
     const user = req.user;
     const { postId } = req.body;
     const candidateInfo = await CandidateInfo.findOne({ candidateId: user._id });
@@ -431,7 +450,7 @@ const isSavedJob = asyncHandler(async(req, res) => {
     }
 })
 
-const saveTheJobPost = asyncHandler(async(req, res) => {
+const saveTheJobPost = asyncHandler(async (req, res) => {
     const candidate = req.user;
     const { postId } = req.body;
 
@@ -462,7 +481,7 @@ const saveTheJobPost = asyncHandler(async(req, res) => {
 
 });
 
-const getSaveTheJobPost = asyncHandler(async(req, res) => {
+const getSaveTheJobPost = asyncHandler(async (req, res) => {
     const user = req.user;
 
     const result = await CandidateInfo.findOne({ candidateId: user._id }).populate("savedJobPost");
@@ -475,7 +494,7 @@ const getSaveTheJobPost = asyncHandler(async(req, res) => {
 
 // not used yet
 // withdraw application
-const withdrawApplication = asyncHandler(async(req, res) => {
+const withdrawApplication = asyncHandler(async (req, res) => {
     const { _id } = req.body;
 
     const result = await JobApplication.deleteOne({ _id });
@@ -489,7 +508,7 @@ const withdrawApplication = asyncHandler(async(req, res) => {
 
 // not used yet
 // get application status
-const getApplicationStatus = asyncHandler(async(req, res) => {
+const getApplicationStatus = asyncHandler(async (req, res) => {
     const { _id } = req.body;
     const result = await JobApplication.findOne({ _id });
 
@@ -501,7 +520,7 @@ const getApplicationStatus = asyncHandler(async(req, res) => {
 });
 
 // get all job applications
-const getAllJobApplications = asyncHandler(async(req, res) => {
+const getAllJobApplications = asyncHandler(async (req, res) => {
     const user = req.user;
     const result = await JobApplication.find({ candidateId: user._id }).populate("jobPostId").sort({ createdAt: 1 });
     if (result) {
@@ -512,7 +531,7 @@ const getAllJobApplications = asyncHandler(async(req, res) => {
 });
 
 // upload resume
-const uploadMyResume = asyncHandler(async(req, res) => {
+const uploadMyResume = asyncHandler(async (req, res) => {
     let user = req.user;
     let myResumes = await CandidateInfo.findOne({ candidateId: user._id }).select({ "resumes": 1 });
 
@@ -523,7 +542,7 @@ const uploadMyResume = asyncHandler(async(req, res) => {
             candidateId: user._id,
             resumes: resume
         });
-        await data.save().then(async(data) => {
+        await data.save().then(async (data) => {
             if (data) {
                 console.log(data);
                 await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { defaultResumeId: data.resumes[0]._id }, { new: true })
@@ -548,7 +567,7 @@ const uploadMyResume = asyncHandler(async(req, res) => {
     } else {
         myResumes.resumes.push({ fileName: req.file.filename, url: 'http://localhost:5000/resumes/' + req.file.filename });
         await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { resumes: myResumes.resumes }, { new: true })
-            .then(async(data) => {
+            .then(async (data) => {
                 if (data) {
                     if (myResumes.resumes.length === 1) {
                         await CandidateInfo.updateOne({ candidateId: user._id }, { defaultResumeId: data.resumes[0]._id }, { new: true })
@@ -573,7 +592,7 @@ const uploadMyResume = asyncHandler(async(req, res) => {
 });
 
 // make default resume
-const makeDefaultResume = asyncHandler(async(req, res) => {
+const makeDefaultResume = asyncHandler(async (req, res) => {
     const user = req.user;
     const { id } = req.body;
 
@@ -595,7 +614,7 @@ const makeDefaultResume = asyncHandler(async(req, res) => {
     }
 });
 
-const unDefaultResume = asyncHandler(async(req, res) => {
+const unDefaultResume = asyncHandler(async (req, res) => {
     const user = req.user;
 
     const result = await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { defaultResumeId: null }, { new: true });
@@ -607,7 +626,7 @@ const unDefaultResume = asyncHandler(async(req, res) => {
 });
 
 // delete resume
-const deleteResume = asyncHandler(async(req, res) => {
+const deleteResume = asyncHandler(async (req, res) => {
     const { id, fileName } = req.body;
     const user = req.user;
     if (id) {
@@ -639,7 +658,7 @@ const deleteResume = asyncHandler(async(req, res) => {
 });
 
 // get all resume
-const getAllMyResumes = asyncHandler(async(req, res) => {
+const getAllMyResumes = asyncHandler(async (req, res) => {
     const user = req.user;
     let data = await CandidateInfo.findOne({ candidateId: user._id });
     if (data) {
@@ -650,7 +669,7 @@ const getAllMyResumes = asyncHandler(async(req, res) => {
 });
 
 // get following
-const getFollowings = asyncHandler(async(req, res) => {
+const getFollowings = asyncHandler(async (req, res) => {
     const user = req.user;
     const result = await CandidateInfo.findOne({ candidateId: user._id }).populate("followings.recruiter followings.recruiterInfo");
 
@@ -662,7 +681,7 @@ const getFollowings = asyncHandler(async(req, res) => {
 });
 
 //follow recruiter
-const followRecruiter = asyncHandler(async(req, res) => {
+const followRecruiter = asyncHandler(async (req, res) => {
     const { recruiterId } = req.body;
     const candidateId = req.user._id;
 
@@ -747,7 +766,7 @@ const followRecruiter = asyncHandler(async(req, res) => {
 });
 
 // unfollow recruiter
-const unFollowRecruiter = asyncHandler(async(req, res) => {
+const unFollowRecruiter = asyncHandler(async (req, res) => {
     const { recruiterId } = req.body;
     const candidateId = req.user._id;
 
@@ -774,9 +793,42 @@ const unFollowRecruiter = asyncHandler(async(req, res) => {
     }
 });
 
+// get mail for reset pass
+const getMailForResetMail = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+    const id = req.user._id;
+
+    const token = await jwt.sign({ _id: id, type: "candidate" }, process.env.SECRETKEY, { expiresIn: 60 * 60 * 2 });
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD
+        }
+    });
+
+    const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject: "Reset business email",
+        html: `<h4><a href='http://localhost:3000/updateBusinessMail/${token}'>Click here</a> For Change Business Mail</h4>`
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            console.log(err);
+            res.json({ message: "Something went wrong during sending mail!", success: false });
+        } else {
+            res.json({ message: "Mail has been sent!!", success: true });
+        }
+    });
+});
+
 module.exports = {
     registerCandidate,
     loginCandidate,
+    updateEmailId,
     updatePassword,
     updateProfile,
     updateProfileImage,
@@ -800,5 +852,6 @@ module.exports = {
     isSavedJob,
     getFollowings,
     followRecruiter,
-    unFollowRecruiter
+    unFollowRecruiter,
+    getMailForResetMail
 };
