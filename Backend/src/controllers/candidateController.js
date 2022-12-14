@@ -595,6 +595,17 @@ const makeDefaultResume = asyncHandler(async(req, res) => {
     }
 });
 
+const unDefaultResume = asyncHandler(async(req, res) => {
+    const user = req.user;
+
+    const result = await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { defaultResumeId: null }, { new: true });
+    if (result) {
+        res.json({ message: "Succesfully undefault resumes", success: true });
+    } else {
+        res.json({ message: "User not found!!", success: false });
+    }
+});
+
 // delete resume
 const deleteResume = asyncHandler(async(req, res) => {
     const { id, fileName } = req.body;
@@ -780,6 +791,7 @@ module.exports = {
     getAllJobApplications,
     uploadMyResume,
     makeDefaultResume,
+    unDefaultResume,
     deleteResume,
     getAllMyResumes,
     isAppliedToJob,

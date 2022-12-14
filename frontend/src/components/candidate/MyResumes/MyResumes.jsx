@@ -144,6 +144,23 @@ const MyResumes = () => {
       });
   };
 
+  const makeUndefault = async () => {
+    await axios
+      .post("http://localhost:5000/candidate/makeUndefaultResume", { token })
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setDefaultResumeId("");
+        } else {
+          setAlert({ error: res.message });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setAlert({ error: "Something went wrong during undefault resume!!" });
+      })
+  }
+
   //------------------- Ignore this part bcz it's meaningless but mandatory ------------------- //
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -244,8 +261,9 @@ const MyResumes = () => {
                           variant="contained"
                           color="success"
                           style={{ margin: "10px" }}
+                          onClick={makeUndefault}
                         >
-                          Default
+                          Set Undefault
                         </Button>
                       </StyledTableCell>
                     ) : (
