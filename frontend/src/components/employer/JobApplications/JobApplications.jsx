@@ -20,7 +20,7 @@ import Loading from "../../Loading/Loading";
 const JobApplications = () => {
 
   const navigate = useNavigate();
-  const [activeJobs, setActiveJobs] = useState([]);
+  const [applicationData, setApplicationData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState({});
 
@@ -54,14 +54,13 @@ const JobApplications = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (token) {
-      const getActiveJobs = async () => {
-        await axios.post("http://localhost:5000/jobs/getActiveJobs", { token: token })
+      const getJobApplications = async () => {
+        await axios.post("http://localhost:5000/jobs/getJobApplications", { token: token })
           .then((res) => res.data)
           .then((res) => {
             if (res.success) {
-              setActiveJobs(res.data);
+              setApplicationData(res.data);
             }
             setLoading(false);
           }).catch((err) => {
@@ -70,7 +69,7 @@ const JobApplications = () => {
             setAlert({ error: "Something went wrong with server!" });
           })
       }
-      getActiveJobs();
+      getJobApplications();
     } else {
       navigate('/');
     }
@@ -90,7 +89,7 @@ const JobApplications = () => {
           alert={alert}
           setAlert={setAlert}
         />
-        <h4>Active Jobs</h4>
+        <h4>Applications for Software Developer</h4>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
@@ -103,7 +102,7 @@ const JobApplications = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {activeJobs.map((data, index) => (
+              {applicationData.map((data, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell>
                     <div className="d-flex align-items-center">
@@ -137,7 +136,7 @@ const JobApplications = () => {
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
-              {activeJobs.length === 0 && <StyledTableRow>
+              {applicationData.length === 0 && <StyledTableRow>
                 <StyledTableCell colSpan="5" className="text-center text-secondary">
                   There are no Active Jobs
                 </StyledTableCell>

@@ -81,6 +81,17 @@ const deleteJobPost = asyncHandler(async(req, res) => {
     }
 });
 
+const getJobApplications = asyncHandler(async(req, res) => {
+    const user = req.user;
+    const { jobPostId } = req.body;
+    const applicationData = await JobApplication.find({ jobPostId: jobPostId, recruiterId: user._id, isApprovedByAdmin: true });
+    if (applicationData) {
+        res.json({ message: "Job post has been deleted successfully!", data: applicationData, success: true });
+    } else {
+        res.json({ message: "Unable to delete the job post", success: false });
+    }
+});
+
 module.exports = {
     getAllJobDetails,
     getJobDetails,
@@ -89,5 +100,6 @@ module.exports = {
     getActiveJobs,
     getInactiveJobs,
     getRecruiterPendingJobs,
-    deleteJobPost
+    deleteJobPost,
+    getJobApplications
 }
