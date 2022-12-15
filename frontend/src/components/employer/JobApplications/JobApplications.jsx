@@ -17,10 +17,10 @@ import axios from 'axios';
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
 import Loading from "../../Loading/Loading";
 
-const InactiveJobs = () => {
+const JobApplications = () => {
 
   const navigate = useNavigate();
-  const [inactiveJobs, setInactiveJobs] = useState([]);
+  const [activeJobs, setActiveJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState({});
 
@@ -56,13 +56,13 @@ const InactiveJobs = () => {
     const token = localStorage.getItem("token");
 
     if (token) {
-      const getInactiveJobs = async () => {
-        await axios.post("http://localhost:5000/jobs/getInactiveJobs", { token: token })
+      const getActiveJobs = async () => {
+        await axios.post("http://localhost:5000/jobs/getActiveJobs", { token: token })
           .then((res) => res.data)
           .then((res) => {
             if (res.success) {
-              setInactiveJobs(res.data);
-            } 
+              setActiveJobs(res.data);
+            }
             setLoading(false);
           }).catch((err) => {
             console.log(err);
@@ -70,7 +70,7 @@ const InactiveJobs = () => {
             setAlert({ error: "Something went wrong with server!" });
           })
       }
-      getInactiveJobs();
+      getActiveJobs();
     } else {
       navigate('/');
     }
@@ -90,20 +90,20 @@ const InactiveJobs = () => {
           alert={alert}
           setAlert={setAlert}
         />
-        <h4>Inactive Jobs</h4>
+        <h4>Active Jobs</h4>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
               <TableRow className="text-center">
-                <StyledTableCell>Job Title</StyledTableCell>
-                <StyledTableCell>Applications</StyledTableCell>
-                <StyledTableCell>Deadline</StyledTableCell>
-                <StyledTableCell>View Job Post</StyledTableCell>
-                <StyledTableCell>View Applications</StyledTableCell>
+                <StyledTableCell>Candidate</StyledTableCell>
+                <StyledTableCell>Status</StyledTableCell>
+                <StyledTableCell>Applied On</StyledTableCell>
+                <StyledTableCell>View Application Details</StyledTableCell>
+                <StyledTableCell>Change Status</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {inactiveJobs.map((data, index) => (
+              {activeJobs.map((data, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell>
                     <div className="d-flex align-items-center">
@@ -124,20 +124,22 @@ const InactiveJobs = () => {
                   <StyledTableCell>
                     <Link to={"/jobdescription/" + data._id}>
                       <Button variant="contained" style={{ marginRight: "20px" }}>
-                        View Job Post
+                        View Application Details
                       </Button>
                     </Link>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <Button variant="contained" style={{ marginRight: "20px" }}>
-                      View Applications
-                    </Button>
+                    <Link to={`/employer/jobapplications/` + data._id}>
+                      <Button variant="contained" style={{ marginRight: "20px" }}>
+                        Change Status
+                      </Button>
+                    </Link>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
-              {inactiveJobs.length === 0 && <StyledTableRow>
-                <StyledTableCell colSpan="6" className="text-center text-secondary">
-                  There are no Inactive Jobs
+              {activeJobs.length === 0 && <StyledTableRow>
+                <StyledTableCell colSpan="5" className="text-center text-secondary">
+                  There are no Active Jobs
                 </StyledTableCell>
               </StyledTableRow>}
             </TableBody>
@@ -149,4 +151,4 @@ const InactiveJobs = () => {
   }
 };
 
-export default InactiveJobs;
+export default JobApplications;

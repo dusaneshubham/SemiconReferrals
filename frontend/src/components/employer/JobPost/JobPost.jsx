@@ -96,6 +96,7 @@ const JobPost = () => {
               numberOfVacancies: "",
               location: "",
               salary: "",
+              skills: []
             });
           } else {
             setAlert({ error: res.message });

@@ -60,11 +60,34 @@ const getInactiveJobs = asyncHandler(async(req, res) => {
     }
 });
 
+const getRecruiterPendingJobs = asyncHandler(async(req, res) => {
+    const user = req.user;
+    const inactiveJobs = await JobPost.find({ recruiterId: user._id, status: "Pending" }).sort({ createdAt: -1 });
+    if (inactiveJobs.length > 0) {
+        res.json({ message: "Pending jobs found", data: inactiveJobs, success: true });
+    } else {
+        res.json({ message: "Pending jobs not found", success: false });
+    }
+});
+
+const deleteJobPost = asyncHandler(async(req, res) => {
+    const user = req.user;
+    const { jobPostId } = req.body;
+    const deleted = await JobPost.deleteOne({ _id: jobPostId, recruiterId: user._id });
+    if (deleted) {
+        res.json({ message: "Job post has been deleted successfully!", success: true });
+    } else {
+        res.json({ message: "Unable to delete the job post", success: false });
+    }
+});
+
 module.exports = {
     getAllJobDetails,
     getJobDetails,
     getPendingJobs,
     getPendingApplications,
     getActiveJobs,
-    getInactiveJobs
+    getInactiveJobs,
+    getRecruiterPendingJobs,
+    deleteJobPost
 }

@@ -1,5 +1,5 @@
 import React from "react";
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import {
     Button,
@@ -9,13 +9,7 @@ import {
     TableBody,
     Table,
     TableContainer,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    useMediaQuery,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { image2 } from "../../../images/images";
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from 'react-router-dom';
@@ -26,11 +20,9 @@ import Loading from "../../Loading/Loading";
 const ActiveJobs = () => {
 
     const navigate = useNavigate();
-    const theme = useTheme();
     const [activeJobs, setActiveJobs] = useState([]);
     const [loading, setLoading] = useState(true);
     const [alert, setAlert] = useState({});
-    const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
     const formatDate = (anyDate) => {
         let fullDate = new Date(anyDate);
@@ -108,7 +100,6 @@ const ActiveJobs = () => {
                                 <StyledTableCell>Deadline</StyledTableCell>
                                 <StyledTableCell>View Job Post</StyledTableCell>
                                 <StyledTableCell>View Applications</StyledTableCell>
-                                <StyledTableCell>Delete</StyledTableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -138,23 +129,16 @@ const ActiveJobs = () => {
                                         </Link>
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        <Button variant="contained" style={{ marginRight: "20px" }}>
-                                            View Applications
-                                        </Button>
-                                    </StyledTableCell>
-                                    <StyledTableCell>
-                                        <Button
-                                            variant="contained"
-                                            color="error"
-                                            startIcon={<DeleteIcon />}
-                                        >
-                                            Delete
-                                        </Button>
+                                        <Link to={`/employer/jobapplications/` + data._id}>
+                                            <Button variant="contained" style={{ marginRight: "20px" }}>
+                                                View Applications
+                                            </Button>
+                                        </Link>
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))}
                             {activeJobs.length === 0 && <StyledTableRow>
-                                <StyledTableCell colSpan="6" className="text-center text-secondary">
+                                <StyledTableCell colSpan="5" className="text-center text-secondary">
                                     There are no Active Jobs
                                 </StyledTableCell>
                             </StyledTableRow>}

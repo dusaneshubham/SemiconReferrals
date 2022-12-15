@@ -29,6 +29,7 @@ import EmployerPendingJobs from "./components/employer/PendingJobs/PendingJobs";
 import EmployerSavedCandidates from "./components/employer/SavedCandidates/SavedCandidates";
 import EmployerFollowers from "./components/employer/Followers/Followers";
 import JobPost from "./components/employer/JobPost/JobPost";
+import JobApplications from "./components/employer/JobApplications/JobApplications";
 import EmployerUpdateProfile from "./components/employer/UpdateProfile/UpdateProfile";
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
           <Route path="savedcandidates" element={<EmployerSavedCandidates />} />
           <Route path="updateprofile" element={<EmployerUpdateProfile />} />
           <Route path="followers" element={<EmployerFollowers />} />
+          <Route path="jobapplications/:id" element={<JobApplications />} />
         </Route>
         <Route exact path="/employer/viewprofile/:id" element={<EmployerProfile />} />
 
