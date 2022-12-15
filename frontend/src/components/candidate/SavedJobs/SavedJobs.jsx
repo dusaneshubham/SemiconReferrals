@@ -85,6 +85,7 @@ const SavedJobs = () => {
           alert={alert}
           setAlert={setAlert}
         />
+        <h4>Saved Jobs</h4>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>

@@ -194,15 +194,13 @@ const JobDescription = () => {
       })
         .then((response) => response.data)
         .then((res) => {
-          if (res.success) {
-            // isAppliedToJob();
+          console.log(res.message);
             if(res.success) {
               setIsAppliedForTheJob(true);
             }
             else {
               setAlert({ error: res.message });
             }
-          }
           handleClose();
         })
         .catch((err) => {
@@ -216,7 +214,6 @@ const JobDescription = () => {
     axios.post("http://localhost:5000/candidate/saveTheJobPost", { token, postId })
       .then((response) => response.data)
       .then((res) => {
-        // isSavedTheJob();
         if (res.success) {
           setIsSavedJob(true);
         }

@@ -23,6 +23,9 @@ import ForgetPassword from "./pages/ForgetPassword";
 import EmployerDashboard from "./pages/employer/Dashboard/Dashboard";
 import EmployerProfile from "./pages/employer/Profile/Profile";
 import EmployerDashboardComponent from "./components/employer/Dashboard/Dashboard";
+import EmployerInactiveJobs from "./components/employer/InactiveJobs/InactiveJobs";
+import EmployerActiveJobs from "./components/employer/ActiveJobs/ActiveJobs";
+import EmployerPendingJobs from "./components/employer/PendingJobs/PendingJobs";
 import EmployerSavedCandidates from "./components/employer/SavedCandidates/SavedCandidates";
 import EmployerFollowers from "./components/employer/Followers/Followers";
 import JobPost from "./components/employer/JobPost/JobPost";
@@ -61,6 +64,9 @@ function App() {
           <Route path="" element={<EmployerDashboardComponent />} />
           <Route path="dashboard" element={<EmployerDashboardComponent />} />
           <Route path="jobpost" element={<JobPost />} />
+          <Route path="inactivejobs" element={<EmployerInactiveJobs />} />
+          <Route path="activejobs" element={<EmployerActiveJobs />} />
+          <Route path="pendingjobs" element={<EmployerPendingJobs />} />
           <Route path="savedcandidates" element={<EmployerSavedCandidates />} />
           <Route path="updateprofile" element={<EmployerUpdateProfile />} />
           <Route path="followers" element={<EmployerFollowers />} />

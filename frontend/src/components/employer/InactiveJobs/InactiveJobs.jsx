@@ -23,24 +23,21 @@ import axios from 'axios';
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
 import Loading from "../../Loading/Loading";
 
-const SavedCandidates = () => {
+const InactiveJobs = () => {
+
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
   const theme = useTheme();
-  const [candidates, setCandidates] = useState([]);
-  const [deleteId, setDeleteId] = useState("");
+  const [inactiveJobs, setInactiveJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState({});
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const handleClickOpen = (id) => {
-    setDeleteId(id);
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setDeleteId("");
-    setOpen(false);
+  const formatDate = (anyDate) => {
+    let fullDate = new Date(anyDate);
+    const month = fullDate.toLocaleString("en-US", { month: "short" });
+    const date = fullDate.getDate();
+    const year = fullDate.getFullYear();
+    return `${month}. ${date}, ${year}`;
   };
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -63,21 +60,17 @@ const SavedCandidates = () => {
     },
   }));
 
-  const token = localStorage.getItem("token");
-
   useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (token) {
-      const getData = async () => {
-        await axios.post("http://localhost:5000/recruiter/getSavedCandidate", { token: token })
+      const getInactiveJobs = async () => {
+        await axios.post("http://localhost:5000/jobs/getInactiveJobs", { token: token })
           .then((res) => res.data)
           .then((res) => {
             if (res.success) {
-              setCandidates(res.data);
-            } else {
-              setAlert({ error: res.message });
-            }
+              setInactiveJobs(res.data);
+            } 
             setLoading(false);
           }).catch((err) => {
             console.log(err);
@@ -85,28 +78,12 @@ const SavedCandidates = () => {
             setAlert({ error: "Something went wrong with server!" });
           })
       }
-
-      getData();
+      getInactiveJobs();
     } else {
       navigate('/');
     }
   }, [navigate]);
 
-  const removeProfile = () => {
-    axios.post("http://localhost:5000/recruiter/removeSavedCandidate", { token: token, id: deleteId })
-      .then((res) => res.data)
-      .then((res) => {
-        if (res.success) {
-          setCandidates(candidates.filter((element) => element.candidate._id !== deleteId));
-        } else {
-          setAlert({ error: res.message });
-        }
-      }).catch((err) => {
-        console.log(err);
-        setAlert({ error: "Something went wrong with server!" });
-      });
-    setOpen(false);
-  }
 
   if (loading) {
     return (
@@ -121,18 +98,21 @@ const SavedCandidates = () => {
           alert={alert}
           setAlert={setAlert}
         />
-        <h4>Your Saved Candidates</h4>
+        <h4>Inactive Jobs</h4>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
-              <TableRow>
-                <StyledTableCell>Candidate</StyledTableCell>
-                <StyledTableCell>Followed On</StyledTableCell>
-                <StyledTableCell>Profile</StyledTableCell>
+              <TableRow className="text-center">
+                <StyledTableCell>Job Title</StyledTableCell>
+                <StyledTableCell>Applications</StyledTableCell>
+                <StyledTableCell>Deadline</StyledTableCell>
+                <StyledTableCell>View Job Post</StyledTableCell>
+                <StyledTableCell>View Applications</StyledTableCell>
+                <StyledTableCell>Delete</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {candidates.map((element, index) => (
+              {inactiveJobs.map((data, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell>
                     <div className="d-flex align-items-center">
@@ -140,65 +120,51 @@ const SavedCandidates = () => {
                         <img src={image2} width="50" height="50" alt="" />
                       </div>
                       <div>
-                        <div className="text-orange">{element.candidate.name}</div>
+                        <div className="text-orange">{data.jobTitle}</div>
                       </div>
                     </div>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <Link to={"/candidate/viewprofile/" + element.candidate._id} className="text-decoration-none">
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleClickOpen}
-                      >
-                        View Profile
+                    {data.numberOfApplications}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {formatDate(data.applicationDeadline)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Link to={"/jobdescription/" + data._id}>
+                      <Button variant="contained" style={{ marginRight: "20px" }}>
+                        View Job Post
                       </Button>
                     </Link>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Button variant="contained" style={{ marginRight: "20px" }}>
+                      View Applications
+                    </Button>
                   </StyledTableCell>
                   <StyledTableCell>
                     <Button
                       variant="contained"
                       color="error"
-                      onClick={() => handleClickOpen(element.candidate._id)}
                       startIcon={<DeleteIcon />}
                     >
-                      Remove
+                      Delete
                     </Button>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
-              {candidates.length === 0 && <StyledTableRow>
-                <StyledTableCell colSpan="3" className="text-center text-secondary">
-                  You have not saved any candidate yet!
+              {inactiveJobs.length === 0 && <StyledTableRow>
+                <StyledTableCell colSpan="6" className="text-center text-secondary">
+                  There are no Inactive Jobs
                 </StyledTableCell>
               </StyledTableRow>}
             </TableBody>
           </Table>
         </TableContainer>
 
-        <Dialog
-          fullScreen={fullScreen}
-          open={open}
-          onClose={handleClose}
-          aria-labelledby="responsive-dialog-title"
-        >
-          <DialogContent>
-            <DialogContentText>
-              Are you sure you want to Remove this candidate from your followings?
-            </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button autoFocus onClick={removeProfile}>
-              Yes
-            </Button>
-            <Button onClick={handleClose} autoFocus>
-              No
-            </Button>
-          </DialogActions>
-        </Dialog>
       </>
     );
   }
 };
 
-export default SavedCandidates;
+export default InactiveJobs;

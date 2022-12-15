@@ -162,7 +162,7 @@ const Followers = () => {
               ))}
               {followers.length === 0 && <StyledTableRow>
                 <StyledTableCell colSpan="3" className="text-center text-secondary">
-                  No Profile Found!
+                  No one follows you yet!
                 </StyledTableCell>
               </StyledTableRow>}
             </TableBody>

@@ -15,6 +15,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Tooltip,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -23,7 +24,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import axios from 'axios';
 import {
-  Home, PostAdd, Person, ManageAccounts, PermIdentity, PeopleAlt, Logout
+  Home, PostAdd, Person, ManageAccounts, PermIdentity, PeopleAlt, Logout, PendingActions, CheckCircle, RemoveCircle
 } from "@mui/icons-material";
 
 const Dashboard = () => {
@@ -32,17 +33,22 @@ const Dashboard = () => {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const sideNavbar = {
     "Dashboard": "dashboard",
     "Post a Job": "jobpost",
     "View Profile": "viewprofile/" + id,
     "Update Profile": "updateprofile",
+    "Inactive Jobs": "inactivejobs",
+    "Active Jobs": "activejobs",
+    "Pending Jobs": "pendingjobs",
     "Saved Candidates": "savedcandidates",
     "Followers": "followers",
   };
 
-  const obj = [<Home />, <PostAdd />, <Person />, <ManageAccounts />, <PermIdentity />, <PeopleAlt />];
+  const obj = [<Home />, <PostAdd />, <Person />, <ManageAccounts />, <RemoveCircle />, <CheckCircle />, <PendingActions />, <PermIdentity />, <PeopleAlt />];
+
+  const tooltips = ["Dashboard", "Post Job", "View Profile", "Update Profile", "Inactive Jobs", "Active Jobs", "Pending Jobs", "Saved Candidates", "Followers"];
 
   const logout = () => {
     localStorage.clear();
@@ -196,15 +202,17 @@ const Dashboard = () => {
                       px: 2.5,
                     }}
                   >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {obj[index]}
-                    </ListItemIcon>
+                    <Tooltip title={tooltips[index]} placement="right-end">
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open ? 3 : "auto",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {obj[index]}
+                      </ListItemIcon>
+                    </Tooltip>
 
                     <ListItemText
                       primary={name}
@@ -223,6 +231,7 @@ const Dashboard = () => {
                   px: 2.5,
                 }}
                 onClick={logout}>
+                <Tooltip title="Logout" placement="right-end">
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
@@ -232,6 +241,7 @@ const Dashboard = () => {
                 >
                   <Logout />
                 </ListItemIcon>
+                </Tooltip>
                 <ListItemText
                   primary="Logout"
                   style={{ color: "var(--text)", textDecoration: "none" }}

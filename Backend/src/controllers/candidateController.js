@@ -1,14 +1,14 @@
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
 const Candidate = require('../models/candidate');
+const JobPost = require('../models/jobPost');
 const CandidateInfo = require('../models/candidateInfo');
 const JobApplication = require('../models/jobApplication');
 const bcrypt = require('bcryptjs');
 const { isEmail } = require('validator');
 const fs = require('fs');
 const path = require('path');
-const recruiterInfo = require('../models/recruiterInfo');
-const recruiter = require('../models/recruiter');
+const RecruiterInfo = require('../models/recruiterInfo');
 
 // Generate the token
 const generateToken = (user) => {
@@ -395,9 +395,18 @@ const applyForJob = asyncHandler(async(req, res) => {
     });
 
     jobApplication.save()
-        .then(() => {
-            res.json({ message: "Application for job has been submitted", success: true });
-        }).catch(() => {
+        .then(async() => {
+            // number of applicants in jobpost to be increased
+            const post = await JobPost.findOne({ _id: data.jobPostId });
+            const applicants = post.numberOfApplications + 1;
+            const updated = await JobPost.updateOne({ _id: data.jobPostId }, { numberOfApplications: applicants }, { new: true });
+            if (updated) {
+                res.json({ message: "Application for job has been submitted", success: true });
+            } else {
+                await JobPost.deleteOne({ candidateId: user._id, jobPostId: data.jobPostId });
+            }
+        }).catch((err) => {
+            console.log(err);
             res.json({ message: "Something went wrong during application for job", success: false });
         })
 });
@@ -668,7 +677,7 @@ const followRecruiter = asyncHandler(async(req, res) => {
 
     if (candidateId && recruiterId) {
         const result = await CandidateInfo.findOne({ candidateId: candidateId });
-        const recruiterInfoData = await recruiterInfo.findOne({ recruiterId: recruiterId });
+        const recruiterInfoData = await RecruiterInfo.findOne({ recruiterId: recruiterId });
         if (result) {
             let res1, res2;
 
@@ -676,7 +685,7 @@ const followRecruiter = asyncHandler(async(req, res) => {
             if (recruiterInfoData) {
                 result.followings.push({ recruiter: recruiterId, recruiterInfo: recruiterInfoData._id });
                 recruiterInfoData.followers.push({ candidate: candidateId, candidateInfo: result._id, followedOn: new Date() });
-                res1 = await recruiterInfo.findOneAndUpdate({ recruiterId: recruiterId }, { followers: recruiterInfoData.followers }, { new: true });
+                res1 = await RecruiterInfo.findOneAndUpdate({ recruiterId: recruiterId }, { followers: recruiterInfoData.followers }, { new: true });
             } else {
                 result.followings.push({ recruiter: recruiterId });
                 const data = new recruiterInfo({
@@ -719,7 +728,7 @@ const followRecruiter = asyncHandler(async(req, res) => {
             // now we save in recruiter collection
             if (recruiterInfoData) {
                 recruiterInfoData.followers.push({ candidate: candidateId, candidateInfo: res2._id, followedOn: new Date() });
-                res1 = await recruiterInfo.findOneAndUpdate({ recruiterId: recruiterId }, { followers: recruiterInfoData.followers }, { new: true });
+                res1 = await RecruiterInfo.findOneAndUpdate({ recruiterId: recruiterId }, { followers: recruiterInfoData.followers }, { new: true });
             } else {
                 const data = new recruiterInfo({
                     recruiterId: recruiterId,
@@ -753,7 +762,7 @@ const unFollowRecruiter = asyncHandler(async(req, res) => {
 
     if (candidateId && recruiterId) {
         const result1 = await CandidateInfo.findOne({ candidateId: candidateId });
-        const result2 = await recruiterInfo.findOne({ recruiterId: recruiterId });
+        const result2 = await RecruiterInfo.findOne({ recruiterId: recruiterId });
         if (result1 && result2) {
             result1.followings.pull({ recruiter: recruiterId });
             result2.followers.pull({ candidate: candidateId });

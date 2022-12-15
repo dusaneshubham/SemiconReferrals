@@ -12,17 +12,6 @@ const getAllJobDetails = asyncHandler(async(req, res) => {
     }
 });
 
-// const getAllJobDetailsFilters = asyncHandler(async(req, res) => {
-//     const { filtersData } = req.body;
-//     filtersData.location = new RegExp(filtersData.location, "i");
-//     const data = await JobPost.find({ location: filtersData.location, status: "Approved", isActive: true }).sort({ createdAt: -1 });
-//     if (data) {
-//         res.json({ message: "All job post data", data: data, success: true });
-//     } else {
-//         res.json({ message: "Jobs details not found", success: false });
-//     }
-// });
-
 const getJobDetails = asyncHandler(async(req, res) => {
     const { postId } = req.body;
     let jobDetails = await JobPost.findOne({ _id: postId });
@@ -51,10 +40,31 @@ const getPendingApplications = asyncHandler(async(req, res) => {
     }
 });
 
+const getActiveJobs = asyncHandler(async(req, res) => {
+    const user = req.user;
+    const activeJobs = await JobPost.find({ recruiterId: user._id, status: "Approved", isActive: true }).sort({ createdAt: -1 });
+    if (activeJobs.length > 0) {
+        res.json({ message: "Active jobs found", data: activeJobs, success: true });
+    } else {
+        res.json({ message: "Active jobs not found", success: false });
+    }
+});
+
+const getInactiveJobs = asyncHandler(async(req, res) => {
+    const user = req.user;
+    const inactiveJobs = await JobPost.find({ recruiterId: user._id, status: "Approved", isActive: false }).sort({ createdAt: -1 });
+    if (inactiveJobs.length > 0) {
+        res.json({ message: "Inactive jobs found", data: inactiveJobs, success: true });
+    } else {
+        res.json({ message: "Inactive jobs not found", success: false });
+    }
+});
+
 module.exports = {
     getAllJobDetails,
-    // getAllJobDetailsFilters,
     getJobDetails,
     getPendingJobs,
-    getPendingApplications
+    getPendingApplications,
+    getActiveJobs,
+    getInactiveJobs
 }
