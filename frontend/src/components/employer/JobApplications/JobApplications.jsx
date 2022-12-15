@@ -11,8 +11,9 @@ import {
   TableContainer,
   DialogContent,
   DialogContentText,
-  Dialog, 
+  Dialog,
   useMediaQuery,
+  DialogActions,
 } from "@mui/material";
 import { image2 } from "../../../images/images";
 import { useEffect, useState } from "react";
@@ -26,12 +27,20 @@ const JobApplications = () => {
   const navigate = useNavigate();
   const param = useParams();
   const [applicationData, setApplicationData] = useState([]);
-  const [openApplicationDialog, setOpenApplicationDialog] = useState(false);
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState({});
 
+  const [open, setOpen] = useState(false);
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const formatDate = (anyDate) => {
     let fullDate = new Date(anyDate);
@@ -40,14 +49,7 @@ const JobApplications = () => {
     const year = fullDate.getFullYear();
     return `${month}. ${date}, ${year}`;
   };
-  
-  const handleClickOpenApplication = () => {
-    setOpenApplicationDialog(true);
-  };
 
-  const handleClose = () => {
-    setOpenApplicationDialog(false);
-  };
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -125,7 +127,7 @@ const JobApplications = () => {
                     <StyledTableCell>
                       <div className="d-flex align-items-center">
                         <div style={{ marginRight: "15px" }}>
-                          <img src={image2} width="50" height="50" alt="" style={{marginRight:"10px"}} />
+                          <img src={image2} width="50" height="50" alt="" style={{ marginRight: "10px" }} />
                           {data.candidate[0].name}
                         </div>
                         <div>
@@ -136,11 +138,9 @@ const JobApplications = () => {
                     <StyledTableCell>{data.status}</StyledTableCell>
                     <StyledTableCell>{formatDate(data.createdAt)}</StyledTableCell>
                     <StyledTableCell>
-                      <Link>
-                        <Button variant="contained" onclick={handleClickOpenApplication}>
-                          View Application Details
-                        </Button>
-                      </Link>
+                      <Button variant="contained" onclick={handleClickOpen}>
+                        View Application Details
+                      </Button>
                     </StyledTableCell>
                     <StyledTableCell>
                       <Link>
@@ -163,15 +163,24 @@ const JobApplications = () => {
 
         <Dialog
           fullScreen={fullScreen}
-          open={openApplicationDialog}
+          open={open}
           onClose={handleClose}
           aria-labelledby="responsive-dialog-title"
         >
           <DialogContent>
             <DialogContentText>
-              Are you sure you want to Delete this Job Post?
+              Let Google help apps determine location. This means sending anonymous
+              location data to Google, even when no apps are running.
             </DialogContentText>
           </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleClose}>
+              Disagree
+            </Button>
+            <Button onClick={handleClose} autoFocus>
+              Agree
+            </Button>
+          </DialogActions>
         </Dialog>
 
       </>
