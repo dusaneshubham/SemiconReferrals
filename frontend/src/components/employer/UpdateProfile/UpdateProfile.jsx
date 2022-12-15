@@ -303,7 +303,7 @@ const UpdateProfile = () => {
             </div>
           </div>
 
-          {/*--------------------- Important Important ---------------------*/}
+          {/*--------------------- Important Information ---------------------*/}
           <div className="col-md-8 p-4 bg-white">
             <div style={{ margin: "10px 0" }}>
               <h4>Important Information</h4>

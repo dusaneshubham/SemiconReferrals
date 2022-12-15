@@ -14,12 +14,22 @@ import Footer from "../../../components/Footer/Footer";
 import axios from "axios";
 import AlertPopUp from "../../../components/AlertPopUp/AlertPopUp";
 import Loading from "../../../components/Loading/Loading";
+import { CKEditor } from "@ckeditor/ckeditor5-react";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import LoadingButton from '@mui/lab/LoadingButton';
+import { isEmail } from 'validator';
 
 const Profile = () => {
     const navigate = useNavigate();
     const param = useParams();
     const [candidateId, setCandidateId] = useState("");
     const [isFollow, setIsFollow] = useState(false);
+    const [contactUsData, setContactUsData] = useState({
+        name: "",
+        email: "",
+        subject: "",
+        message: ""
+    });
     const [data, setData] = useState({
         name: "NaN",
         email: "NaN",
@@ -37,6 +47,7 @@ const Profile = () => {
         createDate: "NaN",
     });
     const [loading, setLoading] = useState(true);
+    const [btnLoading, setBtnLoading] = useState(false);
     const token = localStorage.getItem("token");
 
     useEffect(() => {
@@ -128,8 +139,39 @@ const Profile = () => {
                     setAlert({ error: res.message });
                 }
             }).catch((err) => {
+                console.log(err);
                 setAlert({ message: "Something went wrong with server!!" });
             });
+    }
+
+    // send message for contact
+    const sendMessage = async () => {
+        setBtnLoading(true);
+        if (!contactUsData.name || !contactUsData.subject || !contactUsData.message || !contactUsData.email) {
+            setAlert({ error: "All field are required!!" });
+            setBtnLoading(false);
+        } else if (!isEmail(contactUsData.email)) {
+            setAlert({ error: "Invalid Email id!!" });
+            setBtnLoading(false);
+        } else {
+            axios.post("http://localhost:5000/sendMailForContact", { ...contactUsData, to: data.email })
+                .then((res) => res.data)
+                .then((res) => {
+                    if (res.success) {
+                        setAlert({ success: res.message });
+                        setContactUsData({ name: "", email: "", message: "", subject: "" });
+                        setBtnLoading(false);
+                    } else {
+                        setAlert({ error: res.message });
+                        setBtnLoading(false);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                    setAlert({ message: "Something went wrong with server!!" });
+                    setBtnLoading(false);
+                })
+        }
     }
 
     if (loading) {
@@ -242,8 +284,12 @@ const Profile = () => {
                                     variant="outlined"
                                 >
                                     <OutlinedInput
-                                        id="signup-name"
+                                        id="name"
                                         type="text"
+                                        value={contactUsData.name}
+                                        onChange={(e) => {
+                                            setContactUsData({ ...contactUsData, name: e.target.value });
+                                        }}
                                         placeholder="Full name"
                                         required
                                     />
@@ -253,8 +299,12 @@ const Profile = () => {
                                     variant="outlined"
                                 >
                                     <OutlinedInput
-                                        id="signup-name"
+                                        id="email"
                                         type="email"
+                                        value={contactUsData.email}
+                                        onChange={(e) => {
+                                            setContactUsData({ ...contactUsData, email: e.target.value });
+                                        }}
                                         placeholder="Email address"
                                         required
                                     />
@@ -264,16 +314,39 @@ const Profile = () => {
                                     variant="outlined"
                                 >
                                     <OutlinedInput
-                                        id="signup-name"
+                                        id="subject"
                                         type="text"
+                                        value={contactUsData.subject}
+                                        onChange={(e) => {
+                                            setContactUsData({ ...contactUsData, subject: e.target.value });
+                                        }}
                                         placeholder="Subject"
                                         required
                                     />
                                 </FormControl>
-                                <textarea className="form-control my-1" required></textarea>
-                                <Button variant="contained" sx={{ my: 1, width: "100%" }}>
-                                    Message
-                                </Button>
+                                <div>
+                                    <label htmlFor="team-work-description" className="form-label">
+                                        Message
+                                    </label>
+                                    <CKEditor
+                                        className="form-control my-1"
+                                        data={contactUsData.message}
+                                        editor={ClassicEditor}
+                                        onChange={(_, editor) => {
+                                            const data = editor.getData();
+                                            setContactUsData({ ...contactUsData, message: data });
+                                        }}
+                                    />
+                                </div>
+                                <LoadingButton
+                                    loadingPosition="Sending..."
+                                    loading={btnLoading}
+                                    variant="contained"
+                                    sx={{ my: 1, width: "100%" }}
+                                    onClick={sendMessage}
+                                >
+                                    Send Message
+                                </LoadingButton>
                             </div>
                         </div>
                     </div>
