@@ -195,12 +195,12 @@ const JobDescription = () => {
         .then((response) => response.data)
         .then((res) => {
           console.log(res.message);
-            if(res.success) {
-              setIsAppliedForTheJob(true);
-            }
-            else {
-              setAlert({ error: res.message });
-            }
+          if (res.success) {
+            setIsAppliedForTheJob(true);
+          }
+          else {
+            setAlert({ error: res.message });
+          }
           handleClose();
         })
         .catch((err) => {
@@ -372,7 +372,7 @@ const JobDescription = () => {
           </DialogTitle>
           <hr />
           <DialogContent>
-            {
+            {resumeData.length > 0 && (
               resumeData.map((data, index) => {
                 return (
                   <div className="form-check d-flex justify-content-between w-100 my-4" key={index}>
@@ -396,30 +396,37 @@ const JobDescription = () => {
                   </div>
                 )
               })
-            }
+            )}
+            {resumeData.length === 0 && (
+              <p style={{ color: "red" }}>Upload Resume in the <em>My Resume</em> section, then only you can apply.</p>
+            )}
 
             {/*--------------------- Cover Letter ---------------------*/}
-            <div className="mt-5">
-              <label htmlFor="job-description" className="form-label">
-                Cover Letter
-              </label>
-              <CKEditor
-                editor={ClassicEditor}
-                data=""
-                onChange={(e, editor) => {
-                  const data = editor.getData();
-                  // console.log({ e, editor, data });
-                  setCoverLetter(data);
-                }}
-              />
-            </div>
+            {resumeData.length > 0 && (
+              <div className="mt-5">
+                <label htmlFor="job-description" className="form-label">
+                  Cover Letter
+                </label>
+                <CKEditor
+                  editor={ClassicEditor}
+                  data=""
+                  onChange={(e, editor) => {
+                    const data = editor.getData();
+                    // console.log({ e, editor, data });
+                    setCoverLetter(data);
+                  }}
+                />
+              </div>
+            )}
           </DialogContent>
           <hr />
-          <DialogActions className="d-flex justify-content-center">
-            <button className="main-btn main-btn-link" onClick={applyToJob} autoFocus>
-              Apply
-            </button>
-          </DialogActions>
+          {resumeData.length > 0 && (
+            <DialogActions className="d-flex justify-content-center">
+              <button className="main-btn main-btn-link" onClick={applyToJob} autoFocus>
+                Apply
+              </button>
+            </DialogActions>
+          )}
         </Dialog>
 
         <Footer />

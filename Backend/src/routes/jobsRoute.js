@@ -11,6 +11,6 @@ router.post("/getActiveJobs", verifyToken, getActiveJobs);
 router.post("/getInactiveJobs", verifyToken, getInactiveJobs);
 router.post("/getRecruiterPendingJobs", verifyToken, getRecruiterPendingJobs);
 router.post("/deleteJobPost", verifyToken, deleteJobPost);
-router.post("/getJobApplications", verifyToken, getJobApplications);
+router.post("/getJobApplications/:postId", verifyToken, getJobApplications);
 
 module.exports = router;

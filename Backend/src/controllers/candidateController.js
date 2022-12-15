@@ -46,7 +46,6 @@ const registerCandidate = asyncHandler(async(req, res) => {
 
     newCandidate.save(async(err, data) => {
         if (err) {
-            console.log(err);
             return res.json({ message: "Error in registering the candidate", success: false });
         }
         if (data) {
@@ -161,7 +160,6 @@ const updateProfile = asyncHandler(async(req, res) => {
                     if (data) {
                         res.json({ message: "Successfully update profile!!", success: true });
                     } else {
-                        console.log(err);
                         res.json({ message: "Something went wrong during update the profile", success: false });
                     }
                 }).catch((err) => {
@@ -183,7 +181,6 @@ const updateProfileImage = asyncHandler(async(req, res) => {
         if (result.profileImage && result.profileImage !== "defaultImage.png") {
             fs.unlink(path.join(__dirname, `../images/profileImages/${result.profileImage}`), (err) => {
                 if (err) {
-                    console.log(err);
                     res.json({ message: "Something went wrong during update the profile image!!", success: false });
                 }
             });
@@ -193,7 +190,6 @@ const updateProfileImage = asyncHandler(async(req, res) => {
             .then(() => {
                 res.json({ message: "Successfully, Profile Image Uploaded!!", profileImage: profileImage, success: true });
             }).catch((err) => {
-                console.log(err);
                 res.json({ message: "Something went wrong during update the profile image!!", success: false });
             });
     } else {
@@ -206,7 +202,6 @@ const updateProfileImage = asyncHandler(async(req, res) => {
             .then(() => {
                 res.json({ message: "Successfully, Profile Image Uploaded!!", profileImage: profileImage, success: true });
             }).catch((err) => {
-                console.log(err);
                 res.json({ message: "Something went wrong during update the profile image!!", success: false });
             });
     }
@@ -343,14 +338,11 @@ const updateWorkingExperience = asyncHandler(async(req, res) => {
     await CandidateInfo.findOneAndUpdate({ candidateID: user._id }, { workingExperience: currentWorkingExperience }, { new: true })
         .then((data, err) => {
             if (data) {
-                // console.log("data", data);
                 res.json({ message: "Successfully update profile!!", success: true });
             } else {
-                console.log("err", err);
                 res.json({ message: "Job experience has not been uploaded due to server error!", success: false });
             }
         }).catch((err) => {
-            console.log(err);
             res.json({ message: "Experience has not been uploaded due to server error!", success: false });
         });
 });
@@ -364,14 +356,11 @@ const updateEducationDetails = asyncHandler(async(req, res) => {
         await CandidateInfo.findOneAndUpdate({ candidateID: user._id }, { education: educationDetails }, { new: true })
             .then((data, err) => {
                 if (data) {
-                    // console.log("data", data);
                     res.json({ message: "Successfully update profile!!", success: true });
                 } else {
-                    console.log("err", err);
                     res.json({ message: "Educational details has not been uploaded due to server error!", success: false });
                 }
             }).catch((err) => {
-                console.log(err);
                 res.json({ message: "Experience has not been uploaded due to server error!", success: false });
             });
     } else {
@@ -406,7 +395,6 @@ const applyForJob = asyncHandler(async(req, res) => {
                 await JobPost.deleteOne({ candidateId: user._id, jobPostId: data.jobPostId });
             }
         }).catch((err) => {
-            console.log(err);
             res.json({ message: "Something went wrong during application for job", success: false });
         })
 });
@@ -534,18 +522,15 @@ const uploadMyResume = asyncHandler(async(req, res) => {
         });
         await data.save().then(async(data) => {
             if (data) {
-                console.log(data);
                 await CandidateInfo.findOneAndUpdate({ candidateId: user._id }, { defaultResumeId: data.resumes[0]._id }, { new: true })
                     .then((data) => {
                         if (data) {
-                            console.log(data);
                             res.json({ message: "Resume has been uploaded!", defaultResumeId: data.defaultResumeId, success: true })
                         } else {
                             res.json({ message: "Something went wrong with server!!", success: false });
                         }
                     })
                     .catch((err) => {
-                        console.log(err);
                         res.json({ message: "Something went wrong with server!!", success: false });
                     });
             } else {
@@ -565,7 +550,6 @@ const uploadMyResume = asyncHandler(async(req, res) => {
                                 res.json({ message: "Resume has been uploaded!", resumes: data.resumes, defaultResumeId: data.resumes[0]._id, success: true })
                             })
                             .catch((err) => {
-                                console.log(err);
                                 res.json({ message: "Error!! During making default resume!", success: false })
                             })
                     } else {
@@ -575,7 +559,6 @@ const uploadMyResume = asyncHandler(async(req, res) => {
                     res.json({ message: "Resume has not been uploaded due to server error!", success: false })
                 }
             }).catch((err) => {
-                console.log(err);
                 res.json({ message: "Resume has not been uploaded due to server error!", success: false })
             });
     }
@@ -596,7 +579,6 @@ const makeDefaultResume = asyncHandler(async(req, res) => {
                 }
             })
             .catch((err) => {
-                console.log(err);
                 res.json({ message: "Something went wrong with server!!", success: false });
             });
     } else {
@@ -624,7 +606,6 @@ const deleteResume = asyncHandler(async(req, res) => {
             .then((data) => {
                 fs.unlink(path.join(__dirname, `../resumes/${fileName}`), (err) => {
                     if (err) {
-                        console.log(err);
                         res.json({ message: "Something went wrong during delete resume!!", success: false });
                     } else {
                         data.resumes.pull({ _id: id });
@@ -633,13 +614,11 @@ const deleteResume = asyncHandler(async(req, res) => {
                         data.save().then((data) => {
                             res.json({ message: "Successfully delete resume!!", success: true, resumes: data.resumes });
                         }).catch((err) => {
-                            console.log(err);
                             res.json({ message: "Something went wrong during delete resume!!", success: false });
                         });
                     }
                 });
             }).catch((err) => {
-                console.log(err);
                 res.json({ message: "Something went wrong during delete resume!!", success: false });
             });
     } else {
@@ -705,7 +684,6 @@ const followRecruiter = asyncHandler(async(req, res) => {
             if (res1 && res2) {
                 res.json({ message: "Now you are followings this recruiter!!", success: true });
             } else {
-                console.log("undone");
                 res.json({ message: "Something went wrong during follow recruiter", success: false });
             }
         } else {
@@ -743,10 +721,8 @@ const followRecruiter = asyncHandler(async(req, res) => {
             }
 
             if (res1 && res2) {
-                console.log("done");
                 res.json({ message: "Now you are followings this recruiter!!", success: true });
             } else {
-                console.log("undone");
                 res.json({ message: "Something went wrong during follow recruiter", success: false });
             }
         }

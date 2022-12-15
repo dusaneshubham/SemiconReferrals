@@ -1,6 +1,8 @@
 const asyncHandler = require("express-async-handler");
 const JobPost = require("../models/jobPost");
 const JobApplication = require('../models/jobApplication');
+const mongoose = require('mongoose');
+const Candidate = require('../models/candidate');
 
 // not used yet
 const getAllJobDetails = asyncHandler(async(req, res) => {
@@ -83,13 +85,41 @@ const deleteJobPost = asyncHandler(async(req, res) => {
 
 const getJobApplications = asyncHandler(async(req, res) => {
     const user = req.user;
-    const { jobPostId } = req.body;
-    const applicationData = await JobApplication.find({ jobPostId: jobPostId, recruiterId: user._id, isApprovedByAdmin: true });
-    if (applicationData) {
-        res.json({ message: "Job post has been deleted successfully!", data: applicationData, success: true });
-    } else {
-        res.json({ message: "Unable to delete the job post", success: false });
-    }
+    const postId = req.params.postId;
+    console.log(postId);
+    JobApplication.aggregate([{
+                $match: {
+                    jobPostId: mongoose.Types.ObjectId(postId),
+                    isApprovedByAdmin: true
+                }
+            },
+            {
+                $lookup: {
+                    from: "candidates",
+                    localField: "candidateId",
+                    foreignField: "_id",
+                    as: "candidate"
+                },
+            }
+        ]).then((data) => {
+            console.log(data);
+            res.json({ message: "Approved the post!", data: data, success: true })
+        })
+        .catch(() => res.json({ message: "Unable to approve the post!", success: false }));
+
+    // const applicationData = await JobApplication.find({ jobPostId: jobPostId, recruiterId: user._id, isApprovedByAdmin: true });
+
+    // if (applicationData) {
+    //     const candidate = await Candidate.findOne({ _id: applicationData.candidateId });
+    //     console.log(jobPost, applicationData, candidate);
+    // }
+
+
+    // if (applicationData) {
+    //     res.json({ message: "Job post has been deleted successfully!", data: applicationData, success: true });
+    // } else {
+    //     res.json({ message: "Unable to delete the job post", success: false });
+    // }
 });
 
 module.exports = {

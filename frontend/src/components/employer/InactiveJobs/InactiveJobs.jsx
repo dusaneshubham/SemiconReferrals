@@ -62,7 +62,7 @@ const InactiveJobs = () => {
           .then((res) => {
             if (res.success) {
               setInactiveJobs(res.data);
-            } 
+            }
             setLoading(false);
           }).catch((err) => {
             console.log(err);
@@ -123,15 +123,17 @@ const InactiveJobs = () => {
                   </StyledTableCell>
                   <StyledTableCell>
                     <Link to={"/jobdescription/" + data._id}>
-                      <Button variant="contained" style={{ marginRight: "20px" }}>
+                      <Button variant="contained">
                         View Job Post
                       </Button>
                     </Link>
                   </StyledTableCell>
                   <StyledTableCell>
-                    <Button variant="contained" style={{ marginRight: "20px" }}>
-                      View Applications
-                    </Button>
+                    <Link to={`/employer/jobapplications/` + data._id}>
+                      <Button variant="contained">
+                        View Applications
+                      </Button>
+                    </Link>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}

@@ -36,6 +36,7 @@ const PendingApplications = () => {
 
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState({});
+  const [applicationId, setApplicationId] = useState("");
   const [PendingApplications, setPendingApplications] = useState([]);
 
   useEffect(() => {
@@ -86,10 +87,12 @@ const PendingApplications = () => {
   const [openApproval, setOpenApproval] = React.useState(false);
   const [openRejection, setOpenRejection] = React.useState(false);
 
-  const handleClickOpenApproval = () => {
+  const handleClickOpenApproval = (id) => {
+    setApplicationId(id);
     setOpenApproval(true);
   };
-  const handleClickOpenRejection = () => {
+  const handleClickOpenRejection = (id) => {
+    setApplicationId(id);
     setOpenRejection(true);
   };
 
@@ -99,6 +102,29 @@ const PendingApplications = () => {
   const handleCloseRejection = () => {
     setOpenRejection(false);
   };
+
+  const approveApplication = () => {
+    // axios.post("http://localhost:5000/admin/approveApplication", { applicationId })
+    //   .then((res) => res.data)
+    //   .then(() => {
+
+    //   })
+    //   .catch(() => {
+
+    //   })
+  }
+
+  const rejectApplication = () => {
+    // axios.post("http://localhost:5000/admin/approveApplication", { applicationId })
+    //   .then((res) => res.data)
+    //   .then(() => {
+
+    //   })
+    //   .catch(() => {
+
+    //   })
+  }
+
 
   if (loading) {
     return (
@@ -125,7 +151,7 @@ const PendingApplications = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {PendingApplications.length > 0 &&
+              {PendingApplications.length > 0 && (
                 PendingApplications.map((data, index) => (
                   <StyledTableRow key={index}>
 
@@ -162,14 +188,14 @@ const PendingApplications = () => {
                       <Button
                         variant="contained"
                         color="success"
-                        onClick={handleClickOpenApproval}
+                        onClick={() => handleClickOpenApproval(data._id)}
                       >
                         Approve
                       </Button>
                       <Button
                         variant="contained"
                         color="error"
-                        onClick={handleClickOpenRejection}
+                        onClick={() => handleClickOpenRejection(data._id)}
                         style={{ margin: "10px" }}
                       >
                         Reject
@@ -177,7 +203,8 @@ const PendingApplications = () => {
                     </StyledTableCell>
                   </StyledTableRow>
                 )
-                )}
+                )
+              )}
               {PendingApplications.length === 0 && (
                 <StyledTableRow>
                   <StyledTableCell colSpan="5" className="text-center text-secondary">
@@ -201,7 +228,7 @@ const PendingApplications = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus onClick={handleCloseApproval}>
+            <Button autoFocus onClick={approveApplication}>
               Yes
             </Button>
             <Button onClick={handleCloseApproval}>No</Button>
@@ -220,7 +247,7 @@ const PendingApplications = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus onClick={handleCloseRejection}>
+            <Button autoFocus onClick={rejectApplication}>
               Yes
             </Button>
             <Button onClick={handleCloseRejection}>No</Button>

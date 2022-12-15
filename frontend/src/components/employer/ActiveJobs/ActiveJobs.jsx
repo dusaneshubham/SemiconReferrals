@@ -123,14 +123,14 @@ const ActiveJobs = () => {
                                     </StyledTableCell>
                                     <StyledTableCell>
                                         <Link to={"/jobdescription/" + data._id}>
-                                            <Button variant="contained" style={{ marginRight: "20px" }}>
+                                            <Button variant="contained">
                                                 View Job Post
                                             </Button>
                                         </Link>
                                     </StyledTableCell>
                                     <StyledTableCell>
                                         <Link to={`/employer/jobapplications/` + data._id}>
-                                            <Button variant="contained" style={{ marginRight: "20px" }}>
+                                            <Button variant="contained">
                                                 View Applications
                                             </Button>
                                         </Link>
