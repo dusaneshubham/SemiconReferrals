@@ -31,6 +31,7 @@ import EmployerFollowers from "./components/employer/Followers/Followers";
 import JobPost from "./components/employer/JobPost/JobPost";
 import JobApplications from "./components/employer/JobApplications/JobApplications";
 import EmployerUpdateProfile from "./components/employer/UpdateProfile/UpdateProfile";
+import UpdateBusinessEmail from "./pages/UpdateBusinessEmail";
 
 function App() {
   return (
@@ -75,11 +76,8 @@ function App() {
         </Route>
         <Route exact path="/employer/viewprofile/:id" element={<EmployerProfile />} />
 
-        <Route
-          exact
-          path="/email-verification"
-          element={<EmailVerification />}
-        />
+        <Route exact path="/updateBusinessMail/:token" element={<UpdateBusinessEmail />} />
+        <Route exact path="/email-verification" element={<EmailVerification />} />
         <Route exact path="/forget-pass" element={<ForgetPassword />} />
         <Route path="*" element={<PageNotFound />} />
       </Routes>

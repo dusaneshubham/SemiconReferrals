@@ -9,6 +9,7 @@ const { isEmail } = require('validator');
 const fs = require('fs');
 const path = require('path');
 const RecruiterInfo = require('../models/recruiterInfo');
+const nodemailer = require('nodemailer');
 
 // Generate the token
 const generateToken = (user) => {
@@ -77,6 +78,25 @@ const loginCandidate = asyncHandler(async(req, res) => {
         } else {
             res.json({ message: "Incorrect email or password", success: false });
         }
+    }
+});
+
+// update email
+const updateEmailId = asyncHandler(async(req, res) => {
+    const user = req.user;
+    const { email } = req.body;
+
+    if (email) {
+        await Candidate.findOneAndUpdate({ _id: user._id }, { email: email }, { new: true })
+            .then(() => {
+                res.json({ message: "Successfully update your business email", success: true });
+            })
+            .catch((err) => {
+                console.log(err);
+                res.json({ message: "Somthing went wrong during update the email", success: false });
+            })
+    } else {
+        res.json({ message: "Invalid Request!!", success: false });
     }
 });
 
@@ -759,9 +779,42 @@ const unFollowRecruiter = asyncHandler(async(req, res) => {
     }
 });
 
+// get mail for reset pass
+const getMailForResetMail = asyncHandler(async(req, res) => {
+    const { email } = req.body;
+    const id = req.user._id;
+
+    const token = await jwt.sign({ _id: id, type: "candidate" }, process.env.SECRETKEY, { expiresIn: 60 * 60 * 2 });
+
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL,
+            pass: process.env.PASSWORD
+        }
+    });
+
+    const mailOptions = {
+        from: process.env.EMAIL,
+        to: email,
+        subject: "Reset business email",
+        html: `<h4><a href='http://localhost:3000/updateBusinessMail/${token}'>Click here</a> For Change Business Mail</h4>`
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+        if (err) {
+            console.log(err);
+            res.json({ message: "Something went wrong during sending mail!", success: false });
+        } else {
+            res.json({ message: "Mail has been sent!!", success: true });
+        }
+    });
+});
+
 module.exports = {
     registerCandidate,
     loginCandidate,
+    updateEmailId,
     updatePassword,
     updateProfile,
     updateProfileImage,
@@ -785,5 +838,6 @@ module.exports = {
     isSavedJob,
     getFollowings,
     followRecruiter,
-    unFollowRecruiter
+    unFollowRecruiter,
+    getMailForResetMail
 };

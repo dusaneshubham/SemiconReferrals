@@ -26,7 +26,7 @@ const sendForgetPassMail = expressAsyncHandler(async (req, res) => {
         }
 
         if (user) {
-            const token = await jwt.sign({ _id: user._id, type }, process.env.SECRETKEY);
+            const token = await jwt.sign({ _id: user._id, type }, process.env.SECRETKEY, { expiresIn: 60 * 60 * 2 });
 
             const transporter = nodemailer.createTransport({
                 service: 'gmail',

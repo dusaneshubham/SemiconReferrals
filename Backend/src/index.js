@@ -15,7 +15,7 @@ const sendEmail = require('./middleware/sendEmail');
 const verifyEmail = require('./middleware/verifyEmail');
 const sendForgetPassMail = require('./middleware/sendForgetPassMail');
 const verifyToken = require('./middleware/verifyToken');
-const { getTokenData } = require('./controllers/commonController');
+const { getTokenData, sendMailForContact } = require('./controllers/commonController');
 
 dotenv.config();
 const app = express();
@@ -42,6 +42,7 @@ app.use("/profileImage", express.static(path.join(__dirname, '/images/profileIma
 app.use("/companyImage", express.static(path.join(__dirname, '/images/companyLogo/')));
 
 // Defining Routes
+app.use("/sendMailForContact", sendMailForContact);
 app.use("/verify-token", verifyToken, getTokenData);
 app.use("/verify-mail", verifyEmail);
 app.use("/send-mail", sendEmail);
