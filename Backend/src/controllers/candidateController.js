@@ -92,7 +92,6 @@ const updateEmailId = asyncHandler(async(req, res) => {
                 res.json({ message: "Successfully update your business email", success: true });
             })
             .catch((err) => {
-                console.log(err);
                 res.json({ message: "Somthing went wrong during update the email", success: false });
             })
     } else {
@@ -803,7 +802,6 @@ const getMailForResetMail = asyncHandler(async(req, res) => {
 
     transporter.sendMail(mailOptions, (err, info) => {
         if (err) {
-            console.log(err);
             res.json({ message: "Something went wrong during sending mail!", success: false });
         } else {
             res.json({ message: "Mail has been sent!!", success: true });

@@ -1,7 +1,7 @@
 const expressAsyncHandler = require("express-async-handler");
 const nodemailer = require("nodemailer");
 
-const getTokenData = expressAsyncHandler(async (req, res) => {
+const getTokenData = expressAsyncHandler(async(req, res) => {
     const user = req.user;
 
     if (user) {
@@ -11,7 +11,7 @@ const getTokenData = expressAsyncHandler(async (req, res) => {
     }
 });
 
-const sendMailForContact = expressAsyncHandler(async (req, res) => {
+const sendMailForContact = expressAsyncHandler(async(req, res) => {
     const { name, to, email, subject, message } = req.body;
 
     if (!name || !to || !email || !subject || !message) {
@@ -34,7 +34,6 @@ const sendMailForContact = expressAsyncHandler(async (req, res) => {
 
         transporter.sendMail(mailOptions, (err, info) => {
             if (err) {
-                console.log(err);
                 res.json({ message: "Something went wrong during sending mail!", success: false });
             } else {
                 res.json({ message: "Thanks for contacting us. we will contact you through mail!!", success: true });

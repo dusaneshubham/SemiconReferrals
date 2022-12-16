@@ -34,7 +34,7 @@ const getPendingJobs = asyncHandler(async(req, res) => {
 });
 
 const getPendingApplications = asyncHandler(async(req, res) => {
-    const pendingApplications = await JobApplication.find({ status: "Pending" }).populate("jobPostId").sort({ createdAt: 1 });
+    const pendingApplications = await JobApplication.find({ isApprovedByAdmin: false }).populate("jobPostId").sort({ createdAt: 1 });
     if (pendingApplications) {
         res.json({ data: pendingApplications, success: true });
     } else {
@@ -84,9 +84,7 @@ const deleteJobPost = asyncHandler(async(req, res) => {
 });
 
 const getJobApplications = asyncHandler(async(req, res) => {
-    const user = req.user;
     const postId = req.params.postId;
-    console.log(postId);
     JobApplication.aggregate([{
                 $match: {
                     jobPostId: mongoose.Types.ObjectId(postId),
@@ -102,24 +100,20 @@ const getJobApplications = asyncHandler(async(req, res) => {
                 },
             }
         ]).then((data) => {
-            console.log(data);
             res.json({ message: "Approved the post!", data: data, success: true })
         })
         .catch(() => res.json({ message: "Unable to approve the post!", success: false }));
+});
 
-    // const applicationData = await JobApplication.find({ jobPostId: jobPostId, recruiterId: user._id, isApprovedByAdmin: true });
-
-    // if (applicationData) {
-    //     const candidate = await Candidate.findOne({ _id: applicationData.candidateId });
-    //     console.log(jobPost, applicationData, candidate);
-    // }
-
-
-    // if (applicationData) {
-    //     res.json({ message: "Job post has been deleted successfully!", data: applicationData, success: true });
-    // } else {
-    //     res.json({ message: "Unable to delete the job post", success: false });
-    // }
+const changeApplicationStatus = asyncHandler(async(req, res) => {
+    const applicationId = req.params.applicationId;
+    const { changedStatus } = req.body;
+    const updated = await JobApplication.updateOne({ _id: applicationId }, { status: changedStatus }, { new: true });
+    if (updated) {
+        res.json({ message: "Status has been changed!", success: true });
+    } else {
+        res.json({ message: "Status has not been changed due to technical issue", success: false });
+    }
 });
 
 module.exports = {
@@ -131,5 +125,6 @@ module.exports = {
     getInactiveJobs,
     getRecruiterPendingJobs,
     deleteJobPost,
-    getJobApplications
+    getJobApplications,
+    changeApplicationStatus
 }

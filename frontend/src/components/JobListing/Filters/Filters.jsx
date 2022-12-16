@@ -71,13 +71,6 @@ const Filters = (props) => {
                     <label htmlFor="location" className="form-label">Location</label>
                     <input type="text" value={filters.location} className="form-control" id="location" onChange={(e) => {
                         setFilters({ ...filters, location: e.target.value });
-                        // if (e.target.value === "") {
-                        //     setFilterJobDetails(jobDetails);
-                        // } else {
-                        //     setFilterJobDetails(filterJobDetails.filter((job) => {
-                        //         return job.location.toLowerCase().includes(e.target.value.toLowerCase());
-                        //     }));
-                        // }
                         getFilteredData();
                     }} />
                 </div>
@@ -88,14 +81,6 @@ const Filters = (props) => {
                     <select value={filters.qualification} className="form-select" onChange={(e) => {
                         setFilters({ ...filters, qualification: e.target.value });
                         getFilteredData();
-                        // if (e.target.value === "") {
-                        //     setFilterJobDetails(jobDetails);
-                        // } else {
-                        //     setFilterJobDetails(jobDetails.filter((job) => {
-                        //         console.log(job.qualification, e.target.value);
-                        //         return job.qualification === e.target.value;
-                        //     }));
-                        // }
                     }}>
                         <option selected value="">-- Select --</option>
                         <option value="Bachelor">Bachelor</option>
