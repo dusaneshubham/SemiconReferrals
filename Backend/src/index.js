@@ -15,7 +15,7 @@ const sendEmail = require('./middleware/sendEmail');
 const verifyEmail = require('./middleware/verifyEmail');
 const sendForgetPassMail = require('./middleware/sendForgetPassMail');
 const verifyToken = require('./middleware/verifyToken');
-const { getTokenData } = require('./controllers/commonController');
+const { getTokenData, sendMailForContact } = require('./controllers/commonController');
 
 dotenv.config();
 const app = express();
@@ -26,14 +26,14 @@ app.use(cookieParser());
 app.use(cors());
 
 // updating status in jobpost after deadline surpasses
-// const job = schedule.scheduleJob('01 47 15 * * *', async() => {
-//     await JobPost.updateMany({
-//         applicationDeadline: {
-//             $lt: (new Date(new Date().setHours(00, 00, 00, 00))).toISOString()
-//         },
-//         status: "Approved"
-//     }, { isActive: false }, { new: true });
-// });
+const job = schedule.scheduleJob('01 00 00 * * *', async() => {
+    await JobPost.updateMany({
+        applicationDeadline: {
+            $lt: (new Date(new Date().setHours(00, 00, 00, 00))).toISOString()
+        },
+        status: "Approved"
+    }, { isActive: false }, { new: true });
+});
 
 // resumes path
 app.use("/resumes", express.static(path.join(__dirname, '/resumes/')));
@@ -42,6 +42,7 @@ app.use("/profileImage", express.static(path.join(__dirname, '/images/profileIma
 app.use("/companyImage", express.static(path.join(__dirname, '/images/companyLogo/')));
 
 // Defining Routes
+app.use("/sendMailForContact", sendMailForContact);
 app.use("/verify-token", verifyToken, getTokenData);
 app.use("/verify-mail", verifyEmail);
 app.use("/send-mail", sendEmail);
@@ -52,9 +53,9 @@ app.use("/recruiter", recruiterRoute);
 app.use("/jobs", jobsRoute);
 
 mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
     .then(() => console.log("Connected to Database"))
     .catch((err) => {
         console.log(err);

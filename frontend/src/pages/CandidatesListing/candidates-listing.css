@@ -1,0 +1,40 @@
+#filters-div {
+    background-color: #FFFFFF;
+    padding: 0 30px;
+}
+
+.filter-input-div {
+    background-color: #FFFFFF;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.filter-input-div input,
+select {
+    border: none;
+    font-size: 14px;
+    margin-left: 8px;
+    width: 85%;
+    outline: none;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.filter-radio-div {
+    margin: 15px auto;
+}
+
+.filter-radio-div span {
+    margin-left: 10px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+#candidatelists-div {
+    padding: 10px 25px 25px 25px;
+}
+
+@media only screen and (max-width: 768px) {
+    #filter-outer-div {
+        display: none;
+    }
+}

@@ -210,7 +210,7 @@ const PendingPost = () => {
               {pendingJobs.length === 0 && (
                 <StyledTableRow>
                   <StyledTableCell colSpan="6" className="text-center text-secondary">
-                    No Applications found!
+                    No Post found!
                   </StyledTableCell>
                 </StyledTableRow>
               )}

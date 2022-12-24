@@ -1,16 +1,15 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto&display=swap");
-
 :root {
-    --light-pink: #FE93A0;
-    --light-yellow: #F9F2D8;
-    --bg-gray: #F2F2F2;
-    --main-orange: #F58220;
-    --main-blue: #213F9A;
+    --light-pink: #fe93a0;
+    --light-yellow: #f9f2d8;
+    --bg-gray: #f2f2f2;
+    --main-orange: #f58220;
+    --main-blue: #213f9a;
     --text: #777;
 }
 
 * {
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 
 ::-webkit-scrollbar {
@@ -45,4 +44,25 @@
 
 a {
     text-decoration: none !important;
+}
+
+.main .MuiPaper-root {
+    top: 70px !important;
+}
+
+
+/* Listings pages filter btn */
+
+.filter-btn-div {
+    float: right;
+    position: relative;
+    display: none;
+}
+
+@media only screen and (max-width: 768px) {
+    .filter-btn-div {
+        display: block;
+        position: relative;
+        top: -40px;
+    }
 }

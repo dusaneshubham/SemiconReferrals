@@ -15,6 +15,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Tooltip,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -23,8 +24,9 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import axios from 'axios';
 import {
-  Home, PostAdd, Person, ManageAccounts, PermIdentity, PeopleAlt, Logout
+  Home, PostAdd, Person, ManageAccounts, PermIdentity, PeopleAlt, Logout, PendingActions, CheckCircle, RemoveCircle
 } from "@mui/icons-material";
+import Navbar from "../../../components/Navbar/Navbar";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -32,17 +34,22 @@ const Dashboard = () => {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const sideNavbar = {
     "Dashboard": "dashboard",
     "Post a Job": "jobpost",
     "View Profile": "viewprofile/" + id,
     "Update Profile": "updateprofile",
+    "Inactive Jobs": "inactivejobs",
+    "Active Jobs": "activejobs",
+    "Pending Jobs": "pendingjobs",
     "Saved Candidates": "savedcandidates",
     "Followers": "followers",
   };
 
-  const obj = [<Home />, <PostAdd />, <Person />, <ManageAccounts />, <PermIdentity />, <PeopleAlt />];
+  const obj = [<Home />, <PostAdd />, <Person />, <ManageAccounts />, <RemoveCircle />, <CheckCircle />, <PendingActions />, <PermIdentity />, <PeopleAlt />];
+
+  const tooltips = ["Dashboard", "Post Job", "View Profile", "Update Profile", "Inactive Jobs", "Active Jobs", "Pending Jobs", "Saved Candidates", "Followers"];
 
   const logout = () => {
     localStorage.clear();
@@ -153,49 +160,81 @@ const Dashboard = () => {
 
   if (!loading) {
     return (
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar position="fixed" open={open}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                marginRight: 5,
-                ...(open && { display: "none" }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap component="div">
-              Welcome - {name}
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <DrawerHeader>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === "rtl" ? (
-                <ChevronRightIcon />
-              ) : (
-                <ChevronLeftIcon />
-              )}
-            </IconButton>
-          </DrawerHeader>
-          <Divider />
-          <List>
-            {Object.entries(sideNavbar).map(([name, url], index) => (
-              <ListItem key={index} disablePadding sx={{ display: "block" }}>
-                <NavLink to={url} className={({ isActive }) => "text-decoration-none " + (isActive ? "active-link" : "")}>
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
-                    }}
-                  >
+      <>
+        <Navbar />
+        <Box sx={{ display: "flex" }} className="main">
+          <CssBaseline />
+          <AppBar position="fixed" open={open}>
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
+                sx={{
+                  marginRight: 5,
+                  ...(open && { display: "none" }),
+                }}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" noWrap component="div">
+                Welcome - {name}
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <Drawer variant="permanent" open={open}>
+            <DrawerHeader>
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === "rtl" ? (
+                  <ChevronRightIcon />
+                ) : (
+                  <ChevronLeftIcon />
+                )}
+              </IconButton>
+            </DrawerHeader>
+            <Divider />
+            <List>
+              {Object.entries(sideNavbar).map(([name, url], index) => (
+                <ListItem key={index} disablePadding sx={{ display: "block" }}>
+                  <NavLink to={url} className={({ isActive }) => "text-decoration-none " + (isActive ? "active-link" : "")}>
+                    <ListItemButton
+                      sx={{
+                        minHeight: 48,
+                        justifyContent: open ? "initial" : "center",
+                        px: 2.5,
+                      }}
+                    >
+                      <Tooltip title={tooltips[index]} placement="right-end">
+                        <ListItemIcon
+                          sx={{
+                            minWidth: 0,
+                            mr: open ? 3 : "auto",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {obj[index]}
+                        </ListItemIcon>
+                      </Tooltip>
+
+                      <ListItemText
+                        primary={name}
+                        style={{ color: "var(--text)", textDecoration: "none" }}
+                        sx={{ opacity: open ? 1 : 0 }}
+                      />
+                    </ListItemButton>
+                  </NavLink>
+                </ListItem>
+              ))}
+              <ListItem disablePadding sx={{ display: "block" }}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                  onClick={logout}>
+                  <Tooltip title="Logout" placement="right-end">
                     <ListItemIcon
                       sx={{
                         minWidth: 0,
@@ -203,49 +242,24 @@ const Dashboard = () => {
                         justifyContent: "center",
                       }}
                     >
-                      {obj[index]}
+                      <Logout />
                     </ListItemIcon>
-
-                    <ListItemText
-                      primary={name}
-                      style={{ color: "var(--text)", textDecoration: "none" }}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </NavLink>
+                  </Tooltip>
+                  <ListItemText
+                    primary="Logout"
+                    style={{ color: "var(--text)", textDecoration: "none" }}
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
               </ListItem>
-            ))}
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
-                }}
-                onClick={logout}>
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Logout />
-                </ListItemIcon>
-                <ListItemText
-                  primary="Logout"
-                  style={{ color: "var(--text)", textDecoration: "none" }}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </Drawer>
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <DrawerHeader />
-          <Outlet />
+            </List>
+          </Drawer>
+          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <DrawerHeader />
+            <Outlet />
+          </Box>
         </Box>
-      </Box>
+      </>
     );
   }
 };

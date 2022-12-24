@@ -36,6 +36,7 @@ const PendingApplications = () => {
 
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState({});
+  const [applicationId, setApplicationId] = useState("");
   const [PendingApplications, setPendingApplications] = useState([]);
 
   useEffect(() => {
@@ -46,7 +47,6 @@ const PendingApplications = () => {
         .then((res) => res.data)
         .then((response) => {
           if (response.success) {
-            console.log(response.data);
             setPendingApplications(response.data);
           } else {
             console.log(response.message);
@@ -86,19 +86,51 @@ const PendingApplications = () => {
   const [openApproval, setOpenApproval] = React.useState(false);
   const [openRejection, setOpenRejection] = React.useState(false);
 
-  const handleClickOpenApproval = () => {
+  const handleClickOpenApproval = (id) => {
+    setApplicationId(id);
     setOpenApproval(true);
   };
-  const handleClickOpenRejection = () => {
+  const handleClickOpenRejection = (id) => {
+    setApplicationId(id);
     setOpenRejection(true);
   };
 
   const handleCloseApproval = () => {
+    setApplicationId("");
     setOpenApproval(false);
   };
   const handleCloseRejection = () => {
+    setApplicationId("");
     setOpenRejection(false);
   };
+
+  const approveApplication = () => {
+    axios.post(`http://localhost:5000/admin/approveJobApplication/${applicationId}`)
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setAlert({ success: res.message });
+        }
+        else {
+          setAlert({ error: res.message });
+        }
+      })
+      .catch(() => {
+        setAlert({ error: "Something went wrong in server" });
+      })
+  }
+
+  const rejectApplication = () => {
+    // axios.post("http://localhost:5000/admin/approveApplication", { applicationId })
+    //   .then((res) => res.data)
+    //   .then(() => {
+
+    //   })
+    //   .catch(() => {
+
+    //   })
+  }
+
 
   if (loading) {
     return (
@@ -125,7 +157,7 @@ const PendingApplications = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {PendingApplications.length > 0 &&
+              {PendingApplications.length > 0 && (
                 PendingApplications.map((data, index) => (
                   <StyledTableRow key={index}>
 
@@ -135,7 +167,7 @@ const PendingApplications = () => {
                     <StyledTableCell>
                       <Link to={`/candidate/viewprofile/${data.candidateId}`} className="text-decoration-none">
                         <Button variant="contained" >
-                          View
+                          View Candidate Profile
                         </Button>
                       </Link>
                     </StyledTableCell>
@@ -144,7 +176,7 @@ const PendingApplications = () => {
                     <StyledTableCell>
                       <a href={data.resume.url} rel="noreferrer" target="_blank" style={{ color: "#FFF", textDecoration: "none" }}>
                         <Button variant="contained">
-                          View
+                          View Resume
                         </Button>
                       </a>
                     </StyledTableCell>
@@ -153,7 +185,7 @@ const PendingApplications = () => {
                     <StyledTableCell>
                       <Link to={`/jobdescription/${data.jobPostId._id}`} className="text-decoration-none">
                         <Button variant="contained">
-                          View
+                          View Job Post
                         </Button>
                       </Link>
                     </StyledTableCell>
@@ -162,14 +194,14 @@ const PendingApplications = () => {
                       <Button
                         variant="contained"
                         color="success"
-                        onClick={handleClickOpenApproval}
+                        onClick={() => handleClickOpenApproval(data._id)}
                       >
                         Approve
                       </Button>
                       <Button
                         variant="contained"
                         color="error"
-                        onClick={handleClickOpenRejection}
+                        onClick={() => handleClickOpenRejection(data._id)}
                         style={{ margin: "10px" }}
                       >
                         Reject
@@ -177,7 +209,8 @@ const PendingApplications = () => {
                     </StyledTableCell>
                   </StyledTableRow>
                 )
-                )}
+                )
+              )}
               {PendingApplications.length === 0 && (
                 <StyledTableRow>
                   <StyledTableCell colSpan="5" className="text-center text-secondary">
@@ -201,7 +234,7 @@ const PendingApplications = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus onClick={handleCloseApproval}>
+            <Button autoFocus onClick={approveApplication}>
               Yes
             </Button>
             <Button onClick={handleCloseApproval}>No</Button>
@@ -220,7 +253,7 @@ const PendingApplications = () => {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button autoFocus onClick={handleCloseRejection}>
+            <Button autoFocus onClick={rejectApplication}>
               Yes
             </Button>
             <Button onClick={handleCloseRejection}>No</Button>

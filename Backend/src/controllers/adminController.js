@@ -83,23 +83,6 @@ const updatePassword = asyncHandler(async(req, res) => {
     }
 });
 
-// not used yet
-const approveRecruiter = asyncHandler(async(req, res) => {
-    const { _id } = req.body;
-
-    const isExistRecruiter = await Recruiter.findOne({ _id });
-    if (isExistRecruiter) {
-        const _recruiter = await Recruiter.findOneAndUpdate(_id, { status: "Approved" }, { new: true });
-        if (_recruiter) {
-            res.json({ message: "successfully updated status!", success: true });
-        } else {
-            res.json({ message: "Something went wrong during approval!!", success: false });
-        }
-    } else {
-        res.json({ message: "Incorrect recruiter id", success: false });
-    }
-});
-
 const approvePost = asyncHandler(async(req, res) => {
     const { postId } = req.body;
 
@@ -198,20 +181,29 @@ const getStatistics = asyncHandler(async(req, res) => {
 });
 
 const approveJobApplication = asyncHandler(async(req, res) => {
-    const { _id } = req.body;
+    const applicationId = req.params.applicationId;
+    const approved = await JobApplication.updateOne({ _id: applicationId }, { isApprovedByAdmin: true }, { new: true });
 
-    const newPost = await JobPost.findOneAndUpdate(_id, { isApprovedByAdmin: true }, { new: true });
-    if (newPost) {
-        res.json({ message: "successfully updated status", success: true });
+    if (approved) {
+        // number of applicants in jobpost to be increased
+        const applicationData = await JobApplication.findOne({ _id: applicationId });
+        const post = await JobPost.findOne({ _id: applicationData.jobPostId });
+        const applicants = post.numberOfApplications + 1;
+        const updated = await JobPost.updateOne({ _id: applicationData.jobPostId }, { numberOfApplications: applicants }, { new: true });
+        if (updated) {
+            res.json({ message: "Candidate's job application has been approved", success: true });
+        } else {
+            // rollback condition
+            await JobApplication.updateOne({ _id: applicationId }, { isApprovedByAdmin: true }, { new: true });
+        }
     } else {
-        res.json({ message: "Incorrect post id!!", success: false });
+        res.json({ message: "Job application has not been approved due to technical error", success: false });
     }
 });
 
 const rejectJobApplication = asyncHandler(async(req, res) => {
-    const { _id } = req.body;
-
-    const newPost = await post.findOneAndUpdate(_id, { isApprovedByAdmin: false }, { new: true });
+    const applicationId = req.params.applicationId;
+    const newPost = await JobApplication.findOneAndUpdate(_id, { isApprovedByAdmin: false }, { new: true });
     if (newPost) {
         res.json({ message: "successfully updated status", success: true });
     } else {
@@ -223,7 +215,6 @@ module.exports = {
     registerAdmin,
     loginAdmin,
     updatePassword,
-    approveRecruiter,
     approvePost,
     rejectPost,
     approveJobApplication,

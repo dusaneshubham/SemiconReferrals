@@ -8,7 +8,7 @@ router.post("/update-password", updatePassword)
 router.post("/rejectPost", rejectPost);
 router.post("/approvePost", approvePost);
 router.get("/statistics", getStatistics);
-router.post("/approveJobApplication", approveJobApplication);
-router.post("/rejectJobApplication", rejectJobApplication);
+router.post("/approveJobApplication/:applicationId", approveJobApplication);
+router.post("/rejectJobApplication/:applicationId", rejectJobApplication);
 
 module.exports = router;

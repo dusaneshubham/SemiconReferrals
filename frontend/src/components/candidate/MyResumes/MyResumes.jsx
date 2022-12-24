@@ -42,8 +42,6 @@ const MyResumes = () => {
         if (response.success) {
           setResumeData(response.resumes);
           setDefaultResumeId(response.defaultResumeId);
-        } else {
-          setAlert({ error: response.message });
         }
         setLoading(false);
       })
@@ -146,6 +144,23 @@ const MyResumes = () => {
       });
   };
 
+  const makeUndefault = async () => {
+    await axios
+      .post("http://localhost:5000/candidate/makeUndefaultResume", { token })
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setDefaultResumeId("");
+        } else {
+          setAlert({ error: res.message });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setAlert({ error: "Something went wrong during undefault resume!!" });
+      })
+  }
+
   //------------------- Ignore this part bcz it's meaningless but mandatory ------------------- //
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -206,64 +221,68 @@ const MyResumes = () => {
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
-              <TableRow>
+              <StyledTableRow>
                 <StyledTableCell>Resume Name</StyledTableCell>
                 <StyledTableCell>Download</StyledTableCell>
                 <StyledTableCell>Delete</StyledTableCell>
                 <StyledTableCell>Set Default</StyledTableCell>
-              </TableRow>
+              </StyledTableRow>
             </TableHead>
             <TableBody>
-              {resumeData.map((data, index) => {
-                return (
-                  <StyledTableRow key={index}>
-                    <StyledTableCell>{data.fileName}</StyledTableCell>
-                    <StyledTableCell>
-                      <Button
-                        variant="contained"
-                        color="success"
-                        style={{ margin: "10px" }}
-                        startIcon={<DownloadIcon />}
-                        onClick={() => downloadResume(data.url)}
-                      >
-                        Download
-                      </Button>
-                    </StyledTableCell>
-                    <StyledTableCell>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        onClick={() => handleClickOpen(data._id, data.fileName)}
-                        style={{ margin: "10px" }}
-                        startIcon={<DeleteIcon />}
-                      >
-                        Delete
-                      </Button>
-                    </StyledTableCell>
-                    {data._id === defaultResumeId ? (
+              {resumeData.length > 0 && (
+                resumeData.map((data, index) => {
+                  return (
+                    <StyledTableRow key={index}>
+                      <StyledTableCell>{data.fileName}</StyledTableCell>
                       <StyledTableCell>
                         <Button
                           variant="contained"
                           color="success"
-                          style={{ margin: "10px" }}
+                          startIcon={<DownloadIcon />}
+                          onClick={() => downloadResume(data.url)}
                         >
-                          Default
+                          Download
                         </Button>
                       </StyledTableCell>
-                    ) : (
                       <StyledTableCell>
                         <Button
-                          variant="outlined"
-                          style={{ margin: "10px" }}
-                          onClick={() => makeDefault(data._id)}
+                          variant="contained"
+                          color="error"
+                          onClick={() => handleClickOpen(data._id, data.fileName)}
+                          startIcon={<DeleteIcon />}
                         >
-                          Set Default
+                          Delete
                         </Button>
                       </StyledTableCell>
-                    )}
-                  </StyledTableRow>
-                );
-              })}
+                      {data._id === defaultResumeId ? (
+                        <StyledTableCell>
+                          <Button
+                            variant="contained"
+                            color="success"
+                            onClick={makeUndefault}
+                          >
+                            Set Undefault
+                          </Button>
+                        </StyledTableCell>
+                      ) : (
+                        <StyledTableCell>
+                          <Button
+                            variant="outlined"
+                            onClick={() => makeDefault(data._id)}
+                          >
+                            Set Default
+                          </Button>
+                        </StyledTableCell>
+                      )}
+                    </StyledTableRow>
+                  );
+                })
+              )}
+              {resumeData.length === 0 && (
+                <StyledTableRow>
+                  <StyledTableCell colSpan="4" className="text-center text-secondary">No Resume Uploaded</StyledTableCell>
+                </StyledTableRow>
+              )}
             </TableBody>
           </Table>
         </TableContainer>

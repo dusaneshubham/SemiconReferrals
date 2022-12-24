@@ -7,3 +7,4 @@ export const image6 = require('./logo-semiconreferrals-square.jpg');
 export const image7 = require('./logo-semiconreferrals-square.png');
 export const image8 = require('./applied-jobs.png');
 export const image9 = require('./followers.png');
+export const noDataFoundIllustration = require('./no-data-found-illustration.jpg');

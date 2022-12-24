@@ -86,7 +86,6 @@ const Dashboard = () => {
           setAlert={setAlert}
         />
         {/* --------------------------------------------------- */}
-
         <div className="bg-white py-3 px-4 dashboard">
           <div className="d-flex dashboard-cards-div">
             <StatisticsCard

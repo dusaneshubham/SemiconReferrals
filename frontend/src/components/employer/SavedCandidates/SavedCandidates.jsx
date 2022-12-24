@@ -169,7 +169,7 @@ const SavedCandidates = () => {
               ))}
               {candidates.length === 0 && <StyledTableRow>
                 <StyledTableCell colSpan="3" className="text-center text-secondary">
-                  No Profile Found!
+                  You have not saved any candidate yet!
                 </StyledTableCell>
               </StyledTableRow>}
             </TableBody>

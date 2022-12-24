@@ -85,6 +85,7 @@ const SavedJobs = () => {
           alert={alert}
           setAlert={setAlert}
         />
+        <h4>Saved Jobs</h4>
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
@@ -97,23 +98,30 @@ const SavedJobs = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {job.map((element, index) => (
-                <StyledTableRow key={index}>
-                  <StyledTableCell>{element.companyName}</StyledTableCell>
-                  <StyledTableCell>{element.jobTitle}</StyledTableCell>
-                  <StyledTableCell>
-                    <Link to={"/jobDescription/" + element._id}>
-                      <Button variant="contained">View Job</Button>
-                    </Link>
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Link to={"/employer/viewprofile/" + element.recruiterId}>
-                      <Button variant="contained">View Employer Profile</Button>
-                    </Link>
-                  </StyledTableCell>
-                  <StyledTableCell>{getDate(element.applicationDeadline)}</StyledTableCell>
+              {job.length > 0 && (
+                job.map((element, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell>{element.companyName}</StyledTableCell>
+                    <StyledTableCell>{element.jobTitle}</StyledTableCell>
+                    <StyledTableCell>
+                      <Link to={"/jobDescription/" + element._id}>
+                        <Button variant="contained">View Job</Button>
+                      </Link>
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      <Link to={"/employer/viewprofile/" + element.recruiterId}>
+                        <Button variant="contained">View Employer Profile</Button>
+                      </Link>
+                    </StyledTableCell>
+                    <StyledTableCell>{getDate(element.applicationDeadline)}</StyledTableCell>
+                  </StyledTableRow>
+                ))
+              )}
+              {job.length === 0 && (
+                <StyledTableRow>
+                  <StyledTableCell colSpan="5" className="text-center text-secondary">You have not saved any Jobs</StyledTableCell>
                 </StyledTableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </TableContainer>

@@ -8,7 +8,7 @@ const path = require('path');
 const candidate = require("../models/candidate");
 const recruiter = require("../models/recruiter");
 
-const sendEmail = expressAsyncHandler(async(req, res) => {
+const sendEmail = expressAsyncHandler(async (req, res) => {
     const { name, email } = req.body.data;
     const { type } = req.body;
 
@@ -25,7 +25,7 @@ const sendEmail = expressAsyncHandler(async(req, res) => {
         }
 
         if (!_candidate && !_recruiter) {
-            const token = await jwt.sign(req.body, process.env.SECRETKEY, { expiresIn: '2h' });
+            const token = await jwt.sign(req.body, process.env.SECRETKEY, { expiresIn: 60 * 60 * 2 });
 
             const transporter = nodemailer.createTransport({
                 service: 'gmail',

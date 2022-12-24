@@ -15,6 +15,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Tooltip,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -25,6 +26,7 @@ import {
   Home, Person, ManageAccounts, Description, AssignmentTurnedIn, Bookmark, PeopleAlt, Logout
 } from "@mui/icons-material";
 import axios from 'axios';
+import Navbar from "../../../components/Navbar/Navbar";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -44,6 +46,8 @@ const Dashboard = () => {
   };
 
   const obj = [<Home />, <Person />, <ManageAccounts />, <Description />, <AssignmentTurnedIn />, <Bookmark />, <PeopleAlt />];
+
+  const tooltips = ["Dashboard", "View Profile", "Update Profile", "My Resumes", "Applied Jobs", "Saved Jobs", "Followed Employers"];
 
   const logout = () => {
     localStorage.clear();
@@ -154,7 +158,9 @@ const Dashboard = () => {
 
   if (!loading) {
     return (
-      <Box sx={{ display: "flex" }}>
+      <>
+      <Navbar/>
+      <Box sx={{ display: "flex" }} className="main">
         <CssBaseline />
         <AppBar position="fixed" open={open}>
           <Toolbar>
@@ -197,15 +203,17 @@ const Dashboard = () => {
                       px: 2.5,
                     }}
                   >
-                    <ListItemIcon
-                      sx={{
-                        minWidth: 0,
-                        mr: open ? 3 : "auto",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {obj[index]}
-                    </ListItemIcon>
+                    <Tooltip title={tooltips[index]} placement="right-end">
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open ? 3 : "auto",
+                          justifyContent: "center",
+                        }}
+                      >
+                        {obj[index]}
+                      </ListItemIcon>
+                    </Tooltip>
 
                     <ListItemText
                       primary={name}
@@ -224,15 +232,17 @@ const Dashboard = () => {
                   px: 2.5,
                 }}
                 onClick={logout}>
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Logout />
-                </ListItemIcon>
+                <Tooltip title="Logout" placement="right-end">
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      mr: open ? 3 : "auto",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <Logout />
+                  </ListItemIcon>
+                </Tooltip>
                 <ListItemText
                   primary="Logout"
                   style={{ color: "var(--text)", textDecoration: "none" }}
@@ -247,6 +257,7 @@ const Dashboard = () => {
           <Outlet />
         </Box>
       </Box>
+      </>
     );
   }
 };

@@ -16,8 +16,29 @@ const Navbar = () => {
     const [loggedin, setLoggedin] = useState(false);
     const [type, setType] = useState("");
     const [anchorEl, setAnchorEl] = useState(null);
+    const [searchMenuAnchorEl, setSearchMenuAnchorEl] = useState(null);
+    const [sidebarSearchMenuAnchorEl, setSidebarSearchMenuAnchorEl] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // sidebar navbar
+    const sidebarSearchMenuOpen = Boolean(sidebarSearchMenuAnchorEl);
+    const handleSidebarSearchMenuClick = (event) => {
+        setSidebarSearchMenuAnchorEl(event.currentTarget);
+    };
+    const handleSidebarSearchMenuClose = () => {
+        setSidebarSearchMenuAnchorEl(null);
+    };
+
+    // on full screen navbar
+    const searchMenuOpen = Boolean(searchMenuAnchorEl);
+    const handleSearchMenuClick = (event) => {
+        setSearchMenuAnchorEl(event.currentTarget);
+    };
+    const handleSearchMenuClose = () => {
+        setSearchMenuAnchorEl(null);
+    };
+
+    // profile icon
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -92,8 +113,8 @@ const Navbar = () => {
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
-                    <ListItemButton>
-                        <NavLink to='/search' className={({ isActive }) => isActive ? 'navbar-link active-link' : 'navbar-link'}> <ListItemText primary='Search' /> </NavLink>
+                    <ListItemButton onClick={handleSidebarSearchMenuClick} >
+                        <NavLink className='navbar-link'> <ListItemText primary='Search' /> </NavLink>
                     </ListItemButton>
                 </ListItem>
                 <ListItem disablePadding>
@@ -112,6 +133,54 @@ const Navbar = () => {
                     </ListItemButton>
                 </ListItem>
             </List>
+            {/* -------------------Sidebar Search Submenu ----------------- */}
+            <Menu
+                anchorEl={sidebarSearchMenuAnchorEl}
+                id="search-menu"
+                className='navbar-sidebar-menu'
+                open={sidebarSearchMenuOpen}
+                onClose={handleSidebarSearchMenuClose}
+                onClick={handleSidebarSearchMenuClose}
+                PaperProps={{
+                    elevation: 0,
+                    sx: {
+                        overflow: 'visible',
+                        filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                        mt: 1.5,
+                        '& .MuiAvatar-root': {
+                            width: 32,
+                            height: 32,
+                            ml: -0.5,
+                            mr: 1,
+                        },
+                        '&:before': {
+                            content: '""',
+                            display: 'block',
+                            position: 'absolute',
+                            top: "42%",
+                            left: -5,
+                            width: 10,
+                            height: 10,
+                            bgcolor: 'background.paper',
+                            transform: 'translateY(-50%) rotate(45deg)',
+                            zIndex: 0,
+                        },
+                    },
+                }}
+                transformOrigin={{ horizontal: 'left', vertical: 'center' }}
+                anchorOrigin={{ horizontal: 'right', vertical: 'center' }}
+            >
+                {<NavLink
+                    to="/jobslisting"
+                    className='text-decoration-none text-black'>
+                    <MenuItem>
+                        <ListItemIcon>
+                            <AccountCircle fontSize="small" />
+                        </ListItemIcon>
+                        Search for Jobs
+                    </MenuItem>
+                </NavLink>}
+            </Menu>
         </Box>
     );
 
@@ -121,10 +190,69 @@ const Navbar = () => {
                 <div className="container-fluid w-100">
                     <NavLink to="/" className=" navbar-link"><img src={logoPath} alt="Autism Logo" className="img-fluid" height="150" width="150" /></NavLink>
                     <NavLink to="/" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Home</NavLink>
-                    <NavLink to="/search" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Search</NavLink>
+                    <NavLink
+                        onClick={handleSearchMenuClick}
+                        className='navbar-link main-navbar-link'
+                        aria-controls={open ? 'search-menu' : undefined}
+                        aria-haspopup="true"
+                        aria-expanded={open ? 'true' : undefined}
+                        style={{ color: "black" }}
+                    >
+                        Search
+                    </NavLink>
                     <NavLink to="/blog" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Blog</NavLink>
                     <NavLink to="/faqs" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>FAQs</NavLink>
                     <NavLink to="/contact" className={({ isActive }) => 'navbar-link main-navbar-link ' + (isActive ? 'active-link' : '')}>Contact</NavLink>
+
+                    {/* ------------------- Search Submenu ----------------- */}
+                    <Menu
+                        anchorEl={searchMenuAnchorEl}
+                        id="search-menu"
+                        className='main-navbar-link'
+                        open={searchMenuOpen}
+                        onClose={handleSearchMenuClose}
+                        onClick={handleSearchMenuClose}
+                        PaperProps={{
+                            elevation: 0,
+                            sx: {
+                                overflow: 'visible',
+                                filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+                                mt: 1.5,
+                                '& .MuiAvatar-root': {
+                                    width: 32,
+                                    height: 32,
+                                    ml: -0.5,
+                                    mr: 1,
+                                },
+                                '&:before': {
+                                    content: '""',
+                                    display: 'block',
+                                    position: 'absolute',
+                                    top: 0,
+                                    right: "46%",
+                                    width: 10,
+                                    height: 10,
+                                    bgcolor: 'background.paper',
+                                    transform: 'translateY(-50%) rotate(45deg)',
+                                    zIndex: 0,
+                                },
+                            },
+                        }}
+                        transformOrigin={{ horizontal: 'center', vertical: 'top' }}
+                        anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+                    >
+                        {<NavLink
+                            to="/jobslisting"
+                            className='text-decoration-none text-black'>
+                            <MenuItem>
+                                <ListItemIcon>
+                                    <AccountCircle fontSize="small" />
+                                </ListItemIcon>
+                                Search for Jobs
+                            </MenuItem>
+                        </NavLink>}
+                    </Menu>
+
                     <div className='float-end'>
                         {!loading && !loggedin &&
                             <span className="main-navbar-link" data-bs-toggle="modal" data-bs-target="#loginSignUpModal">
@@ -147,6 +275,8 @@ const Navbar = () => {
                         }
                         {!loading && loggedin && <Button variant="outlined" className="profile-btn border-0 m-sm-2 mt-2"><NotificationsIcon /></Button>}
                     </div>
+
+                    {/* ------------------- Account Submenu ----------------- */}
                     <Menu
                         anchorEl={anchorEl}
                         id="account-menu"
@@ -199,18 +329,20 @@ const Navbar = () => {
                             Logout
                         </MenuItem>
                     </Menu>
+
                     <Button className="menu-btn float-end mx-0 m-sm-2 mt-2" onClick={toggleDrawer(true)}><MenuIcon /></Button>
                     <SwipeableDrawer
                         open={state}
                         onClose={toggleDrawer(false)}
                         onOpen={toggleDrawer(true)}
-                        className='box'
+                        className='box navbar-side-bar'
                     >
                         {list()}
                     </SwipeableDrawer>
                     <LoginSignUpModal />
                 </div>
             </nav>
+            <nav style={{ height: "70px" }}></nav>
         </>
     );
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Snackbar, Slide } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
+import Grow from '@mui/material/Grow';
 
 const AlertPopUp = (prop) => {
 
@@ -11,6 +12,10 @@ const AlertPopUp = (prop) => {
     const Transition = (props) => {
         return <Slide {...props} direction="down" />;
     };
+
+    function GrowTransition(props) {
+        return <Grow {...props} />;
+    }
 
     const handleClose = (_, reason) => {
         if (reason === "clickaway") {
@@ -24,7 +29,7 @@ const AlertPopUp = (prop) => {
             <Snackbar
                 autoHideDuration={2000}
                 open={prop.alert.error ? true : false}
-                TransitionComponent={Transition}
+                TransitionComponent={GrowTransition}
                 onClose={handleClose}
                 anchorOrigin={{ vertical: "top", horizontal: "center" }}
             >
@@ -35,7 +40,7 @@ const AlertPopUp = (prop) => {
             <Snackbar
                 autoHideDuration={2000}
                 open={prop.alert.success ? true : false}
-                TransitionComponent={Transition}
+                TransitionComponent={GrowTransition}
                 onClose={handleClose}
                 anchorOrigin={{ vertical: "top", horizontal: "center" }}
             >

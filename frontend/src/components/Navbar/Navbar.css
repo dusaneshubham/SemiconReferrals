@@ -1,16 +1,25 @@
 .nav-bar {
     padding: 10px 30px;
     background: white;
+    z-index: 1230 !important;
 }
 
-.navbar-link, .navbar-link span {
+.navbar-side-bar {
+    z-index: 1231 !important;
+}
+
+.navbar-link,
+.navbar-link span {
     color: black;
     text-decoration: none;
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
     margin: 5px 20px;
 }
 
-.navbar-link:hover, .navbar-link span:hover, .active-link, .active-link span {
+.navbar-link:hover,
+.navbar-link span:hover,
+.active-link,
+.active-link span {
     color: var(--light-pink);
 }
 
@@ -24,7 +33,7 @@
     background: white;
     border: none;
     outline: none;
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
 }
 
 .search-btn {
@@ -40,26 +49,31 @@
     display: none;
 }
 
-.profile-btn, .menu-btn {
+.profile-btn,
+.menu-btn {
     border-radius: 50% !important;
     min-width: auto !important;
     padding: 5px !important;
+}
+
+.navbar-sidebar-menu {
+    display: none;
 }
 
 @media only screen and (max-width: 1060px) {
     .nav-bar {
         padding: 10px;
     }
-
     .main-navbar-link {
         display: none;
     }
-
     .menu-btn {
         display: inherit !important;
     }
-
     .box {
         display: initial;
+    }
+    .navbar-sidebar-menu {
+        display: inherit;
     }
 }

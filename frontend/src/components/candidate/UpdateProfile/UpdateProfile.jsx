@@ -12,10 +12,12 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import axios from "axios";
 import { useState, useEffect } from "react";
-import ReactLoading from "react-loading";
+import Loading from "../../Loading/Loading";
 import JobExperience from "./JobExperience";
 import EducationDetails from "./EducationDetails";
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
+import LoadingButton from '@mui/lab/LoadingButton';
+import { isEmail } from "validator";
 
 const UpdateProfile = () => {
     // password
@@ -53,6 +55,12 @@ const UpdateProfile = () => {
         resumes: [],
         linkedIn: "",
     });
+
+    // loading button
+    const [loadingBtn, setLoadingBtn] = useState(false);
+
+    // back up mail
+    const [backUpMail, setBackUpMail] = useState("");
 
     // profile image
     const [profileImage, setProfilImage] = useState("");
@@ -132,6 +140,7 @@ const UpdateProfile = () => {
         }
     }
 
+    // change password
     const changePassword = async () => {
         if (passwordData.oldPassword === "" || passwordData.newPassword === "") {
             setAlert({ error: "Both field are require!!" });
@@ -157,20 +166,34 @@ const UpdateProfile = () => {
         }
     };
 
+    // get email for set bussiness email
+    const getMail = async () => {
+        if (backUpMail !== "" && isEmail(backUpMail)) {
+            setLoadingBtn(true);
+            axios.post("http://localhost:5000/candidate/getMailForResetMail", { token: token, email: backUpMail })
+                .then((res) => res.data)
+                .then((res) => {
+                    if (res.success) {
+                        setAlert({ success: res.message });
+                    } else {
+                        setAlert({ error: res.message });
+                    }
+                    setLoadingBtn(false);
+                })
+                .catch((err) => {
+                    console.log(err);
+                    setAlert({ error: "Something went wrong with server!" });
+                    setLoadingBtn(false);
+                })
+        } else {
+            setAlert({ error: "Invalid Backup mail!!" });
+        }
+    };
+
     if (loading) {
         return (
             <>
-                <div
-                    className="d-flex justify-content-center align-items-center"
-                    style={{ height: "70vh" }}
-                >
-                    <ReactLoading
-                        type="bubbles"
-                        color="#1976d2"
-                        height={100}
-                        width={100}
-                    />
-                </div>
+                <Loading />
             </>
         );
     } else {
@@ -209,7 +232,6 @@ const UpdateProfile = () => {
                                         <Button
                                             variant="contained"
                                             type="submit"
-                                            className="start-hiring-btn"
                                             style={{ float: "right", margin: "15px 0" }}
                                             onClick={updateProfileImage}
                                         >
@@ -389,7 +411,6 @@ const UpdateProfile = () => {
                                     <Button
                                         variant="contained"
                                         type="submit"
-                                        className="start-hiring-btn"
                                         style={{ float: "right", margin: "15px 0" }}
                                         onClick={updateCandidateProfile}
                                     >
@@ -495,7 +516,6 @@ const UpdateProfile = () => {
                                     <Button
                                         variant="contained"
                                         type="submit"
-                                        className="start-hiring-btn"
                                         style={{ float: "right", margin: "15px 0" }}
                                         onClick={updateCandidateProfile}
                                     >
@@ -548,7 +568,6 @@ const UpdateProfile = () => {
                                     <Button
                                         variant="contained"
                                         type="submit"
-                                        className="start-hiring-btn"
                                         style={{ float: "right", margin: "15px 0" }}
                                         onClick={updateCandidateProfile}
                                     >
@@ -645,7 +664,6 @@ const UpdateProfile = () => {
                                     <Button
                                         variant="contained"
                                         type="submit"
-                                        className="start-hiring-btn"
                                         style={{ float: "right", margin: "15px 0" }}
                                         onClick={changePassword}
                                     >
@@ -655,7 +673,53 @@ const UpdateProfile = () => {
                             </div>
                         </div>
                     </div>
+
+                    {/*--------------------- Change Business Email ---------------------*/}
+                    <div className="col-md-8 p-4 bg-white">
+                        <div style={{ margin: "10px 0" }}>
+                            <h4>Change Business Email</h4>
+                            <div className="row g-3 p-4 bg-light">
+                                {/*--------------------- BackUp Email ---------------------*/}
+                                <div className="col-md-12">
+                                    <label htmlFor="linkedin-link" className="form-label">
+                                        Backup Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        value={backUpMail}
+                                        onChange={(e) => {
+                                            setBackUpMail(e.target.value);
+                                        }}
+                                        className="form-control"
+                                        id="linkedin-link"
+                                    />
+                                </div>
+
+                                {/*--------------------- Get mail Button ---------------------*/}
+                                <div className="col-12">
+                                    {isEmail(backUpMail) ?
+                                        <LoadingButton
+                                            variant="contained"
+                                            type="submit"
+                                            loadingIndicator="Sending..."
+                                            loading={loadingBtn}
+                                            style={{ float: "right", margin: "15px 0" }}
+                                            onClick={getMail}
+                                        >
+                                            Get mail for update business mail
+                                        </LoadingButton>
+                                        :
+                                        <Button disabled style={{ float: "right", margin: "15px 0" }}>
+                                            Get mail for update business mail
+                                        </Button>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+
+
             </>
         );
     }
