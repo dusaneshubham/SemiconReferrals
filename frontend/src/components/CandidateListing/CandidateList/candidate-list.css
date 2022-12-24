@@ -1,19 +1,9 @@
-#candidate-list {
-    width: 460px;
-    padding: 30px;
-    border: 1px solid black;
-    border-radius: 5px;
-    background-color: #fff;
+
+.candidate-list .card-body {
+    font-size: 1vw;
 }
 
-@media only screen and (min-width: 1061px) and (max-width: 1400px) {
-    #candidate-list {
-        width: 320px;
-    }
-}
-
-@media only screen and (min-width: 768px) and (max-width: 1061px) {
-    #candidate-list {
-        width: 250px;
-    }
+.img-part {
+    display: flex;
+    justify-content: center;
 }

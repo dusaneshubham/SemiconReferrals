@@ -21,7 +21,7 @@ const Filters = (props) => {
             .toLowerCase()
             .includes(filters[eachKey].toLowerCase());
         } else {
-          if (candidatesDetails.candidateinfo[0][eachKey]) {
+          if (candidatesDetails.candidateinfo[0] && candidatesDetails.candidateinfo[0][eachKey]) {
             return candidatesDetails.candidateinfo[0][eachKey]
               .toString()
               .toLowerCase()

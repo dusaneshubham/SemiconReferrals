@@ -1,10 +1,29 @@
+.listing-div {
+    padding: 40px;
+    display: flex;
+    flex-direction: row;
+}
+
+.filter-left-div {
+    width: 20vw;
+}
+
+.filter-right-div {
+    width: 70vw;
+    padding: 0 10px;
+}
+
+.listing-div .form-label {
+    font-size: 1.2vw;
+}
+
 #filters-div {
-    background-color: #ffffff;
+    background-color: #FFFFFF;
     padding: 0 30px;
 }
 
 .filter-input-div {
-    background-color: #ffffff;
+    background-color: #FFFFFF;
     padding: 12px 15px;
     border-radius: 8px;
     margin-top: 15px;
@@ -14,7 +33,6 @@
 select {
     border: none;
     font-size: 14px;
-    margin-left: 8px;
     width: 85%;
     outline: none;
     color: rgba(0, 0, 0, 0.6);
@@ -29,6 +47,16 @@ select {
     color: rgba(0, 0, 0, 0.6);
 }
 
-#joblists-div {
-    padding: 10px 25px 25px 25px;
+.listing-div .job-list {
+    padding: 0 10px;
+}
+
+@media only screen and (max-width: 800px) {
+    .listing-div .filter-right-div {
+        width: 100vw;
+    }
+
+    .filter-left-div {
+        display: none;
+    }
 }

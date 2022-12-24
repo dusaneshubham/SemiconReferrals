@@ -1,6 +1,7 @@
 import React from 'react';
-import { Snackbar, Slide } from "@mui/material";
+import { Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
+// import Slide from '@mui/material/Slide';
 import Grow from '@mui/material/Grow';
 
 const AlertPopUp = (prop) => {
@@ -9,9 +10,9 @@ const AlertPopUp = (prop) => {
         return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
     });
 
-    const Transition = (props) => {
-        return <Slide {...props} direction="down" />;
-    };
+    // const Transition = (props) => {
+    //     return <Slide {...props} direction="down" />;
+    // };
 
     function GrowTransition(props) {
         return <Grow {...props} />;

@@ -6,12 +6,12 @@ import { Link } from "react-router-dom";
 const CandidateList = (props) => {
   return (
     <>
-      <div
-        id="candidate-list"
-        className="d-flex flex-column justify-content-center align-items-center px-5 py-4 m-2"
-      >
-        <Link to={`/candidate/viewprofile/${props.data._id}`}>
-          {props.data.candidateinfo[0].profileImage ? (
+      <div className="card text-center m-2 shadow-lg" style={{ width: "18rem" }}>
+        <div className="card-title p-2 fs-5 bg-light rounded-top" style={{ color: "var(--main-blue)" }}>
+          {props.data.name}
+        </div>
+        <div className="img-part py-3">
+          {props.data.candidateinfo[0] && props.data.candidateinfo[0].profileImage ? (
             <img
               src={`http://localhost:5000/profileImage/${props.data.candidateinfo[0].profileImage}`}
               alt="Candidate Profile"
@@ -28,14 +28,13 @@ const CandidateList = (props) => {
               height="100"
             />
           )}
-
-          {/* ----------- Name ---------- */}
-          {props.data.name && (
-            <p className="my-2" style={{ color: "var(--main-blue)" }}>
-              {props.data.name}
-            </p>
-          )}
-        </Link>
+        </div>
+        {/* <img src="..." className="card-img-top" alt="..." /> */}
+        <div className="card-body w-100 p-2 bg-light rounded-bottom">
+          <Link to={`/candidate/viewprofile/${props.data._id}`} className="text-dark">
+            View Profile
+          </Link >
+        </div>
       </div>
     </>
   );

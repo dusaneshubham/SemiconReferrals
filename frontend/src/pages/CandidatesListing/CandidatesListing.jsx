@@ -10,6 +10,7 @@ import CandidateList from "../../components/CandidateListing/CandidateList/Candi
 import { Button, SwipeableDrawer } from "@mui/material";
 import Filters from "../../components/CandidateListing/Filters/Filters";
 import Loading from "../../components/Loading/Loading";
+import NoDataFoundCard from "../../components/JobListing/JobList/NoDataFoundCard";
 // import NoDataFoundCard from "../../components/JobListing/JobList/NoDataFoundCard";
 
 function CandidatesListing() {
@@ -74,34 +75,35 @@ function CandidatesListing() {
         </SwipeableDrawer>
 
         <div style={{ backgroundColor: "var(--bg-gray" }}>
-          <div className="container" style={{ padding: "40px 0" }}>
-            <div className="row">
-              <div id="filter-outer-div" className="col-md-3">
-                <Filters
-                  setCandidatesDetails={setCandidatesDetails}
-                  candidatesDetails={candidatesDetails}
-                  setFilterData={setFilterData}
-                  filterData={filterData}
-                />
+          <div className="listing-div">
+            <div className="filter-left-div">
+              <Filters
+                setCandidatesDetails={setCandidatesDetails}
+                candidatesDetails={candidatesDetails}
+                setFilterData={setFilterData}
+                filterData={filterData}
+              />
+            </div>
+
+            <div className="filter-right-div">
+              <div className="filter-btn-div my-2">
+                <Button
+                  variant="contained"
+                  startIcon={<FilterAltIcon />}
+                  onClick={toggleDrawer(true)}
+                >
+                  Filters
+                </Button>
               </div>
 
-              <div id="candidatelists-div" className="col-md-9">
-                <div className="filter-btn-div">
-                  <Button
-                    variant="contained"
-                    startIcon={<FilterAltIcon />}
-                    onClick={toggleDrawer(true)}
-                  >
-                    Filters
-                  </Button>
-                </div>
-
-                <div className="candidate-list d-flex flex-wrap">
-                  {filterData.length > 0 &&
-                    filterData.map((data, index) => {
-                      return <CandidateList data={data} key={index} />;
-                    })}
-                </div>
+              <div className="candidate-list">
+                {filterData.length > 0 ?
+                  filterData.map((data, index) => {
+                    return <CandidateList data={data} key={index} />;
+                  })
+                  :
+                  <NoDataFoundCard />
+                }
               </div>
             </div>
           </div>
