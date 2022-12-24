@@ -1,23 +1,22 @@
-const bcrypt = require('bcrypt');
-const asyncHandler = require('express-async-handler');
-const jwt = require('jsonwebtoken');
-const Admin = require('../models/admin');
-const Candidate = require('../models/candidate');
-const Recruiter = require('../models/recruiter');
-const JobApplication = require('../models/jobApplication');
-const JobPost = require('../models/jobPost');
-const { isEmail } = require('validator');
+const bcrypt = require("bcrypt");
+const asyncHandler = require("express-async-handler");
+const jwt = require("jsonwebtoken");
+const Admin = require("../models/admin");
+const Candidate = require("../models/candidate");
+const Recruiter = require("../models/recruiter");
+const JobApplication = require("../models/jobApplication");
+const JobPost = require("../models/jobPost");
+const { isEmail } = require("validator");
 
 // Generate the token
 const generateToken = (user) => {
     return jwt.sign({ _id: user._id, type: "admin" }, process.env.SECRETKEY);
-}
+};
 
 // TODO : To be removed afterwards
 // Register admin
 const registerAdmin = asyncHandler(async(req, res) => {
     // const { name, email, password } = req.body;
-
     // if (!name && !email && !password) {
     //     res.json({ message: "Please fill all details", success: false });
     // } else {
@@ -57,7 +56,6 @@ const loginAdmin = asyncHandler(async(req, res) => {
             } else {
                 res.json({ message: "Invalid credentials!", success: false });
             }
-
         }
     }
 });
@@ -71,14 +69,20 @@ const updatePassword = asyncHandler(async(req, res) => {
     } else if (!isEmail(email)) {
         res.json({ message: "Invalid mail Id!", success: false });
     } else if (password !== confirmPassword) {
-        res.json({ message: "Password and Confirm password does not match!", success: false });
+        res.json({
+            message: "Password and Confirm password does not match!",
+            success: false,
+        });
     } else {
         const newPassword = await bcrypt.hash(password, 10);
         const updatePassword = await Admin.findOneAndUpdate({ email: email }, { password: password }, { new: true });
         if (updatePassword) {
             res.json({ message: "Your password has been saved!", success: true });
         } else {
-            res.json({ message: "Something went wrong during update password!", success: false });
+            res.json({
+                message: "Something went wrong during update password!",
+                success: false,
+            });
         }
     }
 });
@@ -92,21 +96,29 @@ const approvePost = asyncHandler(async(req, res) => {
         if (updatedData) {
             JobPost.aggregate([{
                         $match: {
-                            status: "Pending"
-                        }
+                            status: "Pending",
+                        },
                     },
                     {
                         $lookup: {
                             from: "recruiterinfos",
                             localField: "recruiterId",
                             foreignField: "recruiterId",
-                            as: "recruiterinfos"
+                            as: "recruiterinfos",
                         },
-                    }
-                ]).then((data) => res.json({ message: "Approved the post!", data: data, success: true }))
-                .catch(() => res.json({ message: "Unable to approve the post!", success: false }));
+                    },
+                ])
+                .then((data) =>
+                    res.json({ message: "Approved the post!", data: data, success: true })
+                )
+                .catch(() =>
+                    res.json({ message: "Unable to approve the post!", success: false })
+                );
         } else {
-            res.json({ message: "Something went wrong during approval!!", success: false });
+            res.json({
+                message: "Something went wrong during approval!!",
+                success: false,
+            });
         }
     } else {
         res.json({ message: "Incorrect job post id", success: false });
@@ -122,21 +134,29 @@ const rejectPost = asyncHandler(async(req, res) => {
         if (deleted) {
             JobPost.aggregate([{
                         $match: {
-                            status: "Pending"
-                        }
+                            status: "Pending",
+                        },
                     },
                     {
                         $lookup: {
                             from: "recruiterinfos",
                             localField: "recruiterId",
                             foreignField: "recruiterId",
-                            as: "recruiterinfos"
+                            as: "recruiterinfos",
                         },
-                    }
-                ]).then((data) => res.json({ message: "Rejected the post!", data: data, success: true }))
-                .catch(() => res.json({ message: "Unable to reject the post!", success: false }));
+                    },
+                ])
+                .then((data) =>
+                    res.json({ message: "Rejected the post!", data: data, success: true })
+                )
+                .catch(() =>
+                    res.json({ message: "Unable to reject the post!", success: false })
+                );
         } else {
-            res.json({ message: "Something went wrong during rejection!!", success: false });
+            res.json({
+                message: "Something went wrong during rejection!!",
+                success: false,
+            });
         }
     } else {
         res.json({ message: "Incorrect job post id", success: false });
@@ -148,16 +168,24 @@ const getStatistics = asyncHandler(async(req, res) => {
 
     // TODO : thinking
     // Statistics of job application
-    const numberOfJobApplication = await JobApplication.find().count()
+    const numberOfJobApplication = await JobApplication.find().count();
 
-    const numberOfPendingJobApplication = await JobApplication.find({ isApprovedByAdmin: false }).count();
+    const numberOfPendingJobApplication = await JobApplication.find({
+        isApprovedByAdmin: false,
+    }).count();
 
     // Statistics of job post
-    const numberOfApprovedJobPost = await JobPost.find({ status: "Approved" }).count();
+    const numberOfApprovedJobPost = await JobPost.find({
+        status: "Approved",
+    }).count();
 
-    const numberOfPendingJobPost = await JobPost.find({ status: "Pending" }).count();
+    const numberOfPendingJobPost = await JobPost.find({
+        status: "Pending",
+    }).count();
 
-    const numberOfRejectedJobPost = await JobPost.find({ status: "Rejected" }).count();
+    const numberOfRejectedJobPost = await JobPost.find({
+        status: "Rejected",
+    }).count();
 
     // Statistics of Recruiter
     const numberOfRecruiter = await Recruiter.find().count();
@@ -169,12 +197,14 @@ const getStatistics = asyncHandler(async(req, res) => {
             pending: numberOfPendingJobApplication,
         },
         jobPost: {
-            total: numberOfPendingJobPost + numberOfApprovedJobPost + numberOfRejectedJobPost,
+            total: numberOfPendingJobPost +
+                numberOfApprovedJobPost +
+                numberOfRejectedJobPost,
             pending: numberOfPendingJobPost,
             approve: numberOfApprovedJobPost,
-            reject: numberOfRejectedJobPost
+            reject: numberOfRejectedJobPost,
         },
-        numberOfRecruiter: numberOfRecruiter
+        numberOfRecruiter: numberOfRecruiter,
     };
 
     res.json({ message: "Statistics", statistics: data });
@@ -186,28 +216,36 @@ const approveJobApplication = asyncHandler(async(req, res) => {
 
     if (approved) {
         // number of applicants in jobpost to be increased
-        const applicationData = await JobApplication.findOne({ _id: applicationId });
+        const applicationData = await JobApplication.findOne({
+            _id: applicationId,
+        });
         const post = await JobPost.findOne({ _id: applicationData.jobPostId });
         const applicants = post.numberOfApplications + 1;
         const updated = await JobPost.updateOne({ _id: applicationData.jobPostId }, { numberOfApplications: applicants }, { new: true });
         if (updated) {
-            res.json({ message: "Candidate's job application has been approved", success: true });
+            res.json({
+                message: "Candidate's job application has been approved",
+                success: true,
+            });
         } else {
             // rollback condition
             await JobApplication.updateOne({ _id: applicationId }, { isApprovedByAdmin: true }, { new: true });
         }
     } else {
-        res.json({ message: "Job application has not been approved due to technical error", success: false });
+        res.json({
+            message: "Job application has not been approved due to technical error",
+            success: false,
+        });
     }
 });
 
 const rejectJobApplication = asyncHandler(async(req, res) => {
     const applicationId = req.params.applicationId;
-    const newPost = await JobApplication.findOneAndUpdate(_id, { isApprovedByAdmin: false }, { new: true });
+    const newPost = await JobApplication.findOneAndUpdate({ _id: applicationId }, { status: "Rejected" }, { new: true });
     if (newPost) {
-        res.json({ message: "successfully updated status", success: true });
+        res.json({ message: "You have Rejected the job application", success: true });
     } else {
-        res.json({ message: "Incorrect post id!!", success: false });
+        res.json({ message: "Unable to reject the application", success: false });
     }
 });
 

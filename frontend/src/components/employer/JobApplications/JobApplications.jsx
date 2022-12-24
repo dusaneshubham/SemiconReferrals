@@ -243,7 +243,7 @@ const JobApplications = () => {
               {particularData.status && (
                 <div style={{ minWidth: "500px" }}>
                   <label htmlFor="status">Status</label>
-                  <select class="form-select" value={particularData.status} aria-label="Default select" onChange={(e) => setParticularData({ ...particularData, status: e.target.value })}>
+                  <select className="form-select" value={particularData.status} aria-label="Default select" onChange={(e) => setParticularData({ ...particularData, status: e.target.value })}>
                     <option value="Pending">Pending</option>
                     <option value="Shortlist">Shortlist</option>
                     <option value="Interview">Interview</option>

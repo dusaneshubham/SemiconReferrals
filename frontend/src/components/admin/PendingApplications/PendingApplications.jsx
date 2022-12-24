@@ -19,7 +19,7 @@ import axios from "axios";
 import { useState } from "react";
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
 import Loading from "../../Loading/Loading";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 function PaperComponent(props) {
   return (
@@ -33,7 +33,6 @@ function PaperComponent(props) {
 }
 
 const PendingApplications = () => {
-
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState({});
   const [applicationId, setApplicationId] = useState("");
@@ -105,46 +104,52 @@ const PendingApplications = () => {
   };
 
   const approveApplication = () => {
-    axios.post(`http://localhost:5000/admin/approveJobApplication/${applicationId}`)
+    let token = localStorage.getItem("token");
+    axios
+    .post(
+        `http://localhost:5000/admin/approveJobApplication/${applicationId}`,
+        { token }
+      )
       .then((res) => res.data)
       .then((res) => {
         if (res.success) {
           setAlert({ success: res.message });
-        }
-        else {
+        } else {
           setAlert({ error: res.message });
         }
       })
       .catch(() => {
         setAlert({ error: "Something went wrong in server" });
-      })
-  }
+      });
+  };
 
   const rejectApplication = () => {
-    // axios.post("http://localhost:5000/admin/approveApplication", { applicationId })
-    //   .then((res) => res.data)
-    //   .then(() => {
-
-    //   })
-    //   .catch(() => {
-
-    //   })
-  }
-
+    let token = localStorage.getItem("token");
+    axios
+      .post(`http://localhost:5000/admin/rejectJobApplication/${applicationId}`, {token})
+      .then((res) => res.data)
+      .then((res) => {
+        if (res.success) {
+          setAlert({ success: res.message });
+        } else {
+          setAlert({ error: res.message });
+        }
+      })
+      .catch(() => {
+        setAlert({ error: "Something went wrong in server" });
+      });
+  };
 
   if (loading) {
     return (
       <>
         <Loading />
       </>
-    )
+    );
   } else {
     return (
       <>
-        <AlertPopUp
-          alert={alert}
-          setAlert={setAlert}
-        />
+        <AlertPopUp alert={alert} setAlert={setAlert} />
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
@@ -157,16 +162,20 @@ const PendingApplications = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {PendingApplications.length > 0 && (
+              {PendingApplications.length > 0 &&
                 PendingApplications.map((data, index) => (
                   <StyledTableRow key={index}>
-
-                    <StyledTableCell>{data.jobPostId.companyName}</StyledTableCell>
+                    <StyledTableCell>
+                      {data.jobPostId.companyName}
+                    </StyledTableCell>
 
                     {/* --------------- View Candidate Profile Btn ----------------- */}
                     <StyledTableCell>
-                      <Link to={`/candidate/viewprofile/${data.candidateId}`} className="text-decoration-none">
-                        <Button variant="contained" >
+                      <Link
+                        to={`/candidate/viewprofile/${data.candidateId}`}
+                        className="text-decoration-none"
+                      >
+                        <Button variant="contained">
                           View Candidate Profile
                         </Button>
                       </Link>
@@ -174,19 +183,23 @@ const PendingApplications = () => {
 
                     {/* ------------------ View Resume Btn ---------------------- */}
                     <StyledTableCell>
-                      <a href={data.resume.url} rel="noreferrer" target="_blank" style={{ color: "#FFF", textDecoration: "none" }}>
-                        <Button variant="contained">
-                          View Resume
-                        </Button>
+                      <a
+                        href={data.resume.url}
+                        rel="noreferrer"
+                        target="_blank"
+                        style={{ color: "#FFF", textDecoration: "none" }}
+                      >
+                        <Button variant="contained">View Resume</Button>
                       </a>
                     </StyledTableCell>
 
                     {/* --------------- View Job Details Button ----------------- */}
                     <StyledTableCell>
-                      <Link to={`/jobdescription/${data.jobPostId._id}`} className="text-decoration-none">
-                        <Button variant="contained">
-                          View Job Post
-                        </Button>
+                      <Link
+                        to={`/jobdescription/${data.jobPostId._id}`}
+                        className="text-decoration-none"
+                      >
+                        <Button variant="contained">View Job Post</Button>
                       </Link>
                     </StyledTableCell>
 
@@ -208,12 +221,13 @@ const PendingApplications = () => {
                       </Button>
                     </StyledTableCell>
                   </StyledTableRow>
-                )
-                )
-              )}
+                ))}
               {PendingApplications.length === 0 && (
                 <StyledTableRow>
-                  <StyledTableCell colSpan="5" className="text-center text-secondary">
+                  <StyledTableCell
+                    colSpan="5"
+                    className="text-center text-secondary"
+                  >
                     No Applications found!
                   </StyledTableCell>
                 </StyledTableRow>

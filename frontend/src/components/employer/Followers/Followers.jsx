@@ -132,10 +132,10 @@ const Followers = () => {
               {followers.map((element, index) => (
                 <StyledTableRow key={index}>
                   <StyledTableCell>
-                    <div className="d-flex align-items-center justify-content-center">
+                    <div className="d-flex align-items-center">
                       <div style={{ marginRight: "15px" }}>
-                        {element.candidateInfo ?
-                          <img src={"http://localhost:5000/profileImage/" + element.candidateInfo.profileImage} width="50" height="50" alt="profileImg" />
+                        {element.candidateInfo.profileImage ?
+                          <img src={`http://localhost:5000/profileImage/${element.candidateInfo.profileImage}`} width="50" height="50" alt="profileImg" />
                           :
                           <img src={"http://localhost:5000/profileImage/defaultImage.png"} width="50" height="50" alt="profileImg" />
                         }
@@ -152,7 +152,6 @@ const Followers = () => {
                       variant="contained"
                       color="error"
                       onClick={() => handleClickOpen(element.candidate._id)}
-                      style={{ margin: "10px" }}
                       startIcon={<DeleteIcon />}
                     >
                       Remove

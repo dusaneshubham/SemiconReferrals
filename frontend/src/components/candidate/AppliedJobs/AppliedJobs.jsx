@@ -126,8 +126,7 @@ const AppliedJobs = () => {
                     </StyledTableCell>
 
                     <StyledTableCell>{formatDate(data.createdAt)}</StyledTableCell>
-                    <StyledTableCell>{(data.status === "Pending" || "Approved") ? "In Progress" : data.status}</StyledTableCell>
-
+                    <StyledTableCell>{data.status}</StyledTableCell>
                   </StyledTableRow>
                 ))}
               {jobApplications.length === 0 && (
