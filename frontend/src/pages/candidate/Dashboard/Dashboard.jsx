@@ -26,6 +26,7 @@ import {
   Home, Person, ManageAccounts, Description, AssignmentTurnedIn, Bookmark, PeopleAlt, Logout
 } from "@mui/icons-material";
 import axios from 'axios';
+import Navbar from "../../../components/Navbar/Navbar";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -157,7 +158,9 @@ const Dashboard = () => {
 
   if (!loading) {
     return (
-      <Box sx={{ display: "flex" }}>
+      <>
+      <Navbar/>
+      <Box sx={{ display: "flex" }} className="main">
         <CssBaseline />
         <AppBar position="fixed" open={open}>
           <Toolbar>
@@ -254,6 +257,7 @@ const Dashboard = () => {
           <Outlet />
         </Box>
       </Box>
+      </>
     );
   }
 };

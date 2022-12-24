@@ -1,10 +1,10 @@
 #filters-div {
-    background-color: #ffffff;
+    background-color: #FFFFFF;
     padding: 0 30px;
 }
 
 .filter-input-div {
-    background-color: #ffffff;
+    background-color: #FFFFFF;
     padding: 12px 15px;
     border-radius: 8px;
     margin-top: 15px;
@@ -29,6 +29,12 @@ select {
     color: rgba(0, 0, 0, 0.6);
 }
 
-#joblists-div {
+#candidatelists-div {
     padding: 10px 25px 25px 25px;
+}
+
+@media only screen and (max-width: 768px) {
+    #filter-outer-div {
+        display: none;
+    }
 }

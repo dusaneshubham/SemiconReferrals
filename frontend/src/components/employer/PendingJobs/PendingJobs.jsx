@@ -181,7 +181,7 @@ const PendingJobs = () => {
               ))}
               {pendingJobs.length === 0 && <StyledTableRow>
                 <StyledTableCell colSpan="6" className="text-center text-secondary">
-                  There are no Active Jobs
+                  There are no Pending Jobs
                 </StyledTableCell>
               </StyledTableRow>}
             </TableBody>

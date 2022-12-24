@@ -183,8 +183,19 @@ const getStatistics = asyncHandler(async(req, res) => {
 const approveJobApplication = asyncHandler(async(req, res) => {
     const applicationId = req.params.applicationId;
     const approved = await JobApplication.updateOne({ _id: applicationId }, { isApprovedByAdmin: true }, { new: true });
+
     if (approved) {
-        res.json({ message: "Candidate's job application has been approved", success: true });
+        // number of applicants in jobpost to be increased
+        const applicationData = await JobApplication.findOne({ _id: applicationId });
+        const post = await JobPost.findOne({ _id: applicationData.jobPostId });
+        const applicants = post.numberOfApplications + 1;
+        const updated = await JobPost.updateOne({ _id: applicationData.jobPostId }, { numberOfApplications: applicants }, { new: true });
+        if (updated) {
+            res.json({ message: "Candidate's job application has been approved", success: true });
+        } else {
+            // rollback condition
+            await JobApplication.updateOne({ _id: applicationId }, { isApprovedByAdmin: true }, { new: true });
+        }
     } else {
         res.json({ message: "Job application has not been approved due to technical error", success: false });
     }

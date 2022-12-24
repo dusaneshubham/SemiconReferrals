@@ -14,11 +14,31 @@ import {
 } from "@mui/material";
 import Loading from "../../Loading/Loading";
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
+import axios from 'axios';
 
 const Dashboard = () => {
 
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState({});
+  const [statistic, setStatistics] = useState({});
+
+  useEffect(() => {
+    let token = localStorage.getItem("token");
+    const getStatistics = () => {
+      axios.post(`http://localhost:5000/recruiter/statistics`, { token })
+        .then((res) => res.data)
+        .then((res) => {
+          if(res.success) {
+            setStatistics(res.data);
+            setLoading(false);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
+    getStatistics();
+  }, []);
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -61,31 +81,31 @@ const Dashboard = () => {
         />
         <div className="d-flex dashboard-cards-div">
           <StatisticsCard
-            title="Published Jobs"
-            image={image2}
-            value="0"
-            bgColor="#32ac79"
-            link=""
-          />
-          <StatisticsCard
             title="Active Jobs"
             image={image2}
-            value="10"
+            value={statistic.jobs.active}
+            bgColor="#32ac79"
+            link="/employer/activejobs"
+          />
+          <StatisticsCard
+            title="Inactive Jobs"
+            image={image2}
+            value={statistic.jobs.inactive}
             bgColor="#8675ff"
-            link=""
+            link="/employer/inactivejobs"
           />
           <StatisticsCard
             title="Pending Job Post"
             image={image2}
-            value="1000"
+            value={statistic.jobs.pending}
             bgColor="#28CFD7"
-            link=""
+            link="/employer/pendingjobs"
           />
         </div>
 
         <h4>Recent Jobs Overview</h4>
 
-        <TableContainer component={Paper}>
+        {/* <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
               <TableRow>
@@ -110,7 +130,7 @@ const Dashboard = () => {
               ))}
             </TableBody>
           </Table>
-        </TableContainer>
+        </TableContainer> */}
       </>
     );
   }

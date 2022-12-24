@@ -20,7 +20,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
 import Loading from "../../Loading/Loading";
-import DownloadIcon from "@mui/icons-material/Download";
+// import DownloadIcon from "@mui/icons-material/Download";
 import MailOutlineIcon from '@mui/icons-material/MailOutline';
 
 const JobApplications = () => {
@@ -109,7 +109,7 @@ const JobApplications = () => {
     } else {
       navigate('/');
     }
-  }, [navigate, particularData]);
+  }, [navigate, param]);
 
   const changeStatus = () => {
     axios.post("http://localhost:5000/jobs/changeApplicationStatus/" + particularData._id, { changedStatus: particularData.status })

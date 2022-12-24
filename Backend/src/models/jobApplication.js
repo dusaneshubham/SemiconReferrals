@@ -35,8 +35,6 @@ const jobApplicationSchema = new mongoose.Schema({
 
     status: {
         type: String,
-        enum: ["Hired", "Rejected", "Pending", "Approved"],
-        required: true,
         default: "Pending"
     },
 

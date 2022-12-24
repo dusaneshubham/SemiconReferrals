@@ -309,6 +309,7 @@ const getCandidateDetailsById = asyncHandler(async(req, res) => {
         if (result) {
             if (info) {
                 const data = {
+                    createdAt: result.createdAt,
                     name: result.name,
                     email: result.email,
                     contactNumber: result.contactNumber,
@@ -403,16 +404,8 @@ const applyForJob = asyncHandler(async(req, res) => {
     });
 
     jobApplication.save()
-        .then(async() => {
-            // number of applicants in jobpost to be increased
-            const post = await JobPost.findOne({ _id: data.jobPostId });
-            const applicants = post.numberOfApplications + 1;
-            const updated = await JobPost.updateOne({ _id: data.jobPostId }, { numberOfApplications: applicants }, { new: true });
-            if (updated) {
-                res.json({ message: "Application for job has been submitted", success: true });
-            } else {
-                await JobPost.deleteOne({ candidateId: user._id, jobPostId: data.jobPostId });
-            }
+        .then(() => {
+            res.json({ message: "Application for job has been submitted", success: true });
         }).catch((err) => {
             res.json({ message: "Something went wrong during application for job", success: false });
         })
@@ -809,6 +802,20 @@ const getMailForResetMail = asyncHandler(async(req, res) => {
     });
 });
 
+const getAllCandidateDetails = asyncHandler(async(req, res) => {
+    Candidate.aggregate([{
+            $lookup: {
+                from: "candidateinfos",
+                localField: "_id",
+                foreignField: "candidateId",
+                as: "candidateinfo"
+            },
+        }]).then((data) => {
+            res.json({ message: "All candidates data", data: data, success: true })
+        })
+        .catch(() => res.json({ message: "Candidates data not found", success: false }));
+})
+
 module.exports = {
     registerCandidate,
     loginCandidate,
@@ -837,5 +844,6 @@ module.exports = {
     getFollowings,
     followRecruiter,
     unFollowRecruiter,
-    getMailForResetMail
+    getMailForResetMail,
+    getAllCandidateDetails
 };

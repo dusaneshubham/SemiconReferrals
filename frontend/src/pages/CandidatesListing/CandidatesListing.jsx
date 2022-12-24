@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from "react";
 import "../../../node_modules/bootstrap/dist/css/bootstrap.min.css";
-import "./jobs-listing.css";
+import "./candidates-listing.css";
 import axios from "axios";
 
 import Navbar from "../../components/Navbar/Navbar";
 import Footer from "../../components/Footer/Footer";
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import JobList from "../../components/JobListing/JobList/JobList";
+import CandidateList from "../../components/CandidateListing/CandidateList/CandidateList";
 import { Button, SwipeableDrawer } from "@mui/material";
-import Filters from "../../components/JobListing/Filters/Filters";
+import Filters from "../../components/CandidateListing/Filters/Filters";
 import Loading from "../../components/Loading/Loading";
 // import NoDataFoundCard from "../../components/JobListing/JobList/NoDataFoundCard";
 
-function JobsListing() {
-  
+function CandidatesListing() {
+
   const [state, setState] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const [jobDetails, setJobDetails] = useState([]);
+  const [candidatesDetails, setCandidatesDetails] = useState([]);
   const [filterData, setFilterData] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/jobs/getAllJobDetails")
+    axios.get("http://localhost:5000/candidate/getAllCandidateDetails")
       .then((response) => response.data)
       .then((res) => {
         if (res.success) {
-          setJobDetails(res.data);
+          setCandidatesDetails(res.data);
           setFilterData(res.data);
           setLoading(false);
         }
@@ -66,8 +66,8 @@ function JobsListing() {
           className="box pt-2"
         >
           <Filters
-            setJobDetails={setJobDetails}
-            jobDetails={jobDetails}
+            setCandidatesDetails={setCandidatesDetails}
+            candidatesDetails={candidatesDetails}
             setFilterData={setFilterData}
             filterData={filterData}
           />
@@ -78,14 +78,14 @@ function JobsListing() {
             <div className="row">
               <div id="filter-outer-div" className="col-md-3">
                 <Filters
-                  setJobDetails={setJobDetails}
-                  jobDetails={jobDetails}
+                  setCandidatesDetails={setCandidatesDetails}
+                  candidatesDetails={candidatesDetails}
                   setFilterData={setFilterData}
                   filterData={filterData}
                 />
               </div>
 
-              <div id="joblists-div" className="col-md-9 col-12">
+              <div id="candidatelists-div" className="col-md-9">
                 <div className="filter-btn-div">
                   <Button
                     variant="contained"
@@ -96,10 +96,10 @@ function JobsListing() {
                   </Button>
                 </div>
 
-                <div className="job-list">
+                <div className="candidate-list d-flex flex-wrap">
                   {filterData.length > 0 &&
                     filterData.map((data, index) => {
-                      return <JobList data={data} key={index} />;
+                      return <CandidateList data={data} key={index} />;
                     })}
                 </div>
               </div>
@@ -113,4 +113,4 @@ function JobsListing() {
   }
 }
 
-export default JobsListing;
+export default CandidatesListing;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import "./job-list.css";
 import { image2 } from "../../../images/images";
 import { Link } from 'react-router-dom';
@@ -26,7 +26,7 @@ const JobList = (props) => {
 
           <div style={{ marginLeft: "10px" }}>
             <Link to={`/jobdescription/${props.data._id}`} style={{ textDecoration: "none" }}><h5 className="title">{props.data.jobTitle}</h5></Link>
-            <h6 className="company-name">Google</h6>
+            <h6 className="company-name">{props.data.companyName}</h6>
 
             <div className="details-div">
 
@@ -64,15 +64,12 @@ const JobList = (props) => {
 
               {props.data.skillsRequired.length > 0 && (
                 <ul className="skills d-flex flex-wrap">
-                  {props.data.skillsRequired.map((skill, index)=>{
-                    return <li>{skill}</li>
+                  {props.data.skillsRequired.map((skill, index) => {
+                    return <li key={index}>{skill}</li>
                   })}
                 </ul>
-               )}
-
+              )}
             </div>
-
-
           </div>
         </div>
       </div>

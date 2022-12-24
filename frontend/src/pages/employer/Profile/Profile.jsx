@@ -196,6 +196,7 @@ const Profile = () => {
                 </div>
                 <div className="container px-0 py-3 profile">
                     <div className="m-auto section">
+                        <img className="img-fluid mx-3" src={`http://localhost:5000/images/companyLogo/${data.profileImage}`} alt="Logo" width="80" height="80" />
                         <div className="d-inline-block">
                             <h3 className="text-orange">{data.name}</h3>
                             <p className="text-smaller">{data.companyName}</p>
@@ -238,12 +239,36 @@ const Profile = () => {
                                 <h5 className="header">Employer Details</h5>
                                 <div className="d-flex justify-content-between flex-wrap">
                                     <div className="body-section1">
-                                        <p className="text-black mb-3"><span className='text-orange mx-1'><CardMembership /></span> <strong>Member Since: </strong><span className="text-secondary">{getDate(data.createDate)}</span></p>
-                                        <p className="text-black my-3"><span className='text-orange mx-1'><Email /></span> <strong>Email: </strong><span className="text-secondary">{data.email}</span></p>
+                                        {data.createDate &&
+                                            <p className="text-black mb-3">
+                                                <span className='text-orange mx-1'><CardMembership /></span>
+                                                <strong>Member Since: </strong>
+                                                <span className="text-secondary">{getDate(data.createDate)}</span>
+                                            </p>
+                                        }
+                                        {data.email &&
+                                            <p className="text-black my-3">
+                                                <span className='text-orange mx-1'><Email /></span>
+                                                <strong>Email: </strong>
+                                                <span className="text-secondary">{data.email}</span>
+                                            </p>
+                                        }
                                     </div>
                                     <div className="body-section2">
-                                        <p className="text-black mb-3"><span className='text-orange mx-1'><PeopleOutline /></span> <strong>Employees: </strong><span className="text-secondary">{data.teamSize}</span></p>
-                                        <p className="text-black my-3"><span className='text-orange mx-1'><Public /></span> <strong>Company website: </strong><span className="text-secondary">{data.companyWebsite}</span></p>
+                                        {data.teamSize &&
+                                            <p className="text-black mb-3">
+                                                <span className='text-orange mx-1'><PeopleOutline /></span>
+                                                <strong>Employees: </strong>
+                                                <span className="text-secondary">{data.teamSize}</span>
+                                            </p>
+                                        }
+                                        {data.companyWebsite &&
+                                            <p className="text-black my-3">
+                                                <span className='text-orange mx-1'><Public /></span>
+                                                <strong>Company website: </strong>
+                                                <span className="text-secondary">{data.companyWebsite}</span>
+                                            </p>
+                                        }
                                     </div>
                                 </div>
                             </div>
@@ -253,24 +278,25 @@ const Profile = () => {
                             <div className="section bg-light">
                                 <h5 className="header mb-3">Important Information</h5>
 
-                                <div style={{ margin: "25px 0" }}>
-                                    <div style={{ color: "var(--text)", fontSize: "12px" }}>
-                                        Contact Number
+                                {data.contactNumber &&
+                                    <div style={{ margin: "25px 0" }}>
+                                        <div style={{ color: "var(--text)", fontSize: "12px" }}>Contact Number</div>
+                                        {data.contactNumber}
                                     </div>
-                                    {data.contactNumber}
-                                </div>
-                                <div style={{ margin: "25px 0" }}>
-                                    <div style={{ color: "var(--text)", fontSize: "12px" }}>
-                                        Role
+                                }
+                                {data.designation &&
+                                    <div style={{ margin: "25px 0" }}>
+                                        <div style={{ color: "var(--text)", fontSize: "12px" }}>Role</div>
+                                        {data.designation}
                                     </div>
-                                    {data.designation}
-                                </div>
-                                <div style={{ margin: "25px 0" }}>
-                                    <div style={{ color: "var(--text)", fontSize: "12px" }}>
-                                        About your organization
+                                }
+                                {
+                                    <div style={{ margin: "25px 0" }}>
+                                        <div style={{ color: "var(--text)", fontSize: "12px" }}>About your organization</div>
+                                        {/* TODO */}
+                                        None
                                     </div>
-                                    None
-                                </div>
+                                }
                             </div>
                             {/* ---------------------------------------------------- */}
                         </div>

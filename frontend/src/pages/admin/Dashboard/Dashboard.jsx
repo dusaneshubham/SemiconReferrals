@@ -24,6 +24,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight"
 import { Home, PendingActions, Article, Logout } from "@mui/icons-material/";
 import axios from 'axios';
+import Navbar from "../../../components/Navbar/Navbar";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -151,102 +152,105 @@ const Dashboard = () => {
 
   if (!loading) {
     return (
-      <Box sx={{ display: "flex" }}>
-        <CssBaseline />
-        <AppBar position="fixed" open={open}>
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              aria-label="open drawer"
-              onClick={handleDrawerOpen}
-              edge="start"
-              sx={{
-                marginRight: 5,
-                ...(open && { display: "none" }),
-              }}
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography variant="h6" noWrap component="div">
-              Admin - Semicon Referrals
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Drawer variant="permanent" open={open}>
-          <DrawerHeader>
-            <IconButton onClick={handleDrawerClose}>
-              {theme.direction === "rtl" ? (
-                <ChevronRightIcon />
-              ) : (
-                <ChevronLeftIcon />
-              )}
-            </IconButton>
-          </DrawerHeader>
-          <Divider />
-          <List>
-            {Object.entries(sideNavbar).map(([key, value], index) => (
-              <ListItem key={index} disablePadding sx={{ display: "block" }}>
-                <NavLink to={key} className={({ isActive }) => "text-decoration-none " + (isActive ? "active-link" : "")}>
-                  <ListItemButton
-                    sx={{
-                      minHeight: 48,
-                      justifyContent: open ? "initial" : "center",
-                      px: 2.5,
-                    }}
-                  >
-                    <Tooltip title={tooltips[index]} placement="right-end">
-                      <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          mr: open ? 3 : "auto",
-                          justifyContent: "center",
-                        }}
-                      >
-                        {obj[index]}
-                      </ListItemIcon>
-                    </Tooltip>
-                    <ListItemText
-                      primary={value}
-                      style={{ color: "var(--text)", textDecoration: "none" }}
-                      sx={{ opacity: open ? 1 : 0 }}
-                    />
-                  </ListItemButton>
-                </NavLink>
-              </ListItem>
-            ))}
-            <ListItem disablePadding sx={{ display: "block" }}>
-              <ListItemButton
+      <>
+        <Navbar />
+        <Box sx={{ display: "flex" }} className="main">
+          <CssBaseline />
+          <AppBar position="fixed" open={open}>
+            <Toolbar>
+              <IconButton
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerOpen}
+                edge="start"
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  marginRight: 5,
+                  ...(open && { display: "none" }),
                 }}
-                onClick={logout}>
-                <Tooltip title="Logout" placement="right-end">
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: open ? 3 : "auto",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <Logout />
-                  </ListItemIcon>
-                </Tooltip>
-                <ListItemText
-                  primary="Logout"
-                  style={{ color: "var(--text)", textDecoration: "none" }}
-                  sx={{ opacity: open ? 1 : 0 }}
-                />
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </Drawer>
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <DrawerHeader />
-          <Outlet />
-        </Box>
-      </Box >
+              >
+                <MenuIcon />
+              </IconButton>
+              <Typography variant="h6" noWrap component="div">
+                Admin - Semicon Referrals
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <Drawer variant="permanent" open={open}>
+            <DrawerHeader>
+              <IconButton onClick={handleDrawerClose}>
+                {theme.direction === "rtl" ? (
+                  <ChevronRightIcon />
+                ) : (
+                  <ChevronLeftIcon />
+                )}
+              </IconButton>
+            </DrawerHeader>
+            <Divider />
+            <List>
+              {Object.entries(sideNavbar).map(([key, value], index) => (
+                <ListItem key={index} disablePadding sx={{ display: "block" }}>
+                  <NavLink to={key} className={({ isActive }) => "text-decoration-none " + (isActive ? "active-link" : "")}>
+                    <ListItemButton
+                      sx={{
+                        minHeight: 48,
+                        justifyContent: open ? "initial" : "center",
+                        px: 2.5,
+                      }}
+                    >
+                      <Tooltip title={tooltips[index]} placement="right-end">
+                        <ListItemIcon
+                          sx={{
+                            minWidth: 0,
+                            mr: open ? 3 : "auto",
+                            justifyContent: "center",
+                          }}
+                        >
+                          {obj[index]}
+                        </ListItemIcon>
+                      </Tooltip>
+                      <ListItemText
+                        primary={value}
+                        style={{ color: "var(--text)", textDecoration: "none" }}
+                        sx={{ opacity: open ? 1 : 0 }}
+                      />
+                    </ListItemButton>
+                  </NavLink>
+                </ListItem>
+              ))}
+              <ListItem disablePadding sx={{ display: "block" }}>
+                <ListItemButton
+                  sx={{
+                    minHeight: 48,
+                    justifyContent: open ? "initial" : "center",
+                    px: 2.5,
+                  }}
+                  onClick={logout}>
+                  <Tooltip title="Logout" placement="right-end">
+                    <ListItemIcon
+                      sx={{
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
+                      }}
+                    >
+                      <Logout />
+                    </ListItemIcon>
+                  </Tooltip>
+                  <ListItemText
+                    primary="Logout"
+                    style={{ color: "var(--text)", textDecoration: "none" }}
+                    sx={{ opacity: open ? 1 : 0 }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </List>
+          </Drawer>
+          <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <DrawerHeader />
+            <Outlet />
+          </Box>
+        </Box >
+      </>
     );
   }
 };

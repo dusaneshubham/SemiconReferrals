@@ -197,6 +197,7 @@ const JobDescription = () => {
           console.log(res.message);
           if (res.success) {
             setIsAppliedForTheJob(true);
+            setAlert({ success: res.message });
           }
           else {
             setAlert({ error: res.message });

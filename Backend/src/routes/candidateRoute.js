@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { registerCandidate,
+const {
+    registerCandidate,
     loginCandidate,
     updateEmailId,
     applyForJob,
@@ -27,7 +28,9 @@ const { registerCandidate,
     unFollowRecruiter,
     isSavedJob,
     unDefaultResume,
-    getMailForResetMail } = require('../controllers/candidateController');
+    getMailForResetMail,
+    getAllCandidateDetails
+} = require('../controllers/candidateController');
 const uploadProfileImage = require('../middleware/profileImageUpload');
 const uploadResume = require('../middleware/resumeUpload');
 const verifyToken = require('../middleware/verifyToken');
@@ -60,5 +63,6 @@ router.post("/getFollowings", verifyToken, getFollowings);
 router.post("/followRecruiter", verifyToken, followRecruiter);
 router.post("/unFollowRecruiter", verifyToken, unFollowRecruiter);
 router.post("/getMailForResetMail", verifyToken, getMailForResetMail);
+router.get("/getAllCandidateDetails", getAllCandidateDetails);
 
 module.exports = router;

@@ -22,27 +22,7 @@ const Profile = () => {
     const [defaultResume, setDefaultResume] = useState({});
     const [isSaved, setIsSaved] = useState(false);
     const param = useParams();
-    const [data, setData] = useState({
-        name: "NaN",
-        email: "NaN",
-        contactNumber: "NaN",
-        skills: "NaN",
-        savedJobPost: "NaN",
-        followings: "NaN",
-        resumes: "NaN",
-        education: [],
-        workingExperience: [],
-        DOB: "NaN",
-        gender: "NaN",
-        experience: "NaN",
-        qualification: "NaN",
-        about: "NaN",
-        currentJobLocation: "NaN",
-        desiredCitiesToWork: "NaN",
-        isOpenToWork: "NaN",
-        noticePeriod: "NaN",
-        linkedIn: "NaN",
-    });
+    const [data, setData] = useState({});
     const [loading, setLoading] = useState(true);
     const [contactUsData, setContactUsData] = useState({
         name: "",
@@ -186,6 +166,7 @@ const Profile = () => {
                 </div>
                 <div className="container px-0 py-3 profile">
                     <div className="w-75 m-auto text-orange section">
+                        <img className="img-fluid mx-3" src={`http://localhost:5000/profileImage/${data.profileImage}`} alt="ProfileImage" width="80" height="80" />
                         <h2 className="d-inline-block">
                             {data.name}
                         </h2>
@@ -194,7 +175,8 @@ const Profile = () => {
                                 <a href={data.linkedIn} target="_blank" rel="noreferrer">
                                     <LinkedIn fontSize="large" />
                                 </a>
-                            </div>}
+                            </div>
+                        }
                     </div>
                     <div className="row">
                         <div className="col-md-7 mx-3">
@@ -204,137 +186,186 @@ const Profile = () => {
                                 <h5 className="header">Candidate Details</h5>
                                 <div className="d-flex justify-content-between flex-wrap">
                                     <div className="body-section1">
-                                        <p className="text-black my-3"><span className='text-orange mx-1'><CalendarMonth /></span> <strong>Date of Birth: </strong><span className="text-secondary">{getDate(data.DOB)}</span></p>
-                                        <p className="text-black my-3"><span className='text-orange mx-1'><CardMembership /></span> <strong>Memeber Since: </strong><span className="text-secondary">{getDate(data.DOB)}</span></p>
-                                        <p className="text-black my-3"><span className='text-orange mx-1'><School /></span> <strong>Experience: </strong><span className="text-secondary">{data.experience}</span></p>
+                                        {data.DOB && (
+                                            <p className="text-black my-3">
+                                                <span className='text-orange mx-1'><CalendarMonth /></span> <strong>Date of Birth: </strong>
+                                                <span className="text-secondary">{getDate(data.DOB)}</span>
+                                            </p>
+                                        )}
+                                        {data.createdAt && (
+                                            <p className="text-black my-3">
+                                                <span className='text-orange mx-1'><CardMembership /></span> <strong>Memeber Since: </strong>
+                                                <span className="text-secondary">{getDate(data.createdAt)}</span>
+                                            </p>
+                                        )}
+                                        {data.experience && (
+                                            <p className="text-black my-3">
+                                                <span className='text-orange mx-1'><School /></span>
+                                                <strong>Experience: </strong>
+                                                <span className="text-secondary">{data.experience}</span>
+                                            </p>
+                                        )}
                                     </div>
                                     <div className="body-section2">
-                                        <p className="text-black my-3"><span className='text-orange mx-1'><Email /></span> <strong>Email: </strong><span className="text-secondary">{data.email}</span></p>
-                                        {data.gender === "Male" && <p className="text-black my-3"><span className='text-orange mx-1'><Male /></span> <strong>Gender: </strong><span className="text-secondary">Male</span></p>}
-                                        {data.gender === "Female" && <p className="text-black my-3"><span className='text-orange mx-1'><Female /></span> <strong>Gender: </strong><span className="text-secondary">Female</span></p>}
-                                        {data.gender === "Other" && <p className="text-black my-3"><span className='text-orange mx-1'><Transgender /></span> <strong>Gender: </strong><span className="text-secondary">Other</span></p>}
-                                        <p className="text-black my-3"><span className='text-orange mx-1'><School /></span> <strong>Qualification: </strong><span className="text-secondary">{data.qualification}</span></p>
+                                        {data.email && (
+                                            <p className="text-black my-3">
+                                                <span className='text-orange mx-1'><Email /></span>
+                                                <strong>Email: </strong>
+                                                <span className="text-secondary">{data.email}</span>
+                                            </p>
+                                        )}
+                                        {data.gender === "Male" && (
+                                            <p className="text-black my-3">
+                                                <span className='text-orange mx-1'><Male /></span>
+                                                <strong>Gender: </strong>
+                                                <span className="text-secondary">Male</span>
+                                            </p>
+                                        )}
+                                        {data.gender === "Female" && (
+                                            <p className="text-black my-3">
+                                                <span className='text-orange mx-1'><Female /></span> <strong>Gender: </strong>
+                                                <span className="text-secondary">Female</span>
+                                            </p>
+                                        )}
+                                        {data.gender === "Other" && (
+                                            <p className="text-black my-3">
+                                                <span className='text-orange mx-1'><Transgender /></span> <strong>Gender: </strong>
+                                                <span className="text-secondary">Other</span>
+                                            </p>
+                                        )}
+                                        {data.qualification && (
+                                            <p className="text-black my-3">
+                                                <span className='text-orange mx-1'><School /></span> <strong>Qualification: </strong>
+                                                <span className="text-secondary">{data.qualification}</span>
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                             {/* ---------------------------------------------------- */}
 
                             {/*--------------------- About me ---------------------*/}
-                            <div className="section bg-light">
-                                <h5 className="header mb-3">About me</h5>
-                                <span dangerouslySetInnerHTML={{ __html: data.about }} className="about text-secondary"></span>
-                            </div>
+                            {data.about && (
+                                <div className="section bg-light">
+                                    <h5 className="header mb-3">About me</h5>
+                                    <span dangerouslySetInnerHTML={{ __html: data.about }} className="about text-secondary"></span>
+                                </div>
+                            )}
                             {/* ---------------------------------------------------- */}
 
                             {/*--------------------- Important Information ---------------------*/}
                             <div className="section bg-light">
                                 <h5 className="header mb-3">Important Information</h5>
 
-                                <div style={{ margin: "25px 0" }}>
-                                    <div style={{ color: "var(--text)", fontSize: "12px" }}>
-                                        Contact Number
+                                {data.contactNumber && (
+                                    <div style={{ margin: "25px 0" }}>
+                                        <div style={{ color: "var(--text)", fontSize: "12px" }}>Contact Number</div>
+                                        {data.contactNumber}
                                     </div>
-                                    {data.contactNumber}
-                                </div>
-                                <div style={{ margin: "25px 0" }}>
-                                    <div style={{ color: "var(--text)", fontSize: "12px" }}>
-                                        Are you open to work?
+                                )}
+                                {data.isOpenToWork && (
+                                    <div style={{ margin: "25px 0" }}>
+                                        <div style={{ color: "var(--text)", fontSize: "12px" }}>Are you open to work?</div>
+                                        {data.isOpenToWork}
                                     </div>
-                                    {data.isOpenToWork}
-                                </div>
-                                <div style={{ margin: "25px 0" }}>
-                                    <div style={{ color: "var(--text)", fontSize: "12px" }}>
-                                        What is your notice period
+                                )}
+                                {data.noticePeriod && (
+                                    <div style={{ margin: "25px 0" }}>
+                                        <div style={{ color: "var(--text)", fontSize: "12px" }}>What is your notice period</div>
+                                        {data.noticePeriod}
                                     </div>
-                                    {data.noticePeriod}
-                                </div>
-                                <div style={{ margin: "25px 0" }}>
-                                    <div style={{ color: "var(--text)", fontSize: "12px" }}>
-                                        What is your current job location ?
+                                )}
+                                {data.currentJobLocation && (
+                                    <div style={{ margin: "25px 0" }}>
+                                        <div style={{ color: "var(--text)", fontSize: "12px" }}>What is your current job location ?</div>
+                                        {data.currentJobLocation}
                                     </div>
-                                    {data.currentJobLocation}
-                                </div>
-                                <div style={{ margin: "25px 0" }}>
-                                    <div style={{ color: "var(--text)", fontSize: "12px" }}>
-                                        Desired cities to work in?
+                                )}
+                                {data.desiredCitiesToWork && (
+                                    <div style={{ margin: "25px 0" }}>
+                                        <div style={{ color: "var(--text)", fontSize: "12px" }}>Desired cities to work in ?</div>
+                                        {data.desiredCitiesToWork}
                                     </div>
-                                    {data.desiredCitiesToWork}
-                                </div>
+                                )}
                             </div>
                             {/* ---------------------------------------------------- */}
 
                             {/* ---------------------- Education ---------------------- */}
-                            <div className="section bg-light">
-                                <h5 className="header mb-3">Education</h5>
-                                <Timeline
-                                    sx={{
-                                        [`& .${timelineItemClasses.root}:before`]: {
-                                            flex: 0,
-                                            padding: 0,
-                                        },
-                                    }}
-                                    className="mt-3"
-                                >
-                                    {data.education.map((data, index) => {
-                                        let startDate = new Date(data.startDate);
-                                        let endDate = new Date(data.endDate);
-                                        return (
-                                            <TimelineItem key={index}>
-                                                <TimelineSeparator>
-                                                    <TimelineDot />
-                                                    <TimelineConnector />
-                                                </TimelineSeparator>
-                                                <TimelineContent>
-                                                    <p style={{ fontSize: "13px" }} className="text-secondary">
-                                                        {startDate.toLocaleString('default', { month: 'long' }) + " " + startDate.getFullYear()}
-                                                        &nbsp;-&nbsp;
-                                                        {endDate.toLocaleString('default', { month: 'long' }) + " " + endDate.getFullYear()}</p>
-                                                    <h5 className="text-black mb-1">{data.title}</h5>
-                                                    <h6 style={{ color: "var(--main-orange)" }} className="mb-3">{data.instituteName}</h6>
-                                                    <span dangerouslySetInnerHTML={{ __html: data.description }} className="about text-secondary"></span>
-                                                </TimelineContent>
-                                            </TimelineItem>
-                                        );
-                                    })}
-                                </Timeline>
-                            </div>
+                            {data.education.length > 0 && (
+                                <div className="section bg-light">
+                                    <h5 className="header mb-3">Education</h5>
+                                    <Timeline
+                                        sx={{
+                                            [`& .${timelineItemClasses.root}:before`]: {
+                                                flex: 0,
+                                                padding: 0,
+                                            },
+                                        }}
+                                        className="mt-3"
+                                    >
+                                        {data.education.map((data, index) => {
+                                            let startDate = new Date(data.startDate);
+                                            let endDate = new Date(data.endDate);
+                                            return (
+                                                <TimelineItem key={index}>
+                                                    <TimelineSeparator>
+                                                        <TimelineDot />
+                                                        <TimelineConnector />
+                                                    </TimelineSeparator>
+                                                    <TimelineContent>
+                                                        <p style={{ fontSize: "13px" }} className="text-secondary">
+                                                            {startDate.toLocaleString('default', { month: 'long' }) + " " + startDate.getFullYear()}
+                                                            &nbsp;-&nbsp;
+                                                            {endDate.toLocaleString('default', { month: 'long' }) + " " + endDate.getFullYear()}</p>
+                                                        <h5 className="text-black mb-1">{data.title}</h5>
+                                                        <h6 style={{ color: "var(--main-orange)" }} className="mb-3">{data.instituteName}</h6>
+                                                        <span dangerouslySetInnerHTML={{ __html: data.description }} className="about text-secondary"></span>
+                                                    </TimelineContent>
+                                                </TimelineItem>
+                                            );
+                                        })}
+                                    </Timeline>
+                                </div>
+                            )}
                             {/* ---------------------------------------------------- */}
 
                             {/* ---------------------- Work Experience ---------------------- */}
-                            <div className="section bg-light">
-                                <h5 className="header mb-3">Work Experience</h5>
-                                <Timeline
-                                    sx={{
-                                        [`& .${timelineItemClasses.root}:before`]: {
-                                            flex: 0,
-                                            padding: 0,
-                                        },
-                                    }}
-                                    className="mt-3"
-                                >
-                                    {data.workingExperience.map((data, index) => {
-                                        let startDate = new Date(data.jobStartDate);
-                                        let endDate = new Date(data.jobEndDate);
-                                        return (
-                                            <TimelineItem key={index}>
-                                                <TimelineSeparator>
-                                                    <TimelineDot />
-                                                    <TimelineConnector />
-                                                </TimelineSeparator>
-                                                <TimelineContent>
-                                                    <p style={{ fontSize: "13px" }} className="text-secondary">
-                                                        {startDate.toLocaleString('default', { month: 'long' }) + " " + startDate.getFullYear()}
-                                                        &nbsp;-&nbsp;
-                                                        {!data.isCurrentlyWorking ? endDate.toLocaleString('default', { month: 'long' }) + " " + endDate.getFullYear() : 'Currently Working'}</p>
-                                                    <h5 className="text-black mb-1">{data.designation}</h5>
-                                                    <h6 style={{ color: "var(--main-orange)" }} className="mb-3">{data.organizationName}</h6>
-                                                    <span dangerouslySetInnerHTML={{ __html: data.description }} className="about text-secondary"></span>
-                                                </TimelineContent>
-                                            </TimelineItem>
-                                        );
-                                    })}
-                                </Timeline>
-                            </div>
+                            {data.workingExperience.length > 0 && (
+                                <div className="section bg-light">
+                                    <h5 className="header mb-3">Work Experience</h5>
+                                    <Timeline
+                                        sx={{
+                                            [`& .${timelineItemClasses.root}:before`]: {
+                                                flex: 0,
+                                                padding: 0,
+                                            },
+                                        }}
+                                        className="mt-3"
+                                    >
+                                        {data.workingExperience.map((data, index) => {
+                                            let startDate = new Date(data.jobStartDate);
+                                            let endDate = new Date(data.jobEndDate);
+                                            return (
+                                                <TimelineItem key={index}>
+                                                    <TimelineSeparator>
+                                                        <TimelineDot />
+                                                        <TimelineConnector />
+                                                    </TimelineSeparator>
+                                                    <TimelineContent>
+                                                        <p style={{ fontSize: "13px" }} className="text-secondary">
+                                                            {startDate.toLocaleString('default', { month: 'long' }) + " " + startDate.getFullYear()}
+                                                            &nbsp;-&nbsp;
+                                                            {!data.isCurrentlyWorking ? endDate.toLocaleString('default', { month: 'long' }) + " " + endDate.getFullYear() : 'Currently Working'}</p>
+                                                        <h5 className="text-black mb-1">{data.designation}</h5>
+                                                        <h6 style={{ color: "var(--main-orange)" }} className="mb-3">{data.organizationName}</h6>
+                                                        <span dangerouslySetInnerHTML={{ __html: data.description }} className="about text-secondary"></span>
+                                                    </TimelineContent>
+                                                </TimelineItem>
+                                            );
+                                        })}
+                                    </Timeline>
+                                </div>
+                            )}
                             {/* ---------------------------------------------------- */}
 
                             {/* ---------------------- Resume ---------------------- */}

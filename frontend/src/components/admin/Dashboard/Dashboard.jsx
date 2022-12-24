@@ -45,14 +45,21 @@ const Dashboard = () => {
             image={image2}
             value={statistic.jobApplication.pending}
             bgColor="#8675ff"
-            link=""
+            link="/admin/pendingapplications"
+          />
+          <StatisticsCard
+            title="Pending Job Post"
+            image={image2}
+            value={statistic.jobApplication.pending}
+            bgColor="#6C5A78"
+            link="/admin/pendingapplications"
           />
           <StatisticsCard
             title="Number of Employers"
             image={image2}
             value={statistic.numberOfRecruiter}
             bgColor="#6C5A78"
-            link=""
+            link="/admin/pendingpost"
           />
           <StatisticsCard
             title="Number of Candidates"
