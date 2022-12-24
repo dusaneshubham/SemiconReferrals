@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { registerRecruiter, loginRecruiter, updatePassword, getRecruiterDetails, removeSavedCandidate, getRecruiterDetailsById, updateProfile, updateProfileImage, jobPost, saveCandidateProfile, getSavedCandidate, getFollowers, removeFollower, getStatistics } = require('../controllers/recruiterController');
+const { registerRecruiter, loginRecruiter, updatePassword, getRecruiterDetails, removeSavedCandidate, getRecruiterDetailsById, updateProfile, updateProfileImage, jobPost, saveCandidateProfile, getSavedCandidate, getFollowers, removeFollower, getStatistics, getAllRecruiterDetails } = require('../controllers/recruiterController');
 const companyLogoUpload = require('../middleware/companyLogoUpload');
 const verifyToken = require('../middleware/verifyToken');
 
@@ -19,5 +19,6 @@ router.post("/removeSavedCandidate", verifyToken, removeSavedCandidate);
 router.post("/getFollowers", verifyToken, getFollowers);
 router.post("/removeFollower", verifyToken, removeFollower);
 router.post("/statistics", verifyToken, getStatistics);
+router.get("/getAllRecruiterDetails", getAllRecruiterDetails);
 
 module.exports = router;

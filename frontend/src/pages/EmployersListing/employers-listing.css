@@ -1,0 +1,71 @@
+.listing-div {
+    padding: 40px;
+    display: flex;
+    flex-direction: row;
+}
+
+.filter-left-div {
+    width: 20vw;
+}
+
+.filter-right-div {
+    width: 70vw;
+    padding: 0 10px;
+}
+
+.listing-div .form-label {
+    font-size: 1.2vw;
+}
+
+#filters-div {
+    background-color: #FFFFFF;
+    padding: 0 30px;
+}
+
+.filter-input-div {
+    background-color: #FFFFFF;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.filter-input-div input,
+select {
+    border: none;
+    font-size: 14px;
+    width: 85%;
+    outline: none;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.filter-radio-div {
+    margin: 15px auto;
+}
+
+.filter-radio-div span {
+    margin-left: 10px;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.listing-div .employer-list {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@media only screen and (min-width: 800px) {
+    .listing-div .employer-list {
+        width: 100% !important;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .listing-div .filter-right-div {
+        width: 100vw;
+    }
+
+    .filter-left-div {
+        display: none;
+    }
+}

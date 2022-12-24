@@ -33,6 +33,7 @@ import JobPost from "./components/employer/JobPost/JobPost";
 import JobApplications from "./components/employer/JobApplications/JobApplications";
 import EmployerUpdateProfile from "./components/employer/UpdateProfile/UpdateProfile";
 import UpdateBusinessEmail from "./pages/UpdateBusinessEmail";
+import EmployerListing from "./pages/EmployersListing/EmployersListing";
 
 function App() {
     return (
@@ -42,6 +43,7 @@ function App() {
                 <Route exact path="/jobslisting" element={< JobsListing />} />
                 <Route exact path="/jobdescription/:id" element={< JobDescription />} />
                 <Route exact path="/candidateslisting" element={< CandidatesListing />} />
+                <Route exact path="/employerslisting" element={< EmployerListing />} />
                 <Route exact path="/updateBusinessMail/:token" element={< UpdateBusinessEmail />} />
                 <Route exact path="/email-verification" element={< EmailVerification />} />
                 <Route exact path="/forget-pass" element={< ForgetPassword />} />

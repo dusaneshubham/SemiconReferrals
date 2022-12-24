@@ -1,0 +1,8 @@
+.employer-list .card-body {
+    font-size: 1vw;
+}
+
+.img-part {
+    display: flex;
+    justify-content: center;
+}
