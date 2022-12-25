@@ -19,6 +19,11 @@ const Navbar = () => {
     const [searchMenuAnchorEl, setSearchMenuAnchorEl] = useState(null);
     const [sidebarSearchMenuAnchorEl, setSidebarSearchMenuAnchorEl] = useState(null);
     const [loading, setLoading] = useState(true);
+    const search = {
+        "jobslisting": "Search for Jobs",
+        "employerslisting": "Search for Employers",
+        "candidateslisting": "Search for Candidates"
+    }
 
     // sidebar navbar
     const sidebarSearchMenuOpen = Boolean(sidebarSearchMenuAnchorEl);
@@ -170,16 +175,23 @@ const Navbar = () => {
                 transformOrigin={{ horizontal: 'left', vertical: 'center' }}
                 anchorOrigin={{ horizontal: 'right', vertical: 'center' }}
             >
-                {<NavLink
-                    to="/jobslisting"
-                    className='text-decoration-none text-black'>
-                    <MenuItem>
-                        <ListItemIcon>
-                            <AccountCircle fontSize="small" />
-                        </ListItemIcon>
-                        Search for Jobs
-                    </MenuItem>
-                </NavLink>}
+                {Object.entries(search).map(([key, value], index) => {
+                    return (
+                        <NavLink
+                            to={"/" + key}
+                            className='text-decoration-none text-black'
+                            key={index}
+                        >
+                            <MenuItem>
+                                <ListItemIcon>
+                                    <AccountCircle fontSize="small" />
+                                </ListItemIcon>
+                                {value}
+                            </MenuItem>
+                        </NavLink>
+                    )
+                })
+                }
             </Menu>
         </Box>
     );
@@ -241,16 +253,23 @@ const Navbar = () => {
                         transformOrigin={{ horizontal: 'center', vertical: 'top' }}
                         anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
                     >
-                        {<NavLink
-                            to="/jobslisting"
-                            className='text-decoration-none text-black'>
-                            <MenuItem>
-                                <ListItemIcon>
-                                    <AccountCircle fontSize="small" />
-                                </ListItemIcon>
-                                Search for Jobs
-                            </MenuItem>
-                        </NavLink>}
+                        {Object.entries(search).map(([key, value], index) => {
+                            return (
+                                <NavLink
+                                    to={"/" + key}
+                                    className='text-decoration-none text-black'
+                                    key={index}
+                                >
+                                    <MenuItem>
+                                        <ListItemIcon>
+                                            <AccountCircle fontSize="small" />
+                                        </ListItemIcon>
+                                        {value}
+                                    </MenuItem>
+                                </NavLink>
+                            )
+                        })
+                        }
                     </Menu>
 
                     <div className='float-end'>

@@ -1,3 +1,22 @@
+.listing-div {
+    padding: 40px;
+    display: flex;
+    flex-direction: row;
+}
+
+.filter-left-div {
+    width: 20vw;
+}
+
+.filter-right-div {
+    width: 70vw;
+    padding: 0 10px;
+}
+
+.listing-div .form-label {
+    font-size: 1.2vw;
+}
+
 #filters-div {
     background-color: #FFFFFF;
     padding: 0 30px;
@@ -14,7 +33,6 @@
 select {
     border: none;
     font-size: 14px;
-    margin-left: 8px;
     width: 85%;
     outline: none;
     color: rgba(0, 0, 0, 0.6);
@@ -29,12 +47,25 @@ select {
     color: rgba(0, 0, 0, 0.6);
 }
 
-#candidatelists-div {
-    padding: 10px 25px 25px 25px;
+.listing-div .candidate-list {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
-@media only screen and (max-width: 768px) {
-    #filter-outer-div {
+@media only screen and (min-width: 800px) {
+    .listing-div .candidate-list {
+        width: 100% !important;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .listing-div .filter-right-div {
+        width: 100vw;
+    }
+
+    .filter-left-div {
         display: none;
     }
 }

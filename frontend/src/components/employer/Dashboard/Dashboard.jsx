@@ -14,30 +14,57 @@ import {
 } from "@mui/material";
 import Loading from "../../Loading/Loading";
 import AlertPopUp from "../../AlertPopUp/AlertPopUp";
-import axios from 'axios';
+import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
-
   const [loading, setLoading] = useState(true);
   const [alert, setAlert] = useState({});
   const [statistic, setStatistics] = useState({});
+  const [jobsData, setJobsData] = useState([]);
+
+  const formatDate = (anyDate) => {
+    let fullDate = new Date(anyDate);
+    const month = fullDate.toLocaleString("en-US", { month: "short" });
+    const date = fullDate.getDate();
+    const year = fullDate.getFullYear();
+    return `${month}. ${date}, ${year}`;
+  };
 
   useEffect(() => {
     let token = localStorage.getItem("token");
-    const getStatistics = () => {
-      axios.post(`http://localhost:5000/recruiter/statistics`, { token })
+    const getStatistics = async (getJobsData) => {
+      await axios
+        .post(`http://localhost:5000/recruiter/statistics`, { token })
         .then((res) => res.data)
         .then((res) => {
-          if(res.success) {
+          if (res.success) {
             setStatistics(res.data);
             setLoading(false);
           }
         })
         .catch((err) => {
           console.log(err);
+        });
+      getJobsData();
+    };
+
+    const getJobsData = async () => {
+      await axios
+        .post(`http://localhost:5000/recruiter/getAllPostedJobs`, { token })
+        .then((res) => res.data)
+        .then((res) => {
+          if (res.success) {
+            setJobsData(res.data);
+            setLoading(false);
+          }
         })
-    }
-    getStatistics();
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    getStatistics(getJobsData);
   }, []);
 
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -60,77 +87,82 @@ const Dashboard = () => {
     },
   }));
 
-  function createData(jobTitle, status, viewJobPost) {
-    return { jobTitle, status, viewJobPost };
-  }
-
-  const rows = [createData("Software Developer", "Active", "23 Jan, 2023")];
-
   if (loading) {
     return (
       <>
         <Loading />
       </>
-    )
+    );
   } else {
     return (
       <>
-        <AlertPopUp
-          alert={alert}
-          setAlert={setAlert}
-        />
-        <div className="d-flex dashboard-cards-div">
-          <StatisticsCard
-            title="Active Jobs"
-            image={image2}
-            value={statistic.jobs.active}
-            bgColor="#32ac79"
-            link="/employer/activejobs"
-          />
-          <StatisticsCard
-            title="Inactive Jobs"
-            image={image2}
-            value={statistic.jobs.inactive}
-            bgColor="#8675ff"
-            link="/employer/inactivejobs"
-          />
-          <StatisticsCard
-            title="Pending Job Post"
-            image={image2}
-            value={statistic.jobs.pending}
-            bgColor="#28CFD7"
-            link="/employer/pendingjobs"
-          />
-        </div>
+        <AlertPopUp alert={alert} setAlert={setAlert} />
+        {statistic && (
+          <div className="d-flex dashboard-cards-div">
+            <StatisticsCard
+              title="Active Jobs"
+              image={image2}
+              value={statistic.jobs.active}
+              bgColor="#32ac79"
+              link="/employer/activejobs"
+            />
+            <StatisticsCard
+              title="Inactive Jobs"
+              image={image2}
+              value={statistic.jobs.inactive}
+              bgColor="#8675ff"
+              link="/employer/inactivejobs"
+            />
+            <StatisticsCard
+              title="Pending Job Post"
+              image={image2}
+              value={statistic.jobs.pending}
+              bgColor="#28CFD7"
+              link="/employer/pendingjobs"
+            />
+          </div>
+        )}
 
         <h4>Recent Jobs Overview</h4>
 
-        {/* <TableContainer component={Paper}>
+        <TableContainer component={Paper}>
           <Table sx={{ minWidth: 700 }} aria-label="customized table">
             <TableHead>
               <TableRow>
                 <StyledTableCell>Job Title</StyledTableCell>
                 <StyledTableCell>Status</StyledTableCell>
                 <StyledTableCell>Deadline</StyledTableCell>
+                <StyledTableCell>View Job Post</StyledTableCell>
                 <StyledTableCell>All Applications</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
-                <StyledTableRow key={row.jobTitle}>
-                  <StyledTableCell>{row.jobTitle}</StyledTableCell>
-                  <StyledTableCell>{row.status}</StyledTableCell>
-                  <StyledTableCell>{row.viewJobPost}</StyledTableCell>
+              {jobsData.map((data, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell>{data.jobTitle}</StyledTableCell>
                   <StyledTableCell>
-                    <Button variant="contained" color="primary">
-                      View Applications
-                    </Button>
+                    {data.isActive ? "Active" : "Inactive"}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {formatDate(data.applicationDeadline)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Link to={"/jobdescription/" + data._id}>
+                      <Button variant="contained">View Job Post</Button>
+                    </Link>
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Link to={`/employer/jobapplications/` + data._id}>
+                      <Button variant="contained" color="primary">
+                        View Applications
+                      </Button>
+                    </Link>
                   </StyledTableCell>
                 </StyledTableRow>
               ))}
             </TableBody>
           </Table>
-        </TableContainer> */}
+        </TableContainer>
       </>
     );
   }

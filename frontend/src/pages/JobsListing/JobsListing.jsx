@@ -10,10 +10,11 @@ import JobList from "../../components/JobListing/JobList/JobList";
 import { Button, SwipeableDrawer } from "@mui/material";
 import Filters from "../../components/JobListing/Filters/Filters";
 import Loading from "../../components/Loading/Loading";
+import NoDataFoundCard from "../../components/JobListing/JobList/NoDataFoundCard";
 // import NoDataFoundCard from "../../components/JobListing/JobList/NoDataFoundCard";
 
 function JobsListing() {
-  
+
   const [state, setState] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -74,9 +75,8 @@ function JobsListing() {
         </SwipeableDrawer>
 
         <div style={{ backgroundColor: "var(--bg-gray" }}>
-          <div className="container" style={{ padding: "40px 0" }}>
-            <div className="row">
-              <div id="filter-outer-div" className="col-md-3">
+          <div className="listing-div">
+              <div className="filter-left-div">
                 <Filters
                   setJobDetails={setJobDetails}
                   jobDetails={jobDetails}
@@ -85,8 +85,8 @@ function JobsListing() {
                 />
               </div>
 
-              <div id="joblists-div" className="col-md-9 col-12">
-                <div className="filter-btn-div">
+              <div className="filter-right-div">
+                <div className="filter-btn-div my-2">
                   <Button
                     variant="contained"
                     startIcon={<FilterAltIcon />}
@@ -97,13 +97,15 @@ function JobsListing() {
                 </div>
 
                 <div className="job-list">
-                  {filterData.length > 0 &&
+                  {filterData.length > 0 ?
                     filterData.map((data, index) => {
                       return <JobList data={data} key={index} />;
-                    })}
+                    })
+                    :
+                    <NoDataFoundCard />
+                  }
                 </div>
               </div>
-            </div>
           </div>
         </div>
 
