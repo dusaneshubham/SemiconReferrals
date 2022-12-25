@@ -1,9 +1,9 @@
 import React from "react";
-import "./candidate-list.css";
+import "./employer-list.css";
 import { image2 } from "../../../images/images";
 import { Link } from "react-router-dom";
 
-const CandidateList = (props) => {
+const EmployerList = (props) => {
   return (
     <>
       <div className="card text-center m-2 shadow-lg" style={{ width: "18rem" }}>
@@ -11,10 +11,10 @@ const CandidateList = (props) => {
           {props.data.name}
         </div>
         <div className="img-part py-3">
-          {props.data.candidateinfo[0] && props.data.candidateinfo[0].profileImage ? (
+          {props.data.recruiterinfo[0] && props.data.recruiterinfo[0].profileImage ? (
             <img
-              src={`http://localhost:5000/profileImage/${props.data.candidateinfo[0].profileImage}`}
-              alt="Candidate Profile"
+              src={`http://localhost:5000/profileImage/${props.data.recruiterinfo[0].profileImage}`}
+              alt="Recruiter Profile"
               style={{ borderRadius: "50%" }}
               width="100"
               height="100"
@@ -22,7 +22,7 @@ const CandidateList = (props) => {
           ) : (
             <img
               src={image2}
-              alt="Candidate Profile"
+              alt="Recruiter Profile"
               style={{ borderRadius: "50%" }}
               width="100"
               height="100"
@@ -31,7 +31,7 @@ const CandidateList = (props) => {
         </div>
         {/* <img src="..." className="card-img-top" alt="..." /> */}
         <div className="card-body w-100 p-2 bg-light rounded-bottom">
-          <Link to={`/candidate/viewprofile/${props.data._id}`} className="text-dark">
+          <Link to={`/employer/viewprofile/${props.data._id}`} className="text-dark">
             View Profile
           </Link >
         </div>
@@ -40,4 +40,4 @@ const CandidateList = (props) => {
   );
 };
 
-export default CandidateList;
+export default EmployerList;

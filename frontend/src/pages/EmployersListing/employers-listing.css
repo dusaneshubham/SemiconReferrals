@@ -47,8 +47,17 @@ select {
     color: rgba(0, 0, 0, 0.6);
 }
 
-.listing-div .job-list {
-    padding: 0 10px;
+.listing-div .employer-list {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+@media only screen and (min-width: 800px) {
+    .listing-div .employer-list {
+        width: 100% !important;
+    }
 }
 
 @media only screen and (max-width: 800px) {

@@ -15,7 +15,7 @@ const generateToken = (user) => {
 }
 
 // register api
-const registerRecruiter = asyncHandler(async(req, res) => {
+const registerRecruiter = asyncHandler(async (req, res) => {
     const { name, email, contactNumber, password } = req.body;
 
     // Validations
@@ -42,7 +42,7 @@ const registerRecruiter = asyncHandler(async(req, res) => {
         password: hashPassword
     });
 
-    newRecruiter.save(async(err, data) => {
+    newRecruiter.save(async (err, data) => {
         if (err) {
             console.log(err);
             return res.json({ message: "Error in registering the recruiter", success: false });
@@ -56,7 +56,7 @@ const registerRecruiter = asyncHandler(async(req, res) => {
 });
 
 // login recruiter
-const loginRecruiter = asyncHandler(async(req, res) => {
+const loginRecruiter = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -81,7 +81,7 @@ const loginRecruiter = asyncHandler(async(req, res) => {
 });
 
 // update password
-const updatePassword = asyncHandler(async(req, res) => {
+const updatePassword = asyncHandler(async (req, res) => {
     const { email, password, confirmPassword } = req.body;
 
     if (!email || !password || !confirmPassword) {
@@ -102,7 +102,7 @@ const updatePassword = asyncHandler(async(req, res) => {
     }
 });
 
-const getRecruiterDetails = asyncHandler(async(req, res) => {
+const getRecruiterDetails = asyncHandler(async (req, res) => {
     let user = req.user;
     let recruiterData = await Recruiter.findOne({ _id: user._id });
 
@@ -143,7 +143,7 @@ const getRecruiterDetails = asyncHandler(async(req, res) => {
     }
 });
 
-const getRecruiterDetailsById = asyncHandler(async(req, res) => {
+const getRecruiterDetailsById = asyncHandler(async (req, res) => {
     const { id } = req.body;
     if (id) {
         const result = await Recruiter.findOne({ _id: id }).select({ email: 1, contactNumber: 1, name: 1, createdAt: 1 });
@@ -185,7 +185,7 @@ const getRecruiterDetailsById = asyncHandler(async(req, res) => {
     }
 });
 
-const updateProfile = asyncHandler(async(req, res) => {
+const updateProfile = asyncHandler(async (req, res) => {
     // recruiter information details
     const {
         name,
@@ -236,7 +236,7 @@ const updateProfile = asyncHandler(async(req, res) => {
             // for old user
             const result1 = await RecruiterInfo.updateOne({ recruiterId: user._id }, recruiterInfoUpdatedData, { new: true });
             if (result1) {
-                res.json({ message: "Successfully update profile", success: true, data: {...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
+                res.json({ message: "Successfully update profile", success: true, data: { ...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
             } else {
                 res.json({ message: "Somthing went wrong during update the profile", success: false });
             }
@@ -246,7 +246,7 @@ const updateProfile = asyncHandler(async(req, res) => {
             await newInfo.save()
                 .then((data, err) => {
                     if (data) {
-                        res.json({ message: "Successfully update profile", success: true, data: {...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
+                        res.json({ message: "Successfully update profile", success: true, data: { ...recruiterInfoUpdatedData, ...recruiterUpdatedData } });
                     } else {
                         console.log(err);
                         res.json({ message: "Somthing went wrong during update the profile", success: false });
@@ -261,7 +261,7 @@ const updateProfile = asyncHandler(async(req, res) => {
 });
 
 // update profile image
-const updateProfileImage = asyncHandler(async(req, res) => {
+const updateProfileImage = asyncHandler(async (req, res) => {
     let user = req.user;
     let companyLogo = req.file.filename;
 
@@ -300,7 +300,7 @@ const updateProfileImage = asyncHandler(async(req, res) => {
     }
 });
 
-const jobPost = asyncHandler(async(req, res) => {
+const jobPost = asyncHandler(async (req, res) => {
     let user = req.user;
 
     // TO store companyName
@@ -335,7 +335,7 @@ const jobPost = asyncHandler(async(req, res) => {
     })
 });
 
-const saveCandidateProfile = asyncHandler(async(req, res) => {
+const saveCandidateProfile = asyncHandler(async (req, res) => {
     const { id } = req.body;
     const user = req.user;
 
@@ -370,7 +370,7 @@ const saveCandidateProfile = asyncHandler(async(req, res) => {
 });
 
 // get saved candidate
-const getSavedCandidate = asyncHandler(async(req, res) => {
+const getSavedCandidate = asyncHandler(async (req, res) => {
     const user = req.user;
 
     if (user._id) {
@@ -386,7 +386,7 @@ const getSavedCandidate = asyncHandler(async(req, res) => {
 });
 
 // remove saved Candidate
-const removeSavedCandidate = asyncHandler(async(req, res) => {
+const removeSavedCandidate = asyncHandler(async (req, res) => {
     const user = req.user;
     const { id } = req.body;
 
@@ -411,7 +411,7 @@ const removeSavedCandidate = asyncHandler(async(req, res) => {
 });
 
 // get follower
-const getFollowers = asyncHandler(async(req, res) => {
+const getFollowers = asyncHandler(async (req, res) => {
     const user = req.user;
 
     const result = await RecruiterInfo.findOne({ recruiterId: user._id }).populate("followers.candidate followers.candidateInfo");
@@ -423,7 +423,7 @@ const getFollowers = asyncHandler(async(req, res) => {
 });
 
 // remove follower
-const removeFollower = asyncHandler(async(req, res) => {
+const removeFollower = asyncHandler(async (req, res) => {
     const { candidateId } = req.body;
     const recruiterId = req.user._id;
 
@@ -450,7 +450,7 @@ const removeFollower = asyncHandler(async(req, res) => {
     }
 });
 
-const getStatistics = asyncHandler(async(req, res) => {
+const getStatistics = asyncHandler(async (req, res) => {
     const recruiterId = req.user._id;
     const pendingJobs = await JobPost.find({ recruiterId, status: "Pending" }).count();
     const activeJobs = await JobPost.find({ recruiterId, status: "Approved", isActive: "true" }).count();
@@ -472,6 +472,21 @@ const getStatistics = asyncHandler(async(req, res) => {
 
 });
 
+const getAllRecruiterDetails = asyncHandler(async (req, res) => {
+    Recruiter.aggregate([{
+        $lookup: {
+            from: "recruiterinfos",
+            localField: "_id",
+            foreignField: "recruiterId",
+            as: "recruiterinfo"
+        },
+    }])
+        .then((data) => {
+            res.json({ message: "All recruiter data", data: data, success: true })
+        })
+        .catch(() => res.json({ message: "Recruiters data not found", success: false }));
+})
+
 module.exports = {
     registerRecruiter,
     loginRecruiter,
@@ -486,5 +501,6 @@ module.exports = {
     removeSavedCandidate,
     getFollowers,
     removeFollower,
-    getStatistics
+    getStatistics,
+    getAllRecruiterDetails
 }

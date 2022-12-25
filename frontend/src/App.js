@@ -33,130 +33,56 @@ import JobPost from "./components/employer/JobPost/JobPost";
 import JobApplications from "./components/employer/JobApplications/JobApplications";
 import EmployerUpdateProfile from "./components/employer/UpdateProfile/UpdateProfile";
 import UpdateBusinessEmail from "./pages/UpdateBusinessEmail";
+import EmployerListing from "./pages/EmployersListing/EmployersListing";
 
 function App() {
-    return ( <
-        BrowserRouter >
-        <
-        Routes >
-        <
-        Route exact path = "/"
-        element = { < Home / > }
-        /> <
-        Route exact path = "/jobslisting"
-        element = { < JobsListing / > }
-        /> <
-        Route exact path = "/jobdescription/:id"
-        element = { < JobDescription / > }
-        />
+    return (
+        <BrowserRouter >
+            <Routes >
+                <Route exact path="/" element={< Home />} />
+                <Route exact path="/jobslisting" element={< JobsListing />} />
+                <Route exact path="/jobdescription/:id" element={< JobDescription />} />
+                <Route exact path="/candidateslisting" element={< CandidatesListing />} />
+                <Route exact path="/employerslisting" element={< EmployerListing />} />
+                <Route exact path="/updateBusinessMail/:token" element={< UpdateBusinessEmail />} />
+                <Route exact path="/email-verification" element={< EmailVerification />} />
+                <Route exact path="/forget-pass" element={< ForgetPassword />} />
 
-        <
-        Route exact path = "/candidateslisting"
-        element = { < CandidatesListing / > }
-        />
+                <Route exact path="/admin" element={< AdminDashboard />} >
+                    <Route path="" element={< AdminDashboardComponent />} />
+                    <Route path="dashboard" element={< AdminDashboardComponent />} />
+                    <Route path="pendingapplications" element={< PendingApplications />} />
+                    <Route path="pendingpost" element={< PendingPost />} />
+                </Route>
 
-        <
-        Route exact path = "/admin"
-        element = { < AdminDashboard / > } >
-        <
-        Route path = ""
-        element = { < AdminDashboardComponent / > }
-        /> <
-        Route path = "dashboard"
-        element = { < AdminDashboardComponent / > }
-        /> <
-        Route path = "pendingapplications"
-        element = { < PendingApplications / > }
-        /> <
-        Route path = "pendingpost"
-        element = { < PendingPost / > }
-        /> <
-        /Route>
+                <Route exact path="/candidate" element={< CandidateDashboard />} >
+                    <Route path="" element={< CandidateDashboardComponent />} />
+                    <Route path="dashboard" element={< CandidateDashboardComponent />} />
+                    <Route path="updateprofile" element={< CandidateUpdateProfile />} />
+                    <Route path="myresumes" element={< CandidateResumes />} />
+                    <Route path="appliedjobs" element={< CandidateAppliedJobs />} />
+                    <Route path="savedjobs" element={< CandidateSavedJobs />} />
+                    <Route path="followedemployers" element={< CandidateFollowedEmployers />} />
+                </Route>
+                <Route exact path="/candidate/viewprofile/:id" element={< CandidateProfile />} />
 
-        <
-        Route exact path = "/candidate"
-        element = { < CandidateDashboard / > } >
-        <
-        Route path = ""
-        element = { < CandidateDashboardComponent / > }
-        /> <
-        Route path = "dashboard"
-        element = { < CandidateDashboardComponent / > }
-        /> <
-        Route path = "updateprofile"
-        element = { < CandidateUpdateProfile / > }
-        /> <
-        Route path = "myresumes"
-        element = { < CandidateResumes / > }
-        /> <
-        Route path = "appliedjobs"
-        element = { < CandidateAppliedJobs / > }
-        /> <
-        Route path = "savedjobs"
-        element = { < CandidateSavedJobs / > }
-        /> <
-        Route path = "followedemployers"
-        element = { < CandidateFollowedEmployers / > }
-        /> <
-        /Route> <
-        Route exact path = "/candidate/viewprofile/:id"
-        element = { < CandidateProfile / > }
-        />
+                <Route exact path="/employer" element={< EmployerDashboard />} >
+                    <Route path="" element={< EmployerDashboardComponent />} />
+                    <Route path="dashboard" element={< EmployerDashboardComponent />} />
+                    <Route path="jobpost" element={< JobPost />} />
+                    <Route path="inactivejobs" element={< EmployerInactiveJobs />} />
+                    <Route path="activejobs" element={< EmployerActiveJobs />} />
+                    <Route path="pendingjobs" element={< EmployerPendingJobs />} />
+                    <Route path="savedcandidates" element={< EmployerSavedCandidates />} />
+                    <Route path="updateprofile" element={< EmployerUpdateProfile />} />
+                    <Route path="followers" element={< EmployerFollowers />} />
+                    <Route path="jobapplications/:id" element={< JobApplications />} />
+                </Route>
+                <Route exact path="/employer/viewprofile/:id" element={< EmployerProfile />} />
 
-        <
-        Route exact path = "/employer"
-        element = { < EmployerDashboard / > } >
-        <
-        Route path = ""
-        element = { < EmployerDashboardComponent / > }
-        /> <
-        Route path = "dashboard"
-        element = { < EmployerDashboardComponent / > }
-        /> <
-        Route path = "jobpost"
-        element = { < JobPost / > }
-        /> <
-        Route path = "inactivejobs"
-        element = { < EmployerInactiveJobs / > }
-        /> <
-        Route path = "activejobs"
-        element = { < EmployerActiveJobs / > }
-        /> <
-        Route path = "pendingjobs"
-        element = { < EmployerPendingJobs / > }
-        /> <
-        Route path = "savedcandidates"
-        element = { < EmployerSavedCandidates / > }
-        /> <
-        Route path = "updateprofile"
-        element = { < EmployerUpdateProfile / > }
-        /> <
-        Route path = "followers"
-        element = { < EmployerFollowers / > }
-        /> <
-        Route path = "jobapplications/:id"
-        element = { < JobApplications / > }
-        /> <
-        /Route> <
-        Route exact path = "/employer/viewprofile/:id"
-        element = { < EmployerProfile / > }
-        />
-
-        <
-        Route exact path = "/updateBusinessMail/:token"
-        element = { < UpdateBusinessEmail / > }
-        /> <
-        Route exact path = "/email-verification"
-        element = { < EmailVerification / > }
-        /> <
-        Route exact path = "/forget-pass"
-        element = { < ForgetPassword / > }
-        /> <
-        Route path = "*"
-        element = { < PageNotFound / > }
-        /> <
-        /Routes> <
-        /BrowserRouter>
+                <Route path="*" element={< PageNotFound />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
 
